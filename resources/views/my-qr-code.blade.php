@@ -1,14 +1,10 @@
-
-              
-              
-
 <!DOCTYPE html>
 <html lang="en">
 
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>My QR-Code</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -303,203 +299,42 @@
             <button class="text-gray-400 hover:text-gray-200" id="nextPage">Next</button>
           </div>
     
-        
+         <!-- QR Code Items -->
+         <div class="divide-y divide-gray-700">
+            <table class="w-full table-auto">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-white">Project Name</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-white">Usage</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-white">Date</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($qrCodes as $qrCode)
+                        <tr class="hover:bg-gray-700">
+                            <td class="px-4 py-2 text-white">{{ $qrCode->projectname }}</td>
+                            <td class="px-4 py-2 text-gray-400">{{ $qrCode->usage }}</td>
+                            <td class="px-4 py-2 text-gray-500">{{ $qrCode->created_at->format('M d, Y') }}</td>
+                            <td class="px-4 py-2 text-gray-500">{{ $qrCode->qr_code_svg }}</td>
+                           
+                            <td class="px-4 py-2 space-x-2">
+                                <a href="{{ route('mysms') }}" class="text-blue-400 hover:text-blue-500">View</a>
+                                <a href="" class="text-blue-400 hover:text-blue-500">Download</a>
+                                <form action="" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-400 hover:text-red-500">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     
       </div>
-      <script>
-         const folders = [
-          { name: 'Ads', count: '12 QR Code', date: 'Jun 01, 2024' },
-          { name: 'Restaurants', count: '25 QR Codes', date: 'May 28, 2024' },
-          { name: 'Business', count: '16 QR Code', date: 'Feb 15, 2024' },
-          { name: 'Brands', count: '5 QR Codes', date: 'Feb 12, 2024' },
-          { name: 'Designs', count: '30 QR Codes', date: 'Jan 21, 2024' },
-        ];
     
-        // QR Codes Data
-        const qrCodes = [
-  { id: 1, title: "Business Card", url: "https://qrcodes.example.com/1", type: "Marketing", date: "2021-10-26" },
-  { id: 2, title: "Feedback Form", url: "https://qrcodes.example.com/2", type: "Survey", date: "2021-11-01" },
-  { id: 3, title: "Product Page", url: "https://qrcodes.example.com/3", type: "Marketing", date: "2021-12-15" },
-  { id: 4, title: "Event Registration", url: "https://qrcodes.example.com/4", type: "Event", date: "2022-01-10" },
-  { id: 5, title: "Exclusive Offer", url: "https://qrcodes.example.com/5", type: "Marketing", date: "2022-02-20" },
-  { id: 6, title: "Customer Satisfaction Survey", url: "https://qrcodes.example.com/6", type: "Survey", date: "2022-03-15" },
-  { id: 7, title: "Loyalty Program", url: "https://qrcodes.example.com/7", type: "Marketing", date: "2022-04-05" },
-  { id: 8, title: "Product Review", url: "https://qrcodes.example.com/8", type: "Survey", date: "2022-05-11" },
-  { id: 9, title: "Discount Coupon", url: "https://qrcodes.example.com/9", type: "Marketing", date: "2022-06-01" },
-  { id: 10, title: "Newsletter Signup", url: "https://qrcodes.example.com/10", type: "Marketing", date: "2022-07-10" },
-  { id: 11, title: "Workshop Registration", url: "https://qrcodes.example.com/11", type: "Event", date: "2022-08-25" },
-  { id: 12, title: "Survey for Product Feedback", url: "https://qrcodes.example.com/12", type: "Survey", date: "2022-09-30" }
-];
-   // Populate Folders
-        const foldersGrid = document.getElementById('foldersGrid');
-        folders.forEach((folder) => {
-          foldersGrid.innerHTML += `
-            <div class="bg-gray-800 hover:bg-gray-700 rounded-lg shadow p-4 transition duration-200">
-              <div class="flex justify-between items-start mb-3">
-                <i class="fas fa-folder text-2xl text-blue-400"></i>
-                <button class="text-gray-400 hover:text-gray-200">
-                  <i class="fas fa-ellipsis-h"></i>
-                </button>
-              </div>
-              <h3 class="font-semibold text-white">${folder.name}</h3>
-              <p class="text-sm text-gray-400">${folder.count}</p>
-              <p class="text-xs text-gray-500 mt-2">${folder.date}</p>
-            </div>
-          `;
-        });
-    
-      
-        let currentPage = 1;
-        const itemsPerPage = 5;
-      
-        const qrCodesList = document.getElementById("qrCodesList");
-        const pageInfo = document.getElementById("pageInfo");
-        const prevPage = document.getElementById("prevPage");
-        const nextPage = document.getElementById("nextPage");
-      
-        function renderQrCodes() {
-          qrCodesList.innerHTML = "";
-          const startIndex = (currentPage - 1) * itemsPerPage;
-          const paginatedItems = qrCodes.slice(startIndex, startIndex + itemsPerPage);
-      
-          paginatedItems.forEach((qr) => {
-            qrCodesList.innerHTML += `
-              <div class="p-4 flex items-center hover:bg-gray-700">
-                <input type="checkbox" class="mr-4" />
-                <div class="w-16 h-16 bg-gray-700 rounded flex items-center justify-center mr-4">
-                  <i class="fas fa-qrcode text-4xl text-gray-400"></i>
-                </div>
-                <div class="flex-1">
-                  <h3 class="font-medium text-white">${qr.title}</h3>
-                  <a href="${qr.url}" target="_blank" class="text-sm text-blue-400 hover:underline">${qr.url}</a>
-                  <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
-                    <span>${qr.type}</span>
-                    <span>${qr.date}</span>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-2">
-                <button class="p-2 hover:bg-gray-600 rounded">
-                  <i class="fas fa-edit text-gray-400"></i> Edit
-                </button>
-                
-              </div>
-                <div class="flex items-center space-x-2">
-                  <button class="p-2 hover:bg-gray-600 rounded" onclick="deleteQrCode(${qr.id})">
-                    <i class="fas fa-trash text-gray-400"></i> Delete
-                  </button>
-                  <a href="${qr.url}" download class="p-2 hover:bg-gray-600 rounded">
-                    <i class="fas fa-download text-gray-400"></i> Download
-                  </a>
-                </div>
-              </div>
-            `;
-          });
-      
-          pageInfo.textContent = `Page ${currentPage}`;
-          prevPage.disabled = currentPage === 1;
-          nextPage.disabled = currentPage * itemsPerPage >= qrCodes.length;
-        }
-      
-        function deleteQrCode(id) {
-          if (confirm("Are you sure you want to delete this QR Code?")) {
-            const index = qrCodes.findIndex((qr) => qr.id === id);
-            if (index !== -1) {
-              qrCodes.splice(index, 1);
-              renderQrCodes();
-            }
-          }
-        }
-      
-        prevPage.addEventListener("click", () => {
-          if (currentPage > 1) {
-            currentPage--;
-            renderQrCodes();
-          }
-        });
-      
-        nextPage.addEventListener("click", () => {
-          if (currentPage * itemsPerPage < qrCodes.length) {
-            currentPage++;
-            renderQrCodes();
-          }
-        });
-      
-        renderQrCodes();
-      </script>
-   
-    </div>
-
-    <script>
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-
-    // Toggle Sidebar on Mobile
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('-translate-x-full');
-    });
-  </script>
-
-  </body>
-
-  <script>
-    // Line Chart
-    const lineCtx = document.getElementById('lineChart').getContext('2d');
-    new Chart(lineCtx, {
-      type: 'line',
-      data: {
-        labels: ['Oct 27', 'Oct 28', 'Oct 29', 'Oct 30', 'Oct 31', 'Nov 1', 'Nov 2'],
-        datasets: [{
-          label: 'Scans Over Time',
-          data: [5, 10, 8, 13, 9, 15, 12],
-          borderColor: '#3B82F6',
-          fill: false,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            grid: { color: '#333' },
-            ticks: { color: '#fff' }
-          },
-          y: {
-            grid: { color: '#333' },
-            ticks: { color: '#fff' }
-          }
-        }
-      }
-    });
-
-    // Bar Chart
-    const barCtx = document.getElementById('barChart').getContext('2d');
-    new Chart(barCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Windows', 'MacOS', 'Linux', 'Android', 'iOS'],
-        datasets: [{
-          label: 'Operating System Usage',
-          data: [55, 25, 10, 5, 5],
-          backgroundColor: '#3B82F6',
-          borderColor: '#2563EB',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: {
-            grid: { color: '#333' },
-            ticks: { color: '#fff' }
-          },
-          y: {
-            grid: { color: '#333' },
-            ticks: { color: '#fff' }
-          }
-        }
-      }
-    });
-  </script>
 </html>
 
 

@@ -242,7 +242,7 @@
                 Create Your URL QR Code
               </h1>
             </div>
-
+  
             <!-- Step Container -->
             <div class="flex items-center justify-center mb-5 space-x-0">
               <!-- Step 1 -->
@@ -256,191 +256,74 @@
                   <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
               </div>
-
+  
               <!-- Line Gap -->
               <div class="w-10 h-1 bg-gray-300"></div>
-
+  
               <!-- Step 2 -->
               <div
                 class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
                 2
               </div>
               <div class="w-10 h-1 bg-gray-300"></div>
-
+  
               <!-- Step 2 -->
               <div
                 class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
                 3
               </div>
             </div>
-
+  
           </div>
-
-          <div
-            class="lg:lg:lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
-            <div class="col-span-8">
-              <div class="flex justify-start">
-                <h2
-                  class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
-              </div>
-              <div
-              class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
-            
-              <div class="space-y-4">
-                <div class="mx-auto p-6 bg-white">
-                    <form style="margin-bottom: 1rem;">
-                        <!-- QR Code Text Input -->
-                        <div
-                            style="margin-bottom: 1rem; position: relative;">
-                            <label for="url"
-                                style="font-weight: bold; margin-bottom: 0.5rem; display: block; color: #000;">QR
-                                Code Text:</label>
-                            <input
-                                type="text"
-                                id="url"
-                                name="url"
-                                placeholder="Enter text for QR Code"
-                                style="width: 100%; border: 1px solid #ccc; padding: 0.75rem 1.5rem 0.75rem 1rem; border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
-                           
-                        </div>
-                    
-                        <!-- Enhanced Image Upload Input -->
-                      
-                    </form>
-
-                </div>
+  
+          <div class="p-8 bg-gray-950 rounded-lg border-gray-900 border shadow-sm">
+    <h2 class="text-2xl font-medium text-white text-center">QR Code Generator</h2>
+    
+    @if(session('success'))
+        <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">{{ session('success') }}</div>
+    @endif
+    
+    <form action="{{ route('qrstore') }}" method="POST">
+        @csrf
+        <div class="bg-white p-6 rounded-lg shadow">
+            <label class="block text-gray-600">Phone Number</label>
+            <div class="flex gap-x-2 items-center mt-2">
+                <select name="countrycode" class="border p-2 rounded-md text-black">
+                    <option value="+1">🇺🇸 USA (+1)</option>
+                    <option value="+91">🇮🇳 India (+91)</option>
+                </select>
+                <input type="tel" name="phone" class="border p-2 rounded-md w-full" required>
             </div>
-          </div>
-              <div class="flex mt-10 justify-start">
-                <h2
-                  class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information</h2>
-              </div>
-              <div
-              class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
-
-                <div class="space-y-4">
-                  <div class="mx-auto w-full lg:p-6 bg-white text-black">
-
-                    <div class="space-y-4">
-
-                      <!-- QR Project Name -->
-                      <div>
-                        <label for="projectName"
-                          class="block font-medium text-gray-800">QR Project Name</label>
-                        <input id="projectName" placeholder="Enter project name"
-                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                      </div>
-
-                      <!-- Select Folder -->
-                      <div>
-                        <label for="folderinput"
-                          class="block font-medium text-gray-800">Select Folder</label>
-                        <div class="flex gap-x-4 items-center mt-2">
-                          <button
-                            class="p-2.5 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:bg-gray-100 transition duration-300">
-                            <svg stroke="currentColor" fill="currentColor"
-                              stroke-width="0" viewBox="0 0 512 512"
-                              class="text-2xl mt-1 text-gray-700" height="1em"
-                              width="1em" xmlns="http://www.w3.org/2000/svg">
-                              <path
-                                d="M216 0h80c13.3 0 24 10.7 24 24v168h87.7c17.8 0 26.7 21.5 14.1 34.1L269.7 378.3c-7.5 7.5-19.8 7.5-27.3 0L90.1 226.1c-12.6-12.6-3.7-34.1 14.1-34.1H192V24c0-13.3 10.7-24 24-24zm296 376v112c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24V376c0-13.3 10.7-24 24-24h146.7l49 49c20.1 20.1 52.5 20.1 72.6 0l49-49H488c13.3 0 24 10.7 24 24zm-124 88c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20zm64 0c0-11-9-20-20-20s-20 9-20 20 9 20 20 20 20-9 20-20z"></path>
-                            </svg>
-                          </button>
-                          <div
-                            class="w-full p-3 mt-2 border flex justify-center border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <input id="folderinput" type="file" class="hidden">
-                            <p
-                              class="text-md font-semibold text-gray-600">Document name:</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Date Range -->
-                      <div
-                        class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
-                        <div class="flex-1">
-                          <label for="startDate"
-                            class="block font-medium text-gray-800">Start Date</label>
-                          <input  id="startDate"  min="<?php echo date('Y-m-d');?>" type="date"
-                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div class="flex-1">
-                          <label for="endDate"
-                            class="block font-medium text-gray-800">End Date</label>
-                          <input id="endDate" type="date"
-                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                      </div>
-
-                      <!-- Usage -->
-                      <div>
-                        <label for="usage"
-                          class="block font-medium text-gray-800">Usage</label>
-                        <select id="usage"
-                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                          <option value>Select Usage</option>
-                          <option value="personal">Personal</option>
-                          <option value="business">Business</option>
-                          <option value="event">Event</option>
-                        </select>
-                      </div>
-
-                      <!-- Remarks -->
-                      <div>
-                        <label for="remarks"
-                          class="block font-medium text-gray-800">Remarks</label>
-                        <textarea id="remarks"
-                          placeholder="Enter any additional remarks"
-                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-span-4">
-              <div class="w-full sticky lg:h-screen top-10 ">
-                <div
-                  class="bg-gray-900 border border-gray-800 rounded-lg shadow-lg">
-                  <div class="p-6">
-                    <div
-                      class="bg-white aspect-square rounded-lg mb-6 shadow-sm">
-                      <img src="/download.png" alt="QR Code Preview"
-                        class="w-full h-full object-cover rounded-lg">
-                    </div>
-                    <button
-                      class="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:scale-105 transition-transform rounded-lg py-3 flex justify-center items-center">
-                      <i class="fas fa-qrcode mr-2 text-lg"></i>
-                      Download QR
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex justify-between mt-8">
-            <butt hover:bg-[#F5A623]on
-              class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</butt>
-            <button
-              class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Next</button>
-          </div>
+            <label class="block text-gray-600 mt-4">QR Code SMS Text:</label>
+            <textarea name="sms" class="border p-2 w-full rounded-md text-black" rows="4" required></textarea>
+            <label class="block text-gray-600 mt-4">QR Project Name</label>
+            <input type="text" name="projectname" class="border p-2 w-full rounded-md text-black" required>
+            <label class="block text-gray-600 mt-4">Start Date</label>
+            <input type="date" name="startdate" class="border p-2 w-full rounded-md text-black" required>
+            <label class="block text-gray-600 mt-4">End Date</label>
+            <input type="date" name="enddate" class="border p-2 w-full rounded-md text-black" required>
+            <label class="block text-gray-600 mt-4">Usage</label>
+            <select name="usage" class="border p-2 w-full text-black rounded-md" required>
+                <option value="personal">Personal</option>
+                <option value="business">Business</option>
+            </select>
+            <label class="block text-gray-600 mt-4">Remarks</label>
+            <textarea name="remarks" class="text-black border p-2 w-full rounded-md"></textarea>
+            <button type="submit" class="mt-4 bg-yellow-500 text-white p-2 rounded-md w-full">Generate QR Code</button>
         </div>
+    </form>
+</div>
+       
+       
+      
 
-      </main>
+    </main>
 
-    </div>
+  </div>
 
-    <script>
-            const menuToggle = document.getElementById('menu-toggle');
-            const sidebar = document.getElementById('sidebar');
-        
-            // Toggle Sidebar on Mobile
-            menuToggle.addEventListener('click', () => {
-              sidebar.classList.toggle('-translate-x-full');
-            });
-          </script>
-
+  
+ 
+                  
   </body>
 
 </html>

@@ -253,139 +253,184 @@
 
       </aside>
       <!-- Main Content Area -->
-
-      <div class="mx-auto w-full lg:pl-72 space-y-6">
-
-        <!-- Header -->
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between bg-gray-800 p-6 rounded-lg shadow-lg">
-          <div>
-            <h1 class="text-4xl font-bold text-gray-100">WTM_EN24</h1>
-            <div class="flex flex-wrap items-center gap-6 mt-2 text-sm text-gray-400">
-              <span class="px-3 py-1 rounded-full bg-gray-700">WEBSITE</span>
-              <span class="px-3 py-1 rounded-full bg-gray-700">Oct 27, 2024</span>
-              <span class="px-3 py-1 rounded-full bg-gray-700">No folder</span>
-            </div>
-          </div>
-          <div class="flex gap-4">
-            <button class="flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 border border-blue-500 hover:border-blue-400 transition duration-200">
-              <i class="fas fa-edit h-5 w-5"></i>
-              Edit
-            </button>
-            <button class="flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 border border-blue-500 hover:border-blue-400 transition duration-200">
-              <i class="fas fa-download h-5 w-5"></i>
-              Download
-            </button>
-          </div>
-        </div>
-        
-    
-        <!-- Quick Stats -->
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div class="rounded-lg bg-gray-800 p-6 shadow-lg">
-            <div class="text-sm font-medium text-gray-400">CAMPAIGN START</div>
-            <div class="mt-2 text-2xl font-semibold text-gray-200">Oct 27, 2024</div>
-          </div>
-          <div class="rounded-lg bg-gray-800 p-6 shadow-lg">
-            <div class="text-sm font-medium text-gray-400">CAMPAIGN END</div>
-            <div class="mt-2 text-2xl font-semibold text-gray-200">Nov 7, 2024</div>
-          </div>
-          <div class="rounded-lg bg-gray-800 p-6 shadow-lg">
-            <div class="text-sm font-medium text-gray-400">TOTAL SCANS</div>
-            <div class="mt-2 text-2xl font-semibold text-gray-200">78</div>
-          </div>
-          <div class="rounded-lg bg-gray-800 p-6 shadow-lg">
-            <div class="text-sm font-medium text-gray-400">UNIQUE SCANS</div>
-            <div class="mt-2 text-2xl font-semibold text-gray-200">71</div>
-          </div>
-        </div>
-    
-        <!-- Scans Section -->
-        <div class="rounded-lg bg-gray-800 p-6 shadow-lg">
-          <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div class="flex flex-wrap items-center gap-4">
-              <h2 class="text-lg font-semibold text-gray-200">Scans</h2>
-              <button class="flex items-center gap-2 rounded-md border border-gray-700 px-3 py-1.5 text-sm hover:bg-gray-700">
-                <i class="fas fa-calendar-alt h-4 w-4"></i>
-                Oct 27, 2024 - Nov 7, 2024
-              </button>
-              <div class="flex rounded-md border border-gray-700">
-                <button class="px-3 py-1.5 text-sm hover:bg-gray-700">Day</button>
-                <button class="px-3 py-1.5 text-sm hover:bg-gray-700">Week</button>
-                <button class="px-3 py-1.5 text-sm hover:bg-gray-700">Month</button>
-              </div>
-            </div>
-            <div class="flex flex-wrap items-center gap-4">
-              <button class="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition duration-200">
-                <i class="fas fa-sync h-4 w-4"></i>
-                Reset Scans
-              </button>
-              <button class="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition duration-200">
-                <i class="fas fa-download h-4 w-4"></i>
-                Download CSV
+      <div class=" flex-col lg:w-[80%]  ml-auto h-screen ">
+      <div class="">
+        <div class="mx-auto w-full space-y-6 bg-gray-800 p-3 py-6 ">
+          <!-- Header -->
+          <h3 class="text-4xl mb-3 px-2 lg:px-5 font-semibold text-white">
+            Analytics
+          </h3>
+          <div class="px-2 lg:px-5">
+            <p class="text-sm text-gray-100 mb-10">
+              The QR Code Analytics page provides detailed insights into the performance of your QR codes. Track total
+              scans,
+              monitor usage trends, and analyze when and where your codes are being scanned. These insights help you
+              understand engagement levels and optimize your campaigns effectively. Manage your QR code activity with ease
+              and
+              make informed decisions using real-time data.
+            </p>
+            <div
+              class="flex flex-col justify-center items-center mb-3 gap-y-2 ">
+              <p>No QR code found, create your first QR code.</p>
+              <button onclick="location.href='/qroption'"
+                class="mt-4 bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90">
+                Create QR Code
               </button>
             </div>
           </div>
-    
-          <!-- Charts -->
-          <div class="grid gap-8 md:grid-cols-2">
-            <div class="space-y-4">
-              <h3 class="font-semibold text-gray-200">OVER TIME</h3>
-              <div class="chart-container">
-                <canvas id="lineChart" class="h-64 w-full"></canvas>
-              </div>
+          
+          <div class=" px-2 lg:px-5">
+  
+            <div class="flex justify-start mb-3 items-center gap-x-2">
+              <h3 class="sm:text-2xl text-lg  font-semibold text-white">
+                Select Qr Code
+              </h3>
+              <select
+                class=" flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 bg-gray-900 border border-blue-500 hover:border-blue-400 transition duration-200 "
+                onchange="location.href='?id=' + this.value">
+                <option value="no">Project Name</option>
+                
+              </select>
             </div>
-            <div class="space-y-4">
-              <h3 class="font-semibold text-gray-200">OPERATING SYSTEM</h3>
-              <div class="chart-container">
-                <canvas id="barChart" class="h-64 w-full"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-    
-        <!-- Bottom Tables -->
-        <div class="grid gap-6 md:grid-cols-2">
-          <div class="rounded-lg bg-gray-800 p-6 shadow-lg">
-            <h3 class="mb-4 font-semibold text-gray-200">TOP COUNTRIES</h3>
-            <div class="space-y-4">
-              <div class="flex items-center justify-between text-gray-400">
-                <span>United Kingdom</span>
-                <div class="flex items-center gap-4">
-                  <span>37</span>
-                  <span class="w-16 text-right">75.58%</span>
+            <div class="flex flex-col gap-6 sm:flex-row mb-3 sm:justify-between ">
+              <div class="flex gap-x-4 mb-3">
+                <div class=" ">
+                  <div class="relative inline-block"> <a target="_blank"
+                      href="">
+                      <img src="https://images.squarespace-cdn.com/content/v1/5d3f241fa4e0350001fa20d5/1636491460338-AIZAXV2978MGIDQE0GT7/qr-code.png" alt="" width="128px" height="128px" />
+                      <h1 class="text-xl mt-3 font-bold text-gray-100">My Qrcode</h1>
+                    </a>
+                    <span
+                      class="absolute top-2 left-2 text-sm px-3 py-1 rounded-full font-semibold">
+                      
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <div class="  gap-x-6 mt-0 text-xs sm:text-sm text-gray-400">
+                    <p class="px-3 mb-2 py-1 rounded-full bg-gray-900">Static</p>
+                    <p class="px-3 mb-2 py-1 rounded-full bg-gray-900">23 jan 2025</p>
+                    <p class="px-3 mb-2 py-1 rounded-full bg-gray-900">Email</p>
+                    <p
+                      class=" px-3 mb-2 py-1 rounded-full">
+                      Expired - Please Upgrade
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div class="flex items-center justify-between text-gray-400">
-                <span>United States</span>
-                <div class="flex items-center gap-4">
-                  <span>28</span>
-                  <span class="w-16 text-right">57.85%</span>
+              <div class=" gap-6  flex-row items-center mb-3 flex md:block justify-between">
+                <button
+                  class="flex items-center md:mb-5 gap-2 w-full text-center px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 border border-blue-500 hover:border-blue-400 transition duration-200">
+                  <i class="fas fa-download h-5 w-5"></i>
+                  <a href=""
+                    download="">Download</a>
+                </button>
+                <button
+                  class="flex items-center gap-2 w-full text-center px-4 py-2 w-full rounded-lg text-blue-500 hover:text-blue-400 border border-blue-500 hover:border-blue-400 transition duration-200 disabled:bg-gray-400 disabled:text-white disabled:cursor-not-allowed"
+                  >
+                  <i class="fas fa-edit h-5 w-5"></i>
+                  Edit
+                </button>
+              </div>
+            </div>
+            <!-- Quick Stats -->
+            <div class="grid gap-4 grid-cols-2 lg:grid-cols-4 mb-3">
+              <div class="rounded-lg bg-gray-900 p-2 lg:p-6 shadow-lg">
+                <div class="text-sm font-medium text-gray-400">CAMPAIGN START</div>
+                <div class="mt-2 text-lg sm:text-2xl font-semibold text-gray-200"></div>
+              </div>
+              <div class="rounded-lg bg-gray-900 p-2 lg:p-6 shadow-lg">
+                <div class="text-sm font-medium text-gray-400">CAMPAIGN END</div>
+                <div class="mt-2 text-lg sm:text-2xl font-semibold text-gray-200">
+                 
+                </div>
+              </div>
+              <div class="rounded-lg bg-gray-900 p-2 lg:p-6 shadow-lg">
+                <div class="text-sm font-medium text-gray-400">TOTAL SCANS</div>
+                <div class="mt-2 text-2xl font-semibold text-gray-200">
+                 20
+                </div>
+              </div>
+              <div class="rounded-lg bg-gray-900 p-2 lg:p-6 shadow-lg">
+                <div class="text-sm font-medium text-gray-400">UNIQUE SCANS</div>
+                <div class="mt-2 text-2xl font-semibold text-gray-200">
+                 5
                 </div>
               </div>
             </div>
-          </div>
-          <div class="rounded-lg bg-gray-800 p-6 shadow-lg">
-            <h3 class="mb-4 font-semibold text-gray-200">TOP CITIES</h3>
-            <div class="space-y-4">
-              <div class="flex items-center justify-between text-gray-400">
-                <span>Canning Town</span>
-                <div class="flex items-center gap-4">
-                  <span>25</span>
-                  <span class="w-16 text-right">33.65%</span>
+            <!-- Scans Section -->
+            <div class="rounded-lg sm:bg-gray-900 sm:p-4 lg:p-6 shadow-lg mb-3">
+              <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-wrap items-center gap-4">
+                  <h2 class="text-lg font-semibold text-gray-200">Scans</h2>
+                  <button
+                    class="flex items-center sm:w-auto w-full gap-2 rounded-md border border-gray-700 px-3 py-1.5 text-sm hover:bg-gray-900">
+                    <i class="fas fa-calendar-alt h-4 w-4"></i>
+                    <input class="bg-gray-800 sm:bg-gray-900" type="date" max="" id="start_Date" class="text-gray-700"> -
+                    <input class="bg-gray-800 sm:bg-gray-900" type="date" max="" id="end_Date"
+                      class="text-gray-700">
+                  </button>
+                  <div class="flex rounded-md sm:w-auto w-full justify-around border border-gray-700">
+                    <button id="dayBtn" class="px-3 py-1.5 text-sm hover:bg-gray-900 ">Day</button>
+                    <button id="weekBtn" class="px-3 py-1.5 text-sm hover:bg-gray-900">Week</button>
+                    <button id="monthBtn" class="px-3 py-1.5 text-sm hover:bg-gray-900">Month</button>
+                  </div>
+                </div>
+                <div class="flex flex-wrap  sm:w-auto w-full justify-around items-center gap-4">
+                  <button class="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition duration-200">
+                    <i class="fas fa-sync h-4 w-4"></i>
+                    Reset
+                  </button>
+                  <button class="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition duration-200">
+                    <i class="fas fa-download h-4 w-4"></i>
+                    Download PDF
+                  </button>
                 </div>
               </div>
-              <div class="flex items-center justify-between text-gray-400">
-                <span>New York</span>
-                <div class="flex items-center gap-4">
-                  <span>20</span>
-                  <span class="w-16 text-right">25.35%</span>
+  
+              <!-- Charts -->
+              <div class="grid gap-8 md:grid-cols-2">
+                <div class="space-y-4">
+                  <h3 class="font-semibold text-gray-200">OVER TIME</h3>
+                  <div class="chart-container">
+                    <canvas id="lineChart" class="h-64 w-full"></canvas>
+                  </div>
+                </div>
+                <div class="space-y-4">
+                  <h3 class="font-semibold text-gray-200">OPERATING SYSTEM</h3>
+                  <div class="chart-container">
+                    <canvas id="barChart" class="h-64 w-full"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Bottom Tables -->
+            <div class="grid gap-6 md:grid-cols-2">
+              <div class="rounded-lg bg-gray-900 p-4 lg:p-6 shadow-lg">
+                <h3 class="mb-4 font-semibold text-center md:text-left text-gray-200">TOP COUNTRIES</h3>
+                <div class="space-y-4">
+                    <div class="flex flex-col items-center justify-center text-gray-500 py-10">
+                      <i class="fas fa-globe text-4xl mb-4"></i>
+                      <p class="text-lg font-semibold">No Countries data available</p>
+                      <p class="text-sm text-center md:text-left">Please check back later or contact support for assistance.</p>
+                    </div>
+                </div>
+              </div>
+              <div class="rounded-lg bg-gray-900 p-4 lg:p-6 shadow-lg">
+                <h3 class="mb-4 font-semibold text-center md:text-left text-gray-200">TOP CITIES</h3>
+                <div class="space-y-4">
+                    <div class="flex flex-col items-center justify-center text-gray-500 py-10">
+                      <i class="fas fa-city text-4xl mb-4"></i>
+                      <p class="text-lg font-semibold">No city data available</p>
+                      <p class="text-sm text-center md:text-left">Please check back later or contact support for assistance.</p>
+                    </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    
+      </div>
       <script>
         // Line Chart
         const lineCtx = document.getElementById('lineChart').getContext('2d');
