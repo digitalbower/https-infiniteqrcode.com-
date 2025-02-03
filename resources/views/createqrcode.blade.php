@@ -1,160 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: '#4A90E2',
-            secondary: '#50E3C2',
-            accent: '#F5A623',
-            background: '#1F2937',
-            card: '#374151',
-          },
-          fontFamily: {
-            sans: ['Poppins', 'sans-serif'],
-          },
-        }
-      }
-    }
-  </script>
-   <script>
-    const toggleButton = document.getElementById('toggle-btn');
-    const chevronIcon = document.getElementById('chevron-icon');
-
-    toggleButton.addEventListener('click', () => {
-      // Toggle the rotation class
-      chevronIcon.classList.toggle('rotate-180');
-      chevronIcon.classList.toggle('rotate-0');
-    });
-  </script>
-  <style>
-    .qr-button:hover i{
-      color: #fff;
-    }
-    .qr-button:hover span{
-      color: #fff;
-    }
-  </style>
-</head>
-
-<body class="bg-background text-white font-sans">
-
-  <div class="flex flex-col h-screen">
-
-    <!-- Header with Hamburger Menu -->
-    <header class="bg-gradient-to-b lg:hidden from-[#5f72ab36] bg-opecity-40 to-white text-white p-4 flex justify-between items-center">
-     <a href="/">
-       <img src="/QR code Logo - 750250.svg" class="w-[200px]" />
-     </a>
-      <button id="menu-toggle" class="text-white focus:outline-none lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-      <!-- Tabs (Visible on Desktop) -->
-      <nav class="hidden lg:flex space-x-6">
-        <button class="text-white hover:text-primary">Dashboard</button>
-      <a href="/Profile.html">  <button class="text-white hover:text-primary">Profile</button></a>
-        <button class="text-white hover:text-primary">QR Code Generator</button>
-        <button class="text-white hover:text-primary">Yields</button>
-      </nav>
-    </header>
-
-    <!-- Sidebar (Hidden on Mobile) -->
-    <aside id="sidebar" class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  bg-gradient-to-t from-[#1F2937] from-50% to-white text-white p-4 z-50 transition-all transform -translate-x-full lg:translate-x-0 lg:block">
-      <div class="flex justify-between items-center py-2 mb-8">
-       <a href="/">
-         <img src="/QR code Logo - 750250.svg" class="w-[200px]" />
-       </a>
-      </div>
-
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 mx-auto relative mb-2 rounded-full bg-gray-500">
-          <img src="/download.jpeg" alt="User Profile" class="w-full h-full object-cover rounded-full" />
-          <i class="fas fa-edit text-white text-2xl ml-2 absolute -bottom-1 -left-3"></i>
-        </div>
-        <p class="font-semibold">Esther Howard</p>
-      </div>
-
-      <nav class="flex-1 px py-6">
-        <ul class="space-y-2">
-          <!-- Dashboard -->
-          <li>
-            <button class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
-            </button>
-          </li>
-
-              <!-- QR Code Generator -->
-              <li>
-            <button class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-qrcode mr-3"></i> QR Code Generator
-            </button>
-          </li>
-          <!-- Profile -->
-          <li>
-            <button class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-user mr-3"></i> Profile
-            </button>
-          </li>
-      
-          <!-- Dropdown Menu -->
-          <li class="relative group">
-            <button class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-qrcode mr-3"></i> Analytics
-              
-            </button>
-           
-          </li>
-
-
-          <li class="relative group">
-            <button class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-qrcode mr-3"></i> Subscription
-              
-            </button>
-           
-          </li>
-          
-          
-      
-          
-          <!-- Yields -->
-          <li>
-            <button class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-chart-line mr-3"></i> MY QR Codes 
-            </button>
-          </li>
-        </ul>
-      </nav>
-
-      <ul class="">
-        <li class="mx-4 pt-4">
-          <button class="bg-[#6c8ef6] flex items-center w-full text-white py-3 px-12 rounded-lg shadow-md hover:bg-[#6c8ef6] transition duration-300">
-            <i class="fas fa-arrow-up mr-2"></i> Upgrade
-          </button>
-        </li>
-        <li class="mx-4 pt-4">
-          <button class="bg-[#F5A623] flex items-center w-full text-white py-3 px-12 rounded-lg shadow-md hover:bg-[#F5A623] transition duration-300">
-            <i class="fas fa-sign-out-alt mr-2"></i> Logout
-          </button>
-        </li>
-      </ul>
-    </aside>
-
-    <!-- Main Content Area -->
-   
-  
+@extends('layouts.layout')
+@section('title', 'Create Qr Codes')
+@section('content')
     <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
       <div class="max-w-7xl mx-auto ">
         <div class="flex-1 w-full  lg:px-12">
@@ -538,217 +384,214 @@
       </div>
 
     </main>
+    <script>
+      const menuToggle = document.getElementById('menu-toggle');
+      const sidebar = document.getElementById('sidebar');
   
-
-  </div>
-
-  <script>
-    const menuToggle = document.getElementById('menu-toggle');
-    const sidebar = document.getElementById('sidebar');
-
-    // Toggle Sidebar on Mobile
-    menuToggle.addEventListener('click', () => {
-      sidebar.classList.toggle('-translate-x-full');
-    });
-  </script>
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <script>
-   // Get references to the buttons and content elements
-   const staticButton = document.getElementById('static-toggle');
-   const dynamicButton = document.getElementById('dynamic-toggle');
-   const staticContent = document.getElementById('static-content');
-   const dynamicContent = document.getElementById('dynamic-content');
-
-   // Ensure static content is visible on page load by adding 'active' class
-   staticButton.classList.add('text-[#F5A623]');
-   staticContent.classList.remove('hidden');
-
-   // Event listener for static toggle button
-   staticButton.addEventListener('click', () => {
-     staticButton.classList.add('text-[#F5A623]', 'border-b-2', 'border-blue-500');
-     dynamicButton.classList.remove('text-[#F5A623]', 'border-b-2', 'border-blue-500');
-
+      // Toggle Sidebar on Mobile
+      menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('-translate-x-full');
+      });
+    </script>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <script>
+     // Get references to the buttons and content elements
+     const staticButton = document.getElementById('static-toggle');
+     const dynamicButton = document.getElementById('dynamic-toggle');
+     const staticContent = document.getElementById('static-content');
+     const dynamicContent = document.getElementById('dynamic-content');
+  
+     // Ensure static content is visible on page load by adding 'active' class
+     staticButton.classList.add('text-[#F5A623]');
      staticContent.classList.remove('hidden');
-     dynamicContent.classList.add('hidden');
-   });
-
-   // Event listener for dynamic toggle button
-   dynamicButton.addEventListener('click', () => {
-     dynamicButton.classList.add('text-[#F5A623]', 'border-b-2', 'border-blue-500');
-     staticButton.classList.remove('text-[#F5A623]', 'border-b-2', 'border-blue-500');
-
-     dynamicContent.classList.remove('hidden');
-     staticContent.classList.add('hidden');
-   });
- </script>
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- <script>
-   $(document).ready(function() {
-     var count = "";
-     if (count >= '5') {
-       Swal.fire({
-         title: 'Please upgrade to proceed',
-         text: 'QRCode creation for the free version Exceeds limit',
-         icon: 'error',
-         dangerMode: true,
-         confirmButtonText: 'Upgrade',
-         allowOutsideClick: false, // Disable closing on outside click
-         allowEscapeKey: false, // Disable closing with Escape key
-       }).then((result) => {
-         if (result.isConfirmed) {
-           // Redirect to another file location
-           window.location.href = 'upgrade'; // Replace with your target location
-         }
-       });
-     }
-     // When the Static tab is clicked
-     $('#static-toggle').click(function() {
-       $('#qroption').val('Static'); // Set the value of the input to "Static"
-       $('#static-toggle').addClass('active-tab'); // Make the Static tab active
-       $('#dynamic-toggle').removeClass('active-tab'); // Remove active class from Dynamic tab
+  
+     // Event listener for static toggle button
+     staticButton.addEventListener('click', () => {
+       staticButton.classList.add('text-[#F5A623]', 'border-b-2', 'border-blue-500');
+       dynamicButton.classList.remove('text-[#F5A623]', 'border-b-2', 'border-blue-500');
+  
+       staticContent.classList.remove('hidden');
+       dynamicContent.classList.add('hidden');
      });
-     // When the Dynamic tab is clicked
-     $('#dynamic-toggle').click(function() {
-       var bcount = "";
-       if (bcount >= '10') {
-         $("#dnextButton").prop("disabled", true);
+  
+     // Event listener for dynamic toggle button
+     dynamicButton.addEventListener('click', () => {
+       dynamicButton.classList.add('text-[#F5A623]', 'border-b-2', 'border-blue-500');
+       staticButton.classList.remove('text-[#F5A623]', 'border-b-2', 'border-blue-500');
+  
+       dynamicContent.classList.remove('hidden');
+       staticContent.classList.add('hidden');
+     });
+   </script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script>
+     $(document).ready(function() {
+       var count = "";
+       if (count >= '5') {
          Swal.fire({
            title: 'Please upgrade to proceed',
-           text: 'Dynamic QRCode creation for your Plan Exceeds limit',
+           text: 'QRCode creation for the free version Exceeds limit',
            icon: 'error',
            dangerMode: true,
            confirmButtonText: 'Upgrade',
-           allowOutsideClick: true, // Disable closing on outside click
-           allowEscapeKey: true, // Disable closing with Escape key
+           allowOutsideClick: false, // Disable closing on outside click
+           allowEscapeKey: false, // Disable closing with Escape key
          }).then((result) => {
            if (result.isConfirmed) {
              // Redirect to another file location
              window.location.href = 'upgrade'; // Replace with your target location
            }
          });
-       } else {
-         $('#qroption').val('Dynamic'); // Set the value of the input to "Dynamic"
-         $('#dynamic-toggle').addClass('active-tab'); // Make the Dynamic tab active
-         $('#static-toggle').removeClass('active-tab'); // Remove active class from Static tab
-         $("#dnextButton").prop("disabled", false);
        }
-     });
-   });
- </script>
- <script>
-   document.addEventListener('DOMContentLoaded', () => {
-     const grid = document.getElementById('gridContainer');
-
-     // Shuffle the grid items alphabetically
-     function sortGridAlphabetically() {
-       const items = Array.from(grid.children);
-
-       // Sort items alphabetically based on the span's text content
-       const sortedItems = items.sort((a, b) => {
-         const textA = a.querySelector('span').textContent.trim().toLowerCase();
-         const textB = b.querySelector('span').textContent.trim().toLowerCase();
-         return textA.localeCompare(textB);
+       // When the Static tab is clicked
+       $('#static-toggle').click(function() {
+         $('#qroption').val('Static'); // Set the value of the input to "Static"
+         $('#static-toggle').addClass('active-tab'); // Make the Static tab active
+         $('#dynamic-toggle').removeClass('active-tab'); // Remove active class from Dynamic tab
        });
-
-       const shuffledItems = items.sort(() => Math.random() - 0.5);
-       // Clear the grid and append sorted items
-       grid.innerHTML = '';
-       sortedItems.forEach(item => grid.appendChild(item));
-     }
-
-     // Trigger sorting on page load or via some event (optional)
-     //sortGridAlphabetically(); // Call this function to shuffle on demand
-   });
-
-   $(document).ready(function() {
-     let targetUrl = ''; // Variable to store the URL
-     $('.tick-symbol').remove();
-     // Attach click event to all buttons inside the grid
-     $('#gridContainer .qr-button').on('click', function() {
-       // Get the button name from the span text
-       //const buttonName = $(this).find('span').text().trim().toLowerCase();
-       const buttonName = $(this).find('span').text().trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
-       // Construct the target URL
-       targetUrl = `${buttonName}.php`;
-
-       // Optionally, highlight the selected button (for visual feedback)
-       $('#gridContainer .qr-button').removeClass('border-2 border-gray-700'); // Reset others
-       $(this).addClass('border-2 border-gray-700'); // Highlight selected
-       $(this).addClass('relative');
-       // Remove existing tick symbols from all buttons
-       $('#gridContainer .tick-symbol').remove();
-       // Append the tick symbol to the clicked button
-       if (!$(this).find('.tick-symbol').length) {
-         $(this).append(`<span class="tick-symbol absolute top-[3px] right-[2px] bg-gray-700 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-             ✔
-           </span>`);
-       }
-
-       const img = new Image();
-       img.src = 'demoimg/' + buttonName.trim() + '.png';
-       img.onload = function() {
-         $('.cartoon').find('.img').prop('src', img.src).css({
-           height: '500px',
-           width: '300px'
+       // When the Dynamic tab is clicked
+       $('#dynamic-toggle').click(function() {
+         var bcount = "";
+         if (bcount >= '10') {
+           $("#dnextButton").prop("disabled", true);
+           Swal.fire({
+             title: 'Please upgrade to proceed',
+             text: 'Dynamic QRCode creation for your Plan Exceeds limit',
+             icon: 'error',
+             dangerMode: true,
+             confirmButtonText: 'Upgrade',
+             allowOutsideClick: true, // Disable closing on outside click
+             allowEscapeKey: true, // Disable closing with Escape key
+           }).then((result) => {
+             if (result.isConfirmed) {
+               // Redirect to another file location
+               window.location.href = 'upgrade'; // Replace with your target location
+             }
+           });
+         } else {
+           $('#qroption').val('Dynamic'); // Set the value of the input to "Dynamic"
+           $('#dynamic-toggle').addClass('active-tab'); // Make the Dynamic tab active
+           $('#static-toggle').removeClass('active-tab'); // Remove active class from Static tab
+           $("#dnextButton").prop("disabled", false);
+         }
+       });
+     });
+   </script>
+   <script>
+     document.addEventListener('DOMContentLoaded', () => {
+       const grid = document.getElementById('gridContainer');
+  
+       // Shuffle the grid items alphabetically
+       function sortGridAlphabetically() {
+         const items = Array.from(grid.children);
+  
+         // Sort items alphabetically based on the span's text content
+         const sortedItems = items.sort((a, b) => {
+           const textA = a.querySelector('span').textContent.trim().toLowerCase();
+           const textB = b.querySelector('span').textContent.trim().toLowerCase();
+           return textA.localeCompare(textB);
          });
-       };
-     });
-
-     $('#static-gridContainer .qr-button').on('click', function() {
-       // Get the button name from the span text
-       const buttonName = $(this).find('span').text().trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
-       // Construct the target URL
-       targetUrl = `${buttonName}`;
-
-       // Optionally, highlight the selected button (for visual feedback)
-       $('#static-gridContainer .qr-button').removeClass('border-2 border-gray-700'); // Reset others
-       $(this).addClass('border-2 border-gray-700'); // Highlight selected
-       $(this).addClass('relative');
-       // Remove existing tick symbols from all buttons
-       $('#static-gridContainer .tick-symbol').remove();
-       // Append the tick symbol to the clicked button
-       if (!$(this).find('.tick-symbol').length) {
-         $(this).append(`<span class="tick-symbol absolute top-[3px] right-[2px] bg-gray-700 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-             ✔
-           </span>`);
+  
+         const shuffledItems = items.sort(() => Math.random() - 0.5);
+         // Clear the grid and append sorted items
+         grid.innerHTML = '';
+         sortedItems.forEach(item => grid.appendChild(item));
        }
-       const img = new Image();
-       img.src = 'demoimg/' + buttonName.trim() + '.png';
-       img.onload = function() {
-         $('.cartoon').find('.img').prop('src', img.src).css({
-           height: '500px',
-           width: '300px'
-         });
-       };
-
+  
+       // Trigger sorting on page load or via some event (optional)
+       //sortGridAlphabetically(); // Call this function to shuffle on demand
      });
-
-
-     // Event listener for the Next button
-     $('#nextButton').on('click', function() {
-
-       if (targetUrl) {
-         // Redirect to the stored URL
-         var option = $("#qroption").val();
-
-         window.location.href = targetUrl + "?option=" + option;
-       } else {
-         alert('Please select an option first!');
-       }
+  
+     $(document).ready(function() {
+       let targetUrl = ''; // Variable to store the URL
+       $('.tick-symbol').remove();
+       // Attach click event to all buttons inside the grid
+       $('#gridContainer .qr-button').on('click', function() {
+         // Get the button name from the span text
+         //const buttonName = $(this).find('span').text().trim().toLowerCase();
+         const buttonName = $(this).find('span').text().trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+         // Construct the target URL
+         targetUrl = `${buttonName}.php`;
+  
+         // Optionally, highlight the selected button (for visual feedback)
+         $('#gridContainer .qr-button').removeClass('border-2 border-gray-700'); // Reset others
+         $(this).addClass('border-2 border-gray-700'); // Highlight selected
+         $(this).addClass('relative');
+         // Remove existing tick symbols from all buttons
+         $('#gridContainer .tick-symbol').remove();
+         // Append the tick symbol to the clicked button
+         if (!$(this).find('.tick-symbol').length) {
+           $(this).append(`<span class="tick-symbol absolute top-[3px] right-[2px] bg-gray-700 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+               ✔
+             </span>`);
+         }
+  
+         const img = new Image();
+         img.src = 'demoimg/' + buttonName.trim() + '.png';
+         img.onload = function() {
+           $('.cartoon').find('.img').prop('src', img.src).css({
+             height: '500px',
+             width: '300px'
+           });
+         };
+       });
+  
+       $('#static-gridContainer .qr-button').on('click', function() {
+         // Get the button name from the span text
+         const buttonName = $(this).find('span').text().trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
+         // Construct the target URL
+         targetUrl = `${buttonName}`;
+  
+         // Optionally, highlight the selected button (for visual feedback)
+         $('#static-gridContainer .qr-button').removeClass('border-2 border-gray-700'); // Reset others
+         $(this).addClass('border-2 border-gray-700'); // Highlight selected
+         $(this).addClass('relative');
+         // Remove existing tick symbols from all buttons
+         $('#static-gridContainer .tick-symbol').remove();
+         // Append the tick symbol to the clicked button
+         if (!$(this).find('.tick-symbol').length) {
+           $(this).append(`<span class="tick-symbol absolute top-[3px] right-[2px] bg-gray-700 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+               ✔
+             </span>`);
+         }
+         const img = new Image();
+         img.src = 'demoimg/' + buttonName.trim() + '.png';
+         img.onload = function() {
+           $('.cartoon').find('.img').prop('src', img.src).css({
+             height: '500px',
+             width: '300px'
+           });
+         };
+  
+       });
+  
+  
+       // Event listener for the Next button
+       $('#nextButton').on('click', function() {
+  
+         if (targetUrl) {
+           // Redirect to the stored URL
+           var option = $("#qroption").val();
+  
+           window.location.href = targetUrl + "?option=" + option;
+         } else {
+           alert('Please select an option first!');
+         }
+       });
+       $('#dnextButton').on('click', function() {
+  
+         if (targetUrl) {
+           // Redirect to the stored URL
+           var option = $("#qroption").val();
+  
+           window.location.href = targetUrl + "?option=" + option;
+         } else {
+           alert('Please select an option first!');
+         }
+       });
      });
-     $('#dnextButton').on('click', function() {
-
-       if (targetUrl) {
-         // Redirect to the stored URL
-         var option = $("#qroption").val();
-
-         window.location.href = targetUrl + "?option=" + option;
-       } else {
-         alert('Please select an option first!');
-       }
-     });
-   });
- </script>
-</body>
-
-</html>
+   </script>
+  
+  
+@endsection
+ 

@@ -65,7 +65,8 @@ class HomeController extends Controller
     }
     public function myqrcode()
     {
-        return view('my-qr-code');
+        $qrCodes = [];
+        return view('my-qr-code',['qrCodes'=>$qrCodes]);
     }
     public function upgrade()
     {
@@ -84,5 +85,17 @@ class HomeController extends Controller
     public function index()
     {
         return view('index');
+    }
+    public function signin()
+    {
+        return view('signin');
+    }
+    public function dashboard(){
+        
+        return view('dashboard');
+    }
+    public function subscription(){
+
+        return view('subscription');
     }
 }
