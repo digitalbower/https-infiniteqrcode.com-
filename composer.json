@@ -11,6 +11,7 @@
         "endroid/qr-code": "^6.0",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
+        "stripe/stripe-php": "^16.5",
         "twilio/sdk": "^8.3"
     },
     "require-dev": {

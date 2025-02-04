@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\PaymentController;
 
 
 
@@ -36,6 +37,7 @@ Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+Route::get('/upgrade', [HomeController::class, 'upgrade'])->name('upgrade');
 
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
 Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
@@ -49,4 +51,21 @@ Route::get('/scan-qr', function (Request $request) {
     return view('qr-view', ['data' => $data]);
 });
 
+
+Route::get('/payment', 'PaymentController@showPaymentForm')->name('payment.form');
+Route::post('/process-payment', 'PaymentController@processPayment')->name('process.payment');
+Route::get('/payment/success', function () {
+    return 'Payment Successful!';
+})->name('payment.success');
+Route::get('/payment/failure', function () {
+    return 'Payment Failed!';
+})->name('payment.failure');
+
+Route::get('/payment/success', function () {
+    return view('payment-success');
+})->name('payment.success');
+
+Route::get('/payment/failure', function () {
+    return view('payment-failure');
+})->name('payment.failure');
 
