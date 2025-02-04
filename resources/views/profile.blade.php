@@ -170,7 +170,7 @@
               <div class="flex flex-col items-center justify-center rounded-lg border bg-white p-8 shadow-lg max-full mx-auto mt-10">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Delete Your Account</h2>
                 <p class="text-sm text-gray-600 mb-6 text-center">
-                  We're sorry to see you go. Deleting your account is permanent and cannot be undone. Please confirm your choice below.
+                 We're sorry to see you go. Deleting your account is permanent and cannot be undone.
                 </p>
                 <button
                   id="delete-account"
@@ -372,19 +372,20 @@
           if (isConfirm) {
             $.ajax({
               method: "POST",
-              url: "fetch/deleteAccount.php",
+              url: "{{route('delete-account')}}",
               data: {
-                data: 'delete'
+                data: 'delete',
+                "_token": "{{ csrf_token() }}",
               },
               success: function(response) {
                 $('.message').text('');
-                if (response == 'success') {
+                if (response.message == 'success') {
                   swal({
                     title: 'Deleted!',
                     text: 'Account successfully removed!',
                     icon: 'success'
                   }).then(function() {
-                    location.href = 'index.php';
+                    location.href = "{{route('signin')}}";
                   });
 
                 } else {

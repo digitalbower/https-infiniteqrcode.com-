@@ -42,6 +42,7 @@ Route::get('/upgrade', [HomeController::class, 'upgrade'])->name('upgrade');
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
 Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 Route::post('password-reset', [ProfileController::class, 'password_reset'])->name('password-reset');
+Route::post('delete-account', [ProfileController::class, 'delete_account'])->name('delete-account');
 
 Route::get('/qrcode', [HomeController::class, 'index'])->name('qrcode.index');
 Route::post('/qrstore', [HomeController::class, 'qrstore'])->name('qrstore');

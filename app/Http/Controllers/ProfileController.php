@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 class ProfileController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * View profile
      */
     public function edit()
     {
@@ -20,7 +20,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update profile.
      */
     public function update(Request $request, string $id)
     {
@@ -50,6 +50,9 @@ class ProfileController extends Controller
             "user"  => $user
         ]);
     }
+     /**
+     * Password reset.
+     */
     public function password_reset(Request $request){
         $id = Auth::user()->id; 
         $user = User::find($id);
@@ -61,10 +64,22 @@ class ProfileController extends Controller
         ]);
     }
     /**
-     * Remove the specified resource from storage.
+     * Delete account
      */
-    public function destroy(string $id)
-    {
-        //
+    public function delete_account(Request $request)
+    {   
+        if($request->data == "delete"){
+            $id = Auth::user()->id; 
+            $user = User::find($id);
+            $user->delete();
+
+            $request->session()->invalidate();
+
+            return response()->json([
+                "message" => "success"
+            ]);
+        }
+        
+        
     }
 }
