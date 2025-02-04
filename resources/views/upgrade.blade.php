@@ -551,9 +551,25 @@
                                         <label for="creditCard" class="text-lg font-semibold text-gray-800">Card
                                             Information</label>
 
-                                        <div id="card-element" class="w-full mt-1 p-2 border rounded">
-                                            <!-- A Stripe Element will be inserted here. -->
-                                        </div>
+                                            <form action="{{ route('process.payment') }}" method="POST">
+        @csrf
+        <label for="cardholderName">Cardholder's Name</label>
+        <input type="text" id="cardholderName" name="cardholderName" required><br>
+
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" name="cardNumber" required><br>
+
+        <label for="expMonth">Expiration Month</label>
+        <input type="text" id="expMonth" name="expMonth" required><br>
+
+        <label for="expYear">Expiration Year</label>
+        <input type="text" id="expYear" name="expYear" required><br>
+
+        <label for="cvc">CVC</label>
+        <input type="text" id="cvc" name="cvc" required><br>
+
+        <button type="submit">Submit Payment</button>
+    </form>
                                         <div id="card-errors" role="alert"></div>
                                         <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-3">
 
@@ -675,7 +691,8 @@
             });
         });
 
-        function selectPlan(plan) {
+        function selectPlan(plan) { 
+            
             // Hide all plan details initially
             const plans = document.querySelectorAll('.plan-details');
             plans.forEach((el) => el.classList.add('hidden')); // Hide all plans

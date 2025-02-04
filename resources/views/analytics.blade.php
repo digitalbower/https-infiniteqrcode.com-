@@ -269,14 +269,7 @@
               and
               make informed decisions using real-time data.
             </p>
-            <div
-              class="flex flex-col justify-center items-center mb-3 gap-y-2 ">
-              <p>No QR code found, create your first QR code.</p>
-              <button onclick="location.href='/qroption'"
-                class="mt-4 bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90">
-                Create QR Code
-              </button>
-            </div>
+        
           </div>
           
           <div class=" px-2 lg:px-5">
@@ -286,11 +279,13 @@
                 Select Qr Code
               </h3>
               <select
-                class=" flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 bg-gray-900 border border-blue-500 hover:border-blue-400 transition duration-200 "
-                onchange="location.href='?id=' + this.value">
-                <option value="no">Project Name</option>
-                
-              </select>
+    class="flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 bg-gray-900 border border-blue-500 hover:border-blue-400 transition duration-200"
+    onchange="location.href='?id=' + this.value">
+    <option value="no">Project Name</option>
+    @foreach($projects as $project)
+        <option value="{{ $project->project_code }}">{{ $project->project_name }}</option>
+    @endforeach
+</select>
             </div>
             <div class="flex flex-col gap-6 sm:flex-row mb-3 sm:justify-between ">
               <div class="flex gap-x-4 mb-3">
