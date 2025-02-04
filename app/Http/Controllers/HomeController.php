@@ -76,12 +76,6 @@ class HomeController extends Controller
     {
         return view('plandetails');
     }
-
-    public function profile()
-    {
-        return view('profile');
-    }
-
     public function index()
     {
         return view('index');

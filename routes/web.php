@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 
 
@@ -25,7 +26,6 @@ Route::get('/analytics', [HomeController::class, 'analytics'])->name('analytics'
 Route::get('/my-qr-code', [HomeController::class, 'myqrcode'])->name('myqrcode');
 Route::get('/upgrade', [HomeController::class, 'upgrade'])->name('upgrade');
 Route::get('/plandetails', [HomeController::class, 'plandetails'])->name('plandetails');
-Route::get('/profile', [HomeController::class, 'profile'])->name('profile');
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 Route::get('/text', [HomeController::class, 'text'])->name('text');
 Route::get('/Pdf', [HomeController::class, 'Pdf'])->name('Pdf');
@@ -37,6 +37,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+Route::post('password-reset', [ProfileController::class, 'password_reset'])->name('password-reset');
 
 Route::get('/qrcode', [HomeController::class, 'index'])->name('qrcode.index');
 Route::post('/qrstore', [HomeController::class, 'qrstore'])->name('qrstore');
