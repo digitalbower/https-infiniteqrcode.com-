@@ -18,7 +18,6 @@
       <canvas id="projectDeliveries" style="width: 100%; height: 400px;"></canvas>
     </div>
 
-<<<<<<< HEAD
     <!-- Updated Change (24h) and Users Section -->
     <div class="lg:col-span-3 sm:flex lg:block space-y-3   lg:mt-0 lg:order-2 order-1 my-10 lg:mb-0 grid gap-4">
       <!-- Plan Details and Usage -->
@@ -396,11 +395,5 @@ console.log({ dates1, staticScans, dynamicScans });
 
 // Chart.js Configurations
 </script>
-
-</body>
-
-</html>
-=======
    
 @endsection
->>>>>>> 0e5c8a80f73d53c586260254baf4efad07683b15

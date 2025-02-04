@@ -171,7 +171,7 @@
               I'M A NEW CUSTOMER
             </button>
           </div>
-
+         
           <!-- Sign In Form -->
           <form id="login" class="space-y-4" action="{{ route('auth.login') }}" method="POST">
             @csrf
@@ -209,6 +209,9 @@
               Sign In
             </button>
           </form>
+          @if (session('error'))
+            <span class="success text-red-600">{{session('error')}}</span>
+          @endif
           <span class="success"></span>
           <div class="text-center text-gray-500 mt-4">or</div>
 
