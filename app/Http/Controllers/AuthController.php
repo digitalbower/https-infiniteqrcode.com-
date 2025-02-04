@@ -4,31 +4,28 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+       $request->validate([
+            'firstname' => 'required|string|max:255',
+            'lastname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'mobile' => 'required|numeric',
-        ]); 
-
-       
-          
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'country_code' => $request->countrycode,
-            'mobile' => $request->mobile,
-        ]); 
+            'phonenumber' => 'required|numeric'
+       ]);
+        $user = new User();
+        $user->firstname= $request->firstname;
+        $user->lastname= $request->lastname;
+        $user->email= $request->email;
+        $user->username= $request->email;
+        $user->password= Hash::make($request->password);
+        $user->countrycode= $request->countrycode;
+        $user->phonenumber= $request->phonenumber;
+        $user->save();
 
         Auth::login($user);
 
@@ -37,17 +34,12 @@ class AuthController extends Controller
 
     // Sign In
     public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
+    { 
+        $fields = $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
-        }
-
-        if (Auth::attempt($request->only('email', 'password'))) {
+        if (Auth::attempt($fields)) { 
             return redirect()->route('dashboard')->with('success', 'Logged in successfully!');
         }
 
@@ -55,10 +47,12 @@ class AuthController extends Controller
     }
 
     // Logout
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        return redirect()->route('login')->with('success', 'Logged out successfully');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('signin')->with('success', 'Logged out successfully');
     }
 
 }

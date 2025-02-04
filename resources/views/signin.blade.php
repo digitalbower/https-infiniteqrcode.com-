@@ -174,12 +174,12 @@
 
           <!-- Sign In Form -->
           <form id="login" class="space-y-4" action="{{ route('auth.login') }}" method="POST">
-    @csrf
+            @csrf
             <input
               type="text"
               placeholder="Email"
               id="username"
-              name="username"
+              name="email"
               class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
             />
             <small class="error-message text-red-500"></small>
@@ -249,7 +249,7 @@
           <h2 class="text-2xl font-bold text-center mb-6">
             Create Your Account
           </h2>
-          <form id="" class="space-y-4" action="{{ route('auth.register') }}" method="POST">
+          <form id="registerform" class="space-y-4" action="{{ route('auth.register') }}" method="POST">
     @csrf
     <!-- First Name -->
     <div>
@@ -257,11 +257,11 @@
         type="text"
         placeholder="First Name"
         id="firstName1"
-        name="first_name"
-        value="{{ old('firstName1') }}"
-        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('firstName1') border-red-500 @enderror"
+        name="firstname"
+        value="{{ old('firstname') }}"
+        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('firstname') border-red-500 @enderror"
       />
-      @error('firstName1')
+      @error('firstname')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
     </div>
@@ -272,11 +272,11 @@
         type="text"
         placeholder="Last Name"
         id="lastName1"
-        name="last_name"
-        value="{{ old('lastName1') }}"
-        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('lastName1') border-red-500 @enderror"
+        name="lastname"
+        value="{{ old('lastname') }}"
+        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('lastname') border-red-500 @enderror"
       />
-      @error('lastName1')
+      @error('lastname')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
     </div>
@@ -288,10 +288,10 @@
         placeholder="Email"
         id="Email1"
         name="email"
-        value="{{ old('Email1') }}"
-        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('Email1') border-red-500 @enderror"
+        value="{{ old('email') }}"
+        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('email') border-red-500 @enderror"
       />
-      @error('Email1')
+      @error('email')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
     </div>
@@ -318,11 +318,11 @@
         type="tel"
         placeholder="Mobile"
         id="Mobile1"
-        name="mobile"
-        value="{{ old('Mobile1') }}"
-        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('Mobile1') border-red-500 @enderror"
+        name="phonenumber"
+        value="{{ old('phonenumber') }}"
+        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('phonenumber') border-red-500 @enderror"
       />
-      @error('Mobile1')
+      @error('phonenumber')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
     </div>
@@ -334,9 +334,9 @@
         placeholder="Password"
         id="Password1"
         name="password"
-        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('Password1') border-red-500 @enderror"
+        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('password') border-red-500 @enderror"
       />
-      @error('Password1')
+      @error('password')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
     </div>
@@ -346,8 +346,8 @@
       <input
         type="password"
         placeholder="Confirm Password"
-        id="cpassword"
-        name="CPassword1"
+        id="CPassword1"
+        name="password_confirmation"
         class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('CPassword1') border-red-500 @enderror"
       />
       @error('CPassword1')
@@ -366,10 +366,12 @@
       <label for="terms" class="ml-2 text-gray-700">
         I agree to all
         <a href="terms" target="_blank" style="text-decoration: none">Terms & Conditions</a>
+        <br>
+       <span id="termsError"></span>
+        @error('terms')
+        <small class="error-message text-red-500">{{ $message }}</small>
+        @enderror
       </label>
-      @error('terms')
-      <small class="error-message text-red-500">{{ $message }}</small>
-      @enderror
     </div>
 
     <button
@@ -433,6 +435,7 @@
       reffererpolicy
     ></script>
     <!-- endinject -->
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
     <script
@@ -501,237 +504,323 @@
     </script>
     <script>
       $(document).ready(function () {
-        $("#registerform").on("submit", function (e) {
-          e.preventDefault();
-          let isValid = false;
+        $.validator.addMethod('email', function (value, element) {
+           return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        }, "Enter Valid email");
 
-          // Clear previous error messages
-          $(".error-message").text("");
-
-          // Validate First Name
-          const firstName = $("#firstName1").val().trim();
-          if (firstName === "") {
-            $("#firstName1")
-              .next(".error-message")
-              .text("First Name is required");
-            isValid = false;
-          } else {
-            isValid = true;
+        $('#registerform').validate({  
+        rules: {  
+          firstname: 'required',  
+          lastname: 'required',  
+          phonenumber:{
+            required: true,  
+            number:true
+          },
+          email: {  
+            required: true,  
+            email: true,  
+          },  
+          
+            password: {  
+              required: true,  
+              minlength: 6,  
+            },
+            password_confirmation: {
+              equalTo: "#Password1"
+          },
+          terms:{
+            required: true,  
           }
-
-          // Validate Last Name
-          const Mobile = $("#Mobile1").val().trim();
-          if (Mobile === "") {
-            $("#Mobile1").next(".error-message").text("Mobile No. is required");
-            isValid = false;
-          } else {
-            isValid = true;
+        },  
+        messages: {  
+          firstname: 'First name is required',  
+          lastname: 'Last name is required',  
+          email: 'A valid Email is required', 
+          phonenumber:{
+            required:'Phone Number is required' ,
+            number:'Please enter numbers Only'
+          },
+          password: { 
+            required:'Password is required' ,
+            minlength: 'Password must be at least 6 characters long'  
+          },
+          password_confirmation: { 
+            equalTo:'Password do not match' ,
+          },
+          terms:'You must agree to the Terms & Conditions'
+        },  
+        errorElement: 'small',
+        errorClass: "text-red-500",
+        highlight: function (element) {
+            return false;
+        },
+        unhighlight: function (element) {
+            return false;
+        },
+        errorPlacement: function (error, element) {
+          if (element.attr("type") == "checkbox") error.appendTo("#termsError");
+            else error.insertAfter(element);
+        }
+      });  
+      $('#login').validate({  
+        rules: {  
+          email: {  
+            required: true,  
+            email: true,  
+          },  
+          password: {  
+              required: true,  
+              minlength: 6,  
           }
-          const lastName = $("#lastName1").val().trim();
-          if (lastName === "") {
-            $("#lastName1")
-              .next(".error-message")
-              .text("Last Name is required");
-            isValid = false;
-          } else {
-            isValid = true;
-          }
+        },  
+        messages: {  
+          email: 'Email is required', 
+          password: { 
+            required:'Password is required' ,
+          },
+        },  
+        errorElement: 'small',
+        errorClass: "text-red-500",
+        highlight: function (element) {
+            return false;
+        },
+        unhighlight: function (element) {
+            return false;
+        }
+      });  
+     
+        
+        // $("#registerform").on("submit", function (e) {
+        //   e.preventDefault();
+        //   let isValid = false;
 
-          // Validate Email
-          const email = $("#Email1").val().trim();
-          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (email === "" || !emailPattern.test(email)) {
-            $("#Email1")
-              .next(".error-message")
-              .text("A valid Email is required");
-            isValid = false;
-          } else {
-            isValid = true;
-          }
+        //   // Clear previous error messages
+        //   $(".error-message").text("");
 
-          // Validate Password
-          const password = $("#Password1").val().trim();
-          if (password === "") {
-            $(".perror-message").text("Password is required");
-            isValid = false;
-          } else {
-            isValid = true;
-          }
+        //   // Validate First Name
+        //   const firstName = $("#firstName1").val().trim();
+        //   if (firstName === "") {
+        //     $("#firstName1")
+        //       .next(".error-message")
+        //       .text("First Name is required");
+        //     isValid = false;
+        //   } else {
+        //     isValid = true;
+        //   }
 
-          // Validate Confirm Password
-          const confirmPassword = $("#CPassword1").val().trim();
-          if (confirmPassword !== password) {
-            $(".cperror-message").text("Passwords do not match");
-            isValid = false;
-          } else {
-            isValid = true;
-          }
+        //   // Validate Last Name
+        //   const Mobile = $("#Mobile1").val().trim();
+        //   if (Mobile === "") {
+        //     $("#Mobile1").next(".error-message").text("Mobile No. is required");
+        //     isValid = false;
+        //   } else {
+        //     isValid = true;
+        //   }
+        //   const lastName = $("#lastName1").val().trim();
+        //   if (lastName === "") {
+        //     $("#lastName1")
+        //       .next(".error-message")
+        //       .text("Last Name is required");
+        //     isValid = false;
+        //   } else {
+        //     isValid = true;
+        //   }
 
-          // Validate Terms & Conditions
-          if (!$("#terms").is(":checked")) {
-            $(".error-message1").text(
-              "You must agree to the Terms & Conditions"
-            );
-            isValid = false;
-          } else {
-            isValid = true;
-          }
+        //   // Validate Email
+        //   const email = $("#Email1").val().trim();
+        //   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        //   if (email === "" || !emailPattern.test(email)) {
+        //     $("#Email1")
+        //       .next(".error-message")
+        //       .text("A valid Email is required");
+        //     isValid = false;
+        //   } else {
+        //     isValid = true;
+        //   }
 
-          // If valid, send data via AJAX
-          timeout = 1000; 
-          if (isValid) {
-            $("#loadingIndicator").removeClass("hidden");
-            $.ajax({
-              type: "POST",
-              url: "{{ route('auth.register') }}",
-              data: $("#registerform").serialize(),
-              success: function (response) {
-                if (response == "1") {
+        //   // Validate Password
+        //   const password = $("#Password1").val().trim();
+        //   if (password === "") {
+        //     $(".perror-message").text("Password is required");
+        //     isValid = false;
+        //   } else {
+        //     isValid = true;
+        //   }
 
-                  setTimeout(() => {
-                  location.href = 'dashboard.php';
-                }, 2000);
+        //   // Validate Confirm Password
+        //   const confirmPassword = $("#CPassword1").val().trim();
+        //   if (confirmPassword !== password) {
+        //     $(".cperror-message").text("Passwords do not match");
+        //     isValid = false;
+        //   } else {
+        //     isValid = true;
+        //   }
+
+        //   // Validate Terms & Conditions
+        //   if (!$("#terms").is(":checked")) {
+        //     $(".error-message1").text(
+        //       "You must agree to the Terms & Conditions"
+        //     );
+        //     isValid = false;
+        //   } else {
+        //     isValid = true;
+        //   }
+
+        //   // If valid, send data via AJAX
+        //   timeout = 1000; 
+        //   if (isValid) {
+        //     $("#loadingIndicator").removeClass("hidden");
+        //     $.ajax({
+        //       type: "POST",
+        //       url: "{{ route('auth.register') }}",
+        //       data: $("#registerform").serialize(),
+        //       success: function (response) {
+        //         if (response == "1") {
+
+        //           setTimeout(() => {
+        //           location.href = 'dashboard.php';
+        //         }, 2000);
                 
              
-              }
+        //       }
                 
-                else if (response == "2") {
-                  $(".success").text("Fill missed values");
-                  $(".success").addClass("text-red-600");
-                } else if (response == "3") {
-                  $(".success").text("User Already Exists");
-                  $(".success").addClass("text-red-600");
-                } else {
-                  $(".success").text("Contact admin");
-                  $(".success").addClass("text-red-600");
-                }
-              },
-              complete: function () {
-                $("#loadingIndicator").addClass("hidden");
-              },
-              error: function (data) {
-                $("#loadingIndicator").addClass("hidden");
-                $(".success").text("An error occurred. Please try again.");
-                $(".success").addClass("text-red-600");
-              },
-            });
-          }
-        });
+        //         else if (response == "2") {
+        //           $(".success").text("Fill missed values");
+        //           $(".success").addClass("text-red-600");
+        //         } else if (response == "3") {
+        //           $(".success").text("User Already Exists");
+        //           $(".success").addClass("text-red-600");
+        //         } else {
+        //           $(".success").text("Contact admin");
+        //           $(".success").addClass("text-red-600");
+        //         }
+        //       },
+        //       complete: function () {
+        //         $("#loadingIndicator").addClass("hidden");
+        //       },
+        //       error: function (data) {
+        //         $("#loadingIndicator").addClass("hidden");
+        //         $(".success").text("An error occurred. Please try again.");
+        //         $(".success").addClass("text-red-600");
+        //       },
+        //     });
+        //   }
+        // });
        
 
-        $(".Password1").on("click", function () {
-          const passwordInput = $("#Password1");
-          // Toggle input type between 'password' and 'text'
-          const type =
-            passwordInput.attr("type") === "password" ? "text" : "password";
-          // Toggle the eye icon SVG
-          const eyeIcon = $(".Password1 span");
-          if (passwordInput.val() !== "") {
-            passwordInput.attr("type", type);
-            if (type === "password") {
-              eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
-              eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
-            } else {
-              eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
-              eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
-            }
-          } else {
-            $(".success").text("Add Password");
-            $(".success").addClass("text-red-600");
-          }
-        });
-        $(".CPassword1").on("click", function () {
-          const passwordInput = $("#CPassword1");
-          // Toggle input type between 'password' and 'text'
-          const type =
-            passwordInput.attr("type") === "password" ? "text" : "password";
-          // Toggle the eye icon SVG
-          const eyeIcon = $(".CPassword1 span");
-          if (passwordInput.val() !== "") {
-            passwordInput.attr("type", type);
-            if (type === "password") {
-              eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
-              eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
-            } else {
-              eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
-              eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
-            }
-          } else {
-            $(".success").text("Add Confirm Password");
-            $(".success").addClass("text-red-600");
-          }
-        });
+//         $(".Password1").on("click", function () {
+//           const passwordInput = $("#Password1");
+//           // Toggle input type between 'password' and 'text'
+//           const type =
+//             passwordInput.attr("type") === "password" ? "text" : "password";
+//           // Toggle the eye icon SVG
+//           const eyeIcon = $(".Password1 span");
+//           if (passwordInput.val() !== "") {
+//             passwordInput.attr("type", type);
+//             if (type === "password") {
+//               eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
+//               eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
+//             } else {
+//               eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
+//               eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
+//             }
+//           } else {
+//             $(".success").text("Add Password");
+//             $(".success").addClass("text-red-600");
+//           }
+//         });
+//         $(".CPassword1").on("click", function () {
+//           const passwordInput = $("#CPassword1");
+//           // Toggle input type between 'password' and 'text'
+//           const type =
+//             passwordInput.attr("type") === "password" ? "text" : "password";
+//           // Toggle the eye icon SVG
+//           const eyeIcon = $(".CPassword1 span");
+//           if (passwordInput.val() !== "") {
+//             passwordInput.attr("type", type);
+//             if (type === "password") {
+//               eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
+//               eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
+//             } else {
+//               eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
+//               eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
+//             }
+//           } else {
+//             $(".success").text("Add Confirm Password");
+//             $(".success").addClass("text-red-600");
+//           }
+//         });
 
-        $('#login1').on('click', function () {
-    let isValid = false;
-    // Clear previous error messages
-    $('.error-message').text('');
-    // Validate Username or Email
-    const username = $('#username').val().trim();
-    if (username === '') {
-        $('#username').next('.error-message').text('Username or Email needed');
-        isValid = false;
-    } else {
-        $('#username').next('.error-message').text('');
-        isValid = true;
-    }
-    // Validate Password
-    const password = $('#password').val();
-    if (password === '') {
-        $('#password').next('.error-message').text('Password is needed');
-        isValid = false;
-    } else {
-        $('#password').next('.error-message').text('');
-        isValid = true;
-    }
+// $('#login1').on('click', function () {
+//     let isValid = false;
+//     // Clear previous error messages
+//     $('.error-message').text('');
+//     // Validate Username or Email
+//     const username = $('#username').val().trim();
+//     if (username === '') {
+//         $('#username').next('.error-message').text('Username or Email needed');
+//         isValid = false;
+//     } else {
+//         $('#username').next('.error-message').text('');
+//         isValid = true;
+//     }
+//     // Validate Password
+//     const password = $('#password').val();
+//     if (password === '') {
+//         $('#password').next('.error-message').text('Password is needed');
+//         isValid = false;
+//     } else {
+//         $('#password').next('.error-message').text('');
+//         isValid = true;
+//     }
 
-    timeout = 1000; // Adjust timeout for redirection delay
+//     timeout = 1000; // Adjust timeout for redirection delay
 
-    // If valid, send data via AJAX
-    if (isValid) {
-        $('#loadingIndicator').removeClass('hidden');  // Show loader
-        $.ajax({
-            url: 'qrbackend/login.php',
-            type: 'POST',
-            data: {
-                username: username,
-                password: password
-            },
-            dataType: 'json',
-            success: function (response) {
-              console.log('Response:', response); // Log the response for debugging
+//     // If valid, send data via AJAX
+//     if (isValid) {
+//         $('#loadingIndicator').removeClass('hidden');  // Show loader
+//         $.ajax({
+//             url: 'qrbackend/login.php',
+//             type: 'POST',
+//             data: {
+//                 username: username,
+//                 password: password
+//             },
+//             dataType: 'json',
+//             success: function (response) {
+//               console.log('Response:', response); // Log the response for debugging
 
-                if (response.status === 'success' && response.message === '1') {
-                    // Login success, redirect to dashboard
-                    setTimeout(() => {
-                        $('#loadingIndicator').addClass('hidden');  // Hide loader
-                        window.location.href = 'dashboard.php';
-                    }, timeout);
-                } else if (response.status === 'success' && response.message === '2') {
-                    // Profile redirect
-                    setTimeout(() => {
-                        $('#loadingIndicator').addClass('hidden');  // Hide loader
-                        window.location.href = 'Profile.php';
-                    }, timeout);
-                } else {
-                    // Error handling
-                    $('.success').text(response.message);
-                    $('.success').addClass('text-red-600');
-                    $('#loadingIndicator').addClass('hidden');  // Hide loader in case of error
-                }
-            },
-            complete: function () {
-                // Make sure the loader is hidden at the end of the process
-                $('#loadingIndicator').addClass('hidden');
-            },
-            error: function () {
-                $('#loadingIndicator').addClass('hidden');
-                $('.success').text('An error occurred. Please try again.');
-                $('.success').addClass('text-red-600');
-            }
-        });
-    }
-});
+//                 if (response.status === 'success' && response.message === '1') {
+//                     // Login success, redirect to dashboard
+//                     setTimeout(() => {
+//                         $('#loadingIndicator').addClass('hidden');  // Hide loader
+//                         window.location.href = 'dashboard.php';
+//                     }, timeout);
+//                 } else if (response.status === 'success' && response.message === '2') {
+//                     // Profile redirect
+//                     setTimeout(() => {
+//                         $('#loadingIndicator').addClass('hidden');  // Hide loader
+//                         window.location.href = 'Profile.php';
+//                     }, timeout);
+//                 } else {
+//                     // Error handling
+//                     $('.success').text(response.message);
+//                     $('.success').addClass('text-red-600');
+//                     $('#loadingIndicator').addClass('hidden');  // Hide loader in case of error
+//                 }
+//             },
+//             complete: function () {
+//                 // Make sure the loader is hidden at the end of the process
+//                 $('#loadingIndicator').addClass('hidden');
+//             },
+//             error: function () {
+//                 $('#loadingIndicator').addClass('hidden');
+//                 $('.success').text('An error occurred. Please try again.');
+//                 $('.success').addClass('text-red-600');
+//             }
+//         });
+//     }
+// });
 
       });
     </script>
