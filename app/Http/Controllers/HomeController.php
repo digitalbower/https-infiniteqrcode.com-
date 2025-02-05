@@ -77,10 +77,7 @@ class HomeController extends Controller
         $qrCodes = [];
         return view('my-qr-code',['qrCodes'=>$qrCodes]);
     }
-    public function upgrade()
-    {
-        return view('upgrade');
-    }
+    
     public function plandetails()
     {
         return view('plandetails');

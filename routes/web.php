@@ -6,8 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PaymentController;
-
-
+use App\Http\Controllers\SubscriptionController;
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
 Route::get('/createqrcode', [HomeController::class, 'createqrcode'])->name('createqrcode');
@@ -37,7 +36,7 @@ Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
-Route::get('/upgrade', [HomeController::class, 'upgrade'])->name('upgrade');
+Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade');
 
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
 Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
