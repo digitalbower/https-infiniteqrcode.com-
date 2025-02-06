@@ -30,12 +30,13 @@ Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard'
 Route::get('/text', [HomeController::class, 'text'])->name('text');
 Route::get('/Pdf', [HomeController::class, 'Pdf'])->name('Pdf');
 Route::get('/facebook', [HomeController::class, 'facebook'])->name('facebook');
-Route::get('/subscription', [HomeController::class, 'subscription'])->name('subscription');
 Route::get('/signin', [HomeController::class, 'signin'])->name('signin');
 Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
 Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+
+Route::get('/subscription', [SubscriptionController::class, 'subscription'])->name('subscription');
 Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade');
 
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');

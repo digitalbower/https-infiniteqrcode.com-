@@ -171,10 +171,6 @@ class HomeController extends Controller
         return view('signin');
     }
    
-    public function subscription(){
-
-        return view('subscription');
-    }
 
     public function dashboard()
 {
