@@ -277,7 +277,7 @@
                       <div class="space-y-3 p-6 ">
                         <div class="w-full gap-4 ">
                           <div id="pdf-preview">
-                            <img src="{{asset('images/pdf.png')}}" class="w-full xl:h-[350px] object-cover"/>
+                            <img src="{{asset('demoimg/pdf.png')}}" class="w-full xl:h-[350px] object-cover"/>
                           </div>
 
                           </div>
