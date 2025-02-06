@@ -255,7 +255,7 @@
                   <!-- Dynamic URL -->
                   <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
                     <i class="fa-solid fa-link-slash text-2xl mb-1 text-gray-700"></i>
-                    <br /><span class="text-sm font-semibold text-gray-900">Dynamic URL</span>
+                    <br /><span class="text-sm font-semibold text-gray-900">URL</span>
                   </button>
 
                   <!-- Facebook 
@@ -384,16 +384,7 @@
       </div>
 
     </main>
-    <script>
-      const menuToggle = document.getElementById('menu-toggle');
-      const sidebar = document.getElementById('sidebar');
-  
-      // Toggle Sidebar on Mobile
-      menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('-translate-x-full');
-      });
-    </script>
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   
    <script>
      // Get references to the buttons and content elements
      const staticButton = document.getElementById('static-toggle');
@@ -423,7 +414,6 @@
        staticContent.classList.add('hidden');
      });
    </script>
-   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script>
      $(document).ready(function() {
        var count = "";
@@ -511,7 +501,7 @@
          //const buttonName = $(this).find('span').text().trim().toLowerCase();
          const buttonName = $(this).find('span').text().trim().toLowerCase().replace(/[^a-z0-9-]/g, '-');
          // Construct the target URL
-         targetUrl = `${buttonName}.php`;
+         targetUrl = `${buttonName}`;
   
          // Optionally, highlight the selected button (for visual feedback)
          $('#gridContainer .qr-button').removeClass('border-2 border-gray-700'); // Reset others
