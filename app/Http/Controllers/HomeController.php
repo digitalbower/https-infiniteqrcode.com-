@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Http\Response;
+use App\Models\Sms;
+use Illuminate\Support\Facades\Storage;
+
+
 
 class HomeController extends Controller
 {
@@ -72,11 +78,81 @@ class HomeController extends Controller
          
         return view('analytics',compact('projects'));
     }
-    public function myqrcode()
-    {
-        $qrCodes = [];
-        return view('my-qr-code',['qrCodes'=>$qrCodes]);
+    public function create() {
+        return view('qrcode.create');
     }
+
+    // Generate QR Code and Save to DB
+    public function myqrcode(Request $request) {
+        $request->validate([
+            'countrycode' => 'required',
+            'phone' => 'required',
+            'sms' => 'required',
+            'projectname' => 'required',
+            'startdate' => 'required|date',
+            'enddate' => 'required|date',
+            'usage' => 'required',
+        ]);
+
+        $message = "Phone: " . $request->countrycode . $request->phone . "\nMessage: " . $request->sms;
+        
+        // Generate QR Code and save to storage
+       $data = 'http://127.0.0.1:8000/';
+        
+
+        
+    
+       // Define storage path for QR code
+    $qrCodePath = 'qrcodes/' . time() . '.svg';
+
+    // Generate QR Code with Logo (Merge Logo)
+    $qrCode = QrCode::format('svg')
+        // Merge logo
+        ->size(300)
+        ->errorCorrection('H')
+        ->generate($data);
+
+    // Save QR Code to Storage
+    Storage::disk('public')->put($qrCodePath, $qrCode);
+
+    // Generate the full URL of the QR Code
+    $qrCodeUrl = asset('storage/' . $qrCodePath);
+
+        // Save in DB
+        $sms = Sms::create([
+            'countrycode' => $request->countrycode,
+            'phonenumber' => $request->phone,
+            'qrsms' => $request->sms,
+            'project_name' => $request->projectname,
+            'start_date' => $request->startdate,
+            'end_date' => $request->enddate,
+            'usage' => $request->usage,
+            'remarks' => $request->remarks,
+            'qr_code_path' => $qrCodePath,
+        ]);
+
+        return redirect()->route('qrcode.list')->with('success', 'QR Code Generated Successfully');
+    }
+
+    // Show QR Code List
+    public function list() {
+        $qrcodes = Sms::latest()->get();
+        return view('scan', compact('qrcodes'));
+    }
+
+    // Show QR Code Details
+    public function show($id) {
+        $sms = Sms::findOrFail($id);
+        return view('qrcode.show', compact('sms'));
+    }
+
+    public function myqrcodelists()
+    {
+        return view('my-qr-code');
+    }
+        
+
+       
     public function upgrade()
     {
         return view('upgrade');
@@ -204,6 +280,8 @@ class HomeController extends Controller
 
     return view('dashboard', compact('userId','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'isPast', 'diffTotal'));
 }
+
+
 
 
           

@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Data</title>
-</head>
-<body>
-    <h1>QR Code Data</h1>
-    <p><strong>Phone:</strong> {{ $data['phone'] }}</p>
-    <p><strong>Project Name:</strong> {{ $data['projectname'] }}</p>
-    <p><strong>Usage:</strong> {{ $data['usage'] }}</p>
-</body>
-</html>
+
+
+<h2 class="text-2xl font-medium text-center">Generated QR Codes</h2>
+@foreach ($qrcodes as $qr)
+    <div class="p-4 border rounded">
+        <p><strong>Project:</strong> {{ $qr->project_name }}</p>
+        <a href="{{ route('qrcode.show', $qr->id) }}">
+            <img src="{{ asset('storage/qrcodes/1738760595.svg') }}" alt="QR Code">
+
+        </a>
+    </div>
+@endforeach
+

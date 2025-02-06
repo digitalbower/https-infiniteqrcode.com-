@@ -40,9 +40,18 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/upgrade', [HomeController::class, 'upgrade'])->name('upgrade');
 
 
-Route::get('/qrcode', [HomeController::class, 'index'])->name('qrcode.index');
-Route::post('/qrstore', [HomeController::class, 'qrstore'])->name('qrstore');
+Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
+
+
+Route::post('/myqrcode', [HomeController::class, 'myqrcode'])->name('myqrcode');
 Route::get('/mysms', [HomeController::class, 'mysms'])->name('mysms');
+
+Route::get('/qrcode/create', [HomeController::class, 'create'])->name('qrcode.create');
+Route::post('/qrcode/store', [HomeController::class, 'store'])->name('qrcode.store');
+Route::get('/qrcode/list', [HomeController::class, 'list'])->name('qrcode.list');
+Route::get('/qrcode/{id}', [HomeController::class, 'show'])->name('qrcode.show');
+
+
 Route::get('/scan-qr', function (Request $request) {
     $data = json_decode($request->get('data'), true);
     return view('qr-view', ['data' => $data]);

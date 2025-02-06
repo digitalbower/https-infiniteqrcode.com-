@@ -7,10 +7,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "bacon/bacon-qr-code": "3.0",
-        "endroid/qr-code": "^6.0",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "stripe/stripe-php": "^16.5",
         "twilio/sdk": "^8.3"
     },

@@ -283,7 +283,7 @@
         <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">{{ session('success') }}</div>
     @endif
     
-    <form action="{{ route('qrstore') }}" method="POST">
+    <form action="{{ route('myqrcode') }}" method="POST">
         @csrf
         <div class="bg-white p-6 rounded-lg shadow">
             <label class="block text-gray-600">Phone Number</label>
