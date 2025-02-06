@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MyQRCodeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PaymentController;
@@ -24,7 +25,6 @@ Route::get('/app-stores', [HomeController::class, 'appstore'])->name('appstore')
 Route::get('/social-media', [HomeController::class, 'socialmedia'])->name('socialmedia');
 Route::get('/analytics', [HomeController::class, 'analytics'])->name('analytics');
 Route::get('/my-qr-code', [HomeController::class, 'myqrcode'])->name('myqrcode');
-Route::get('/upgrade', [HomeController::class, 'upgrade'])->name('upgrade');
 Route::get('/plandetails', [HomeController::class, 'plandetails'])->name('plandetails');
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 Route::get('/text', [HomeController::class, 'text'])->name('text');
@@ -36,8 +36,13 @@ Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-Route::get('/subscription', [SubscriptionController::class, 'subscription'])->name('subscription');
-Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade');
+Route::get('/subscription', [SubscriptionController::class, 'subscription'])->name('subscription'); // Subscription 
+Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade'); //Upgrade
+
+Route::get('/myqrcodelist', [MyQRCodeController::class, 'myqrcodelist'])->name('myqrcodelist'); //My OR Codes 
+Route::get('/folders_list', [MyQRCodeController::class, 'folders_list'])->name('folders_list'); //Folders list in My QR Code
+Route::post('/folder_details', [MyQRCodeController::class, 'folder_details'])->name('folder_details'); //Folders Details in My QR Code
+Route::get('/qrcode_list', [MyQRCodeController::class, 'qrcode_list'])->name('qrcode_list'); 
 
 Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
 Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
@@ -49,7 +54,7 @@ Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
 
 Route::post('/myqrcode', [HomeController::class, 'myqrcode'])->name('myqrcode');
 Route::get('/mysms', [HomeController::class, 'mysms'])->name('mysms');
-Route::get('/myqrcodelist', [HomeController::class, 'myqrcodelist'])->name('myqrcodelist');
+
 
 
 Route::get('/qrcode/create', [HomeController::class, 'create'])->name('qrcode.create');

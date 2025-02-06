@@ -146,18 +146,6 @@ class HomeController extends Controller
         return view('qrcode.show', compact('sms'));
     }
 
-    public function myqrcodelist()
-    {
-        return view('my-qr-code');
-    }
-        
-
-       
-    public function upgrade()
-    {
-        return view('upgrade');
-    }
-    
     public function plandetails()
     {
         return view('plandetails');

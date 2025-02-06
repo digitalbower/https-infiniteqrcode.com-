@@ -58,7 +58,7 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
 
 
         <li>
-            <a href="{{ route('myqrcode') }}"
+            <a href="{{ route('myqrcodelist') }}"
                 class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
                 <i class="fa-solid fa-qrcode mr-3"></i> My QR Codes
             </a>
