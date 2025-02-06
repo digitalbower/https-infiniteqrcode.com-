@@ -40,18 +40,16 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
         if (Auth::attempt($fields)) { 
-            return redirect()->route('dashboard')->with('success', 'Logged in successfully!');
+            return redirect()->route('profile')->with('success', 'Logged in successfully!');
         }
 
         return back()->with('error', 'Invalid credentials');
     }
 
     // Logout
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
         return redirect()->route('signin')->with('success', 'Logged out successfully');
     }
 

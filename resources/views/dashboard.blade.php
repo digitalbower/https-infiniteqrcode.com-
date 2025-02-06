@@ -400,4 +400,5 @@ console.log({ dates1, staticScans, dynamicScans });
 
 </html>
 
+   
 @endsection

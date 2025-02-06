@@ -103,7 +103,7 @@
                   <!-- Images -->
                   <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
                     <i class="fa-solid fa-image text-2xl mb-1 text-gray-700"></i>
-                    <br /><span class="text-sm font-semibold text-gray-900">Images</span>
+                    <br /><span class="text-sm font-semibold text-gray-900">Image</span>
                   </button>
 
                   <!-- Video -->
@@ -237,7 +237,7 @@
                   <!-- Images -->
                   <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
                     <i class="fa-solid fa-image text-2xl mb-1 text-gray-700"></i>
-                    <br /><span class="text-sm font-semibold text-gray-900">Images</span>
+                    <br /><span class="text-sm font-semibold text-gray-900">Image</span>
                   </button>
 
                   <!-- Video -->
