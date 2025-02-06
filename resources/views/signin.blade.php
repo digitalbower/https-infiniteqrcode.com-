@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign In / Sign Up Page</title>
-    <link rel="shortcut icon" href="indexfav.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{asset('images/indexfav.png')}}" type="image/x-icon">
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -42,18 +42,18 @@
           <!-- Logo -->
           <div class="flex justify-center w-full items-center">
             <a href="#" class="flex items-center gap-2">
-              <img src="indexfav.png" class="w-[200px]" />
+              <img src="{{asset('images/indexfav.png')}}" class="w-[200px]" />
             </a>
           </div>
 
           <!-- Right section - Icons -->
           <div class="flex items-center gap-4">
             <button class="hidden lg:inline-flex"></button>
-            <button onclick="location.href='sign.php';">
+            <a href="{{ route('signin') }}">
               <i
                 class="fas fa-user h-4 w-4 text-black hover:text-red-500 transition-colors duration-300"
               ></i>
-            </button>
+            </a>
           </div>
         </div>
 
@@ -213,10 +213,10 @@
             <span class="success text-red-600">{{session('error')}}</span>
           @endif
           <span class="success"></span>
-          <div class="text-center text-gray-500 mt-4">or</div>
+          {{-- <div class="text-center text-gray-500 mt-4">or</div> --}}
 
           <!-- Google Button -->
-          <div class="mt-4">
+          {{-- <div class="mt-4">
             <div class="mt-4">
               <button
                 class="w-full flex items-center justify-center bg-white text-gray-700 transition-colors"
@@ -241,7 +241,7 @@
                 ></div>
               </button>
             </div>
-          </div>
+          </div> --}}
         </div>
 
         <!-- Sign Up Section -->
@@ -339,6 +339,14 @@
         name="password"
         class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('password') border-red-500 @enderror"
       />
+      <button
+      type="button"
+      id="togglePassword"
+      class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+      onclick="toggleSignUpPasswordVisibility()"
+    >
+      <i class="fas fa-eye" id="eyeIcon"></i>
+    </button>
       @error('password')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
@@ -353,6 +361,14 @@
         name="password_confirmation"
         class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('CPassword1') border-red-500 @enderror"
       />
+      <button
+      type="button"
+      id="togglePassword"
+      class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+      onclick="toggleConfirmPasswordVisibility()"
+    >
+      <i class="fas fa-eye" id="eyeIcon"></i>
+    </button>
       @error('CPassword1')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
@@ -385,23 +401,33 @@
     </button>
   </form>
           <span class="success"></span>
-          <div class="text-center text-gray-500 mt-4">or</div>
+          {{-- <div class="text-center text-gray-500 mt-4">or</div>
           <div class="mt-4">
-            <button
-              class="w-full flex items-center justify-center bg-white text-gray-700 transition-colors"
-            >
-              <div
-                id="g_id_onload"
-                data-client_id="623466204275-lp0ub4bkq7a9qo4meemkiagb9rb8mquj.apps.googleusercontent.com"
-                data-context="signin"
-                data-callback="handleCredentialResponse"
-                data-auto_prompt="false"
-                data-width="400"
-                data-height="200"
-              ></div>
-            
-            </button>
-          </div>
+            <div class="mt-4">
+              <button
+                class="w-full flex items-center justify-center bg-white text-gray-700 transition-colors"
+              >
+                <div
+                  id="g_id_onload"
+                  data-client_id="623466204275-lp0ub4bkq7a9qo4meemkiagb9rb8mquj.apps.googleusercontent.com"
+                  data-context="signin"
+                  data-callback="handleCredentialResponse"
+                  data-auto_prompt="false"
+                  data-width="400"
+                  data-height="200"
+                ></div>
+
+                <div
+                  class="g_id_signin"
+                  data-type="standard"
+                  data-shape="rectangular"
+                  data-theme="outline"
+                  data-text="sign_in_with"
+                  data-size="large"
+                ></div>
+              </button>
+            </div>
+          </div> --}}
         </div>
       </div>
     </section>
@@ -867,9 +893,9 @@
 
       // Toggle Password Visibility
       function togglePasswordVisibility() {
-        const passwordInput = document.getElementById("password");
+        const passwordInput = document.getElementById("password"); 
         const eyeIcon = document.getElementById("eyeIcon");
-        if (passwordInput.type === "password") {
+        if (passwordInput.type === "password") { 
           passwordInput.type = "text";
           eyeIcon.classList.remove("fa-eye");
           eyeIcon.classList.add("fa-eye-slash");
@@ -881,30 +907,31 @@
       }
 
       function toggleSignUpPasswordVisibility() {
-        const signUpPasswordInput = document.getElementById("Password1");
-        const signUpEyeIcon = document.getElementById("signUpEyeIcon");
-        if (signUpPasswordInput.type === "password") {
-          signUpPasswordInput.type = "text";
-          signUpEyeIcon.classList.remove("fa-eye");
-          signUpEyeIcon.classList.add("fa-eye-slash");
-        } else {
-          signUpPasswordInput.type = "password";
-          signUpEyeIcon.classList.remove("fa-eye-slash");
-          signUpEyeIcon.classList.add("fa-eye");
+        const signUpPasswordInput = document.getElementById("Password1"); 
+        const eyeIcon = document.getElementById("eyeIcon");
+        if (signUpPasswordInput.type === 'password') { 
+          signUpPasswordInput.type = 'text';  
+          eyeIcon.classList.remove('fa-eye');
+          eyeIcon.classList.add('fa-eye-slash'); 
+        } else { 
+          signUpPasswordInput.type = 'password';
+          eyeIcon.classList.remove('fa-eye-slash');
+          eyeIcon.classList.add('fa-eye');
         }
       }
+      
 
       function toggleConfirmPasswordVisibility() {
         const confirmPasswordInput = document.getElementById("CPassword1");
-        const confirmEyeIcon = document.getElementById("confirmEyeIcon");
+        const eyeIcon = document.getElementById("eyeIcon");
         if (confirmPasswordInput.type === "password") {
           confirmPasswordInput.type = "text";
-          confirmEyeIcon.classList.remove("fa-eye");
-          confirmEyeIcon.classList.add("fa-eye-slash");
+          eyeIcon.classList.remove("fa-eye");
+          eyeIcon.classList.add("fa-eye-slash");
         } else {
           confirmPasswordInput.type = "password";
-          confirmEyeIcon.classList.remove("fa-eye-slash");
-          confirmEyeIcon.classList.add("fa-eye");
+          eyeIcon.classList.remove("fa-eye-slash");
+          eyeIcon.classList.add("fa-eye");
         }
       }
     </script>

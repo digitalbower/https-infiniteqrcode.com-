@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Infinite QR Codes</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="shortcut icon" href="indexfav.png" type="image/x-icon">
+  <link rel="shortcut icon" href="{{asset('images/indexfav.png')}}" type="image/x-icon">
   <link href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.carousel.min.css"
     rel="stylesheet" />
   <link href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.theme.default.min.css"
@@ -278,7 +278,7 @@
         <!-- Logo -->
         <div class="flex justify-center w-full items-center">
           <a href="#" class="flex items-center gap-2 ">
-            <img src="indexfav.png" class="w-[200px]" />
+            <img src="{{asset('images/indexfav.png')}}" class="w-[200px]" />
           </a>
         </div>
 
@@ -288,18 +288,20 @@
 
 <div class="relative inline-block text-left">
   <!-- Dropdown Button -->
-  @if (session('username'))
-    <button id="userDropdownButton"
+  @auth
+      <button id="userDropdownButton"
       class="w-full bg-[#00b8cbb5] flex justify-center gap-x-2 items-center text-white py-3 px-3 lg:text-base text-sm lg:px-6 rounded-lg font-semibold hover:bg-[#0097a5] transition-colors duration-300"
       onclick="toggleDropdown('userDropdown')">
       <i class="fas fa-user-circle text-2xl text-white"></i>
-      <span class="font-semibold">{{ session('firstname') }}</span>
+      <span class="font-semibold">{{ auth()->user()->firstname }}</span>
       <i id="userDropdownArrow"
         class="fas fa-chevron-down text-sm text-white transform transition-transform duration-200"></i>
     </button>
-  @else
-    <a href="{{ route('signin') }}"><i class="fas fa-user text-black"></i></a>
-  @endif
+  @endauth
+    
+ @guest
+  <a href="{{ route('signin') }}"><i class="fas fa-user text-black"></i></a>
+ @endguest
 
   <!-- Dropdown Menu -->
   <div id="userDropdown"
@@ -310,7 +312,7 @@
       Dashboard
     </a>
 
-    <a href="{{ route('logout') }}"
+    <a href="{{ route('auth.logout') }}"
       class="flex items-center gap-x-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
       <i class="fas fa-sign-out-alt text-red-500"></i>
       Logout
