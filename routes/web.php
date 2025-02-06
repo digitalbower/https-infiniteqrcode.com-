@@ -48,6 +48,8 @@ Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
 
 Route::post('/myqrcode', [HomeController::class, 'myqrcode'])->name('myqrcode');
 Route::get('/mysms', [HomeController::class, 'mysms'])->name('mysms');
+Route::get('/myqrcodelist', [HomeController::class, 'myqrcodelist'])->name('myqrcodelist');
+
 
 Route::get('/qrcode/create', [HomeController::class, 'create'])->name('qrcode.create');
 Route::post('/qrcode/store', [HomeController::class, 'store'])->name('qrcode.store');

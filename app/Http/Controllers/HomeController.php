@@ -72,7 +72,7 @@ class HomeController extends Controller
     {
 
         // $userId = auth()->id();
-        $userId = "vivekshakya8447@gmail.com"; // Get the authenticated user's ID
+        $userId = auth()->id(); // Get the authenticated user's ID
       
         $projects = DB::select("SELECT * FROM qr_basic_info WHERE userid = ? ORDER BY created_at DESC", [$userId]);
          
@@ -131,7 +131,7 @@ class HomeController extends Controller
             'qr_code_path' => $qrCodePath,
         ]);
 
-        return redirect()->route('qrcode.list')->with('success', 'QR Code Generated Successfully');
+        return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
 
     // Show QR Code List
@@ -146,7 +146,7 @@ class HomeController extends Controller
         return view('qrcode.show', compact('sms'));
     }
 
-    public function myqrcodelists()
+    public function myqrcodelist()
     {
         return view('my-qr-code');
     }
@@ -181,7 +181,7 @@ class HomeController extends Controller
     // Get the authenticated user's ID
     // $userId = Auth::user()->username;
 
-    $userId = "arun1310@gmail.com";
+    $userId = Auth::user()->username;
 
 
 
