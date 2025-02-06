@@ -97,7 +97,7 @@ class HomeController extends Controller
         $message = "Phone: " . $request->countrycode . $request->phone . "\nMessage: " . $request->sms;
         
         // Generate QR Code and save to storage
-       $data = 'http://127.0.0.1:8000/';
+       $data = 'https://infiniteqrcode.com/';
         
 
         
