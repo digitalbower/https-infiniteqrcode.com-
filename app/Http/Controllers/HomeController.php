@@ -10,6 +10,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Http\Response;
 use App\Models\Sms;
 use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use App\Models\QrBasicInfo;
 
 
 
@@ -102,24 +104,16 @@ class HomeController extends Controller
 
         
     
-       // Define storage path for QR code
-    $qrCodePath = 'qrcodes/' . time() . '.svg';
+   
+    $projectCode = 'P' . time() . rand(100, 999);
+    $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
     // Generate QR Code with Logo (Merge Logo)
-    $qrCode = QrCode::format('svg')
-        // Merge logo
-        ->size(300)
-        ->errorCorrection('H')
-        ->generate($data);
 
-    // Save QR Code to Storage
-    Storage::disk('public')->put($qrCodePath, $qrCode);
-
-    // Generate the full URL of the QR Code
-    $qrCodeUrl = asset('storage/' . $qrCodePath);
 
         // Save in DB
         $sms = Sms::create([
+            'code' => $projectCode,
             'countrycode' => $request->countrycode,
             'phonenumber' => $request->phone,
             'qrsms' => $request->sms,
@@ -130,6 +124,35 @@ class HomeController extends Controller
             'remarks' => $request->remarks,
             'qr_code_path' => $qrCodePath,
         ]);
+
+        $qrBasicInfo = QrBasicInfo::create([
+            'project_code' => $projectCode,
+            'project_name' => $request->projectname,
+            'folder_name' => 'qrcodes', // Storing in 'qrcodes' folder
+            'qrtype' => 'SMS', // Assuming QR type is SMS
+            'start_date' => $request->startdate,
+            'end_date' => $request->enddate,
+            'usage_type' => $request->usage,
+            'remarks' => $request->remarks,
+            'userid' => auth()->user()->id ?? 'Guest', // Store user ID or 'Guest'
+            'qrtable' => json_encode($message), // Store QR content
+            'total_scans' => 0,
+            'unique_scans' => 0,
+            'created_At' => now(),
+        ]);
+
+        $qrCode = QrCode::format('svg')
+        // Merge logo
+        ->size(300)
+        ->errorCorrection('H')
+        ->generate($data);
+
+    // Save QR Code to Storage
+    Storage::disk('public')->put($qrCodePath, $qrCode);
+
+    // Generate the full URL of the QR Code
+    $qrCodeUrl = asset('storage/' . $qrCodePath);
+    
 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }

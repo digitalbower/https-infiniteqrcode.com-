@@ -12,8 +12,8 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
             <i class="fas fa-edit text-[#6c8ef6] text-xl mx-auto "></i>
         </div> --}}
     </div>
-    <p class="font-semibold"></p>
-    <p class="font-semibold">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</p>
+    <p class="font-semibold"></p> 
+    <p class="font-semibold">{{ Auth::user()->firstname }} {{ auth()->user()->lastname }}</p>
 </div>
 
 <nav class="flex-1 px py-6">
