@@ -12,6 +12,6 @@ class Sms extends Model
     protected $table = 'smsqr';
 
     protected $fillable = [
-        'countrycode', 'phonenumber', 'qrsms', 'project_name', 'start_date', 'end_date', 'usage', 'remarks', 'qr_code_path'
+        'code','qrtype', 'qrsms','countrycode', 'phonenumber', 'url','qrimage','userid','created_At',
     ];
 }

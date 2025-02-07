@@ -8,14 +8,38 @@
       <section class="my-8 mt-10 bg-gray-700 rounded-lg p-5">
         <h2 class="text-2xl font-semibold mb-4">My Folders</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4" id="foldersGrid">
-          <!-- Folder Items -->
+          @forelse ($folders  as $folder)
+          <div class="bg-gray-800 hover:bg-gray-700 rounded-lg shadow p-4 transition duration-200 foldersGrid1" folder_name="{{$folder->name}}">
+              <div class="flex justify-between items-start mb-3">
+                <i class="fas fa-folder text-2xl text-blue-400"></i>
+                <button class="text-gray-400 hover:text-gray-200">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+              </div>
+              <h3 class="font-semibold text-white foldername">{{$folder->name ?? 'No Name'}}</h3>
+              <p class="text-sm text-gray-400">QR Codes({{$folder->count ?? 'QR Codes(0)'}})</p>
+              <p class="text-xs text-gray-500 mt-2">{{$folder->date ?? ''}}</p>
+            </div>
+          @empty
+            <div class="p-4 flex flex-col justify-center items-center text-center">
+              <div class="text-lg text-gray-500 mb-4">
+                No QR Code Available. Start Creating Your First QR Code.
+              </div>
+              <div class="mt-4">
+                <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='qroption.php'">
+                  Create QR Code
+                </button>
+              </div>
+            </div>
+          @endforelse
+          
         </div>
       </section>
 
       <section class="bg-gray-700 rounded-lg shadow-lg w-full">
         <div class="p-4 border-b border-gray-700  flex justify-between items-center">
           <div class="flex items-center space-x-2">
-            <h2 class="lg:text-lg text-sm font-semibold">QR Codes (<span id="qrcount"></span>)</h2>
+            <h2 class="lg:text-lg text-sm font-semibold">QR Codes (<span id="qrcount">{{count($qrCodes)}}</span>)</h2>
             <span class="text-gray-500">|</span>
 
           </div>
@@ -26,16 +50,54 @@
         <div class="divide-y divide-gray-700" id="qrCodesList">
 
           <!-- QR Code Items -->
+          @foreach ($qrCodes  as $qrCode)
+          <div class="p-4 flex relative items-center hover:bg-gray-700" id="qr-{{$qrCode['code']}}">
+            <input type="checkbox" class="mr-4 md:relative absolute top-5 md:top-0 md:left-0 left-5" />
+            <div class="w-6 h-6 bg-gray-700 rounded flex items-center justify-center mr-4">
+              <i class="fas fa-qrcode text-4xl text-gray-400"></i>
+            </div>
+            <div class="flex-1 w-auto">
+               <a href='analytics.php?id=$qrCode["code"]'> <h3 class="font-medium text-white">{{$qrCode['projectname']}}</h3></a>
+              <a href="{{$qrCode['url']}}" target="_blank" class="md:text-sm md:line-clamp-none line-clamp-1 max-w-[200px] text-[11px] text-blue-400 hover:underline">{{$qrCode['url']}}</a>
+              <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
+                <span>{{$qrCode['qrtype']}}</span>
+                <span>{{$qrCode['date']}}</span>
+              </div>
+            </div>
+            <div class="ml-auto">
+              <div class="flex justify-end">
+                <button class="p-2 w-auto ml-auto text-xs md:text-base hover:bg-gray-600 bg-gray-400 mb-2 rounded">
+                  <a href="qrbackend/qrcodes/{{$qrCode['code']}}.png" class="flex gap-x-2 items-center" download>
+                    <i class="fas fa-download text-white"></i> Download
+                  </a>
+                </button>
+              </div>
+              <div class="flex items-center justify-end space-x-2">
+                <input id="id" class="id" value="{{$qrCode['code']}}" type="hidden">
+                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded {{$qrCode['qrtype'] === 'Static' ? 'hidden' : ''}}" onclick="forward('{{$qrCode['url']}}', '{{$qrCode['code']}}')">
+                  <i class="fas fa-edit text-gray-400"></i>
+                </button>
+
+                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode" data-value="$qrCode['qrtype']">
+                  <i class="fas fa-trash text-gray-400"></i>
+                </button>
+                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded" onclick="location.href='Style-QR-Code.php?id=$qrCode['qrtype']'">
+                  <i class="fa-solid fa-palette text-gray-400"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          @endforeach
         </div>
       </section>
-      <!-- Pagination -->
-      <div class="py-4 flex justify-between items-center" id="pagination">
-        <button class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400 "
-          id="prevPage">Previous</button>
-        <span class="text-gray-400" id="pageInfo"></span>
-        <button
-          class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]"
-          id="nextPage">Next</button>
+        <!-- Pagination -->
+        <div class="py-4 flex justify-between items-center" id="pagination">
+          <button class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400 "
+            id="prevPage">Previous</button>
+          <span class="text-gray-400" id="pageInfo"></span>
+          <button
+            class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]"
+            id="nextPage">Next</button>
       </div>
 
 
@@ -46,26 +108,7 @@
       let qrCodes;
       let folders;
       $(document).ready(function() {
-        $.ajax({
-          url: "{{route('folders_list')}}", // URL of the PHP script
-          method: 'GET',
-          dataType: 'json',
-          success: function(response) {
-            folders = response; //JSON.stringify(response);
-            letFolders(folders);
-          }
-        });
-        $.ajax({
-          url: "{{route('qrcode_list')}}", // URL of the PHP script
-          method: 'GET',
-          dataType: 'json',
-          success: function(response) {
-            qrCodes = response;
-            $("#qrcount").text(qrCodes.length);
-            renderQrCodes(qrCodes);
-          }
-        });
-  
+       
         $(document).on('click', ".deleteQrCode", function(e) {
           e.preventDefault();
           const index = $(this).data('value');
@@ -114,43 +157,6 @@
         });
       });
   
-      function letFolders(folders) {
-        const foldersGrid = document.getElementById('foldersGrid');
-        if (folders.length > 0) {
-          folders.forEach((folder) => {
-            let date = dateConvert(folder.date);
-            foldersGrid.innerHTML += `
-              <div class="bg-gray-800 hover:bg-gray-700 rounded-lg shadow p-4 transition duration-200 foldersGrid1">
-                <div class="flex justify-between items-start mb-3">
-                  <i class="fas fa-folder text-2xl text-blue-400"></i>
-                  <button class="text-gray-400 hover:text-gray-200">
-                    <i class="fas fa-ellipsis-h"></i>
-                  </button>
-                </div>
-                <h3 class="font-semibold text-white foldername">${folder.name}</h3>
-                <p class="text-sm text-gray-400">QR Codes(${folder.count})</p>
-                <p class="text-xs text-gray-500 mt-2">${date}</p>
-              </div>
-            `;
-          });
-        } else {
-          foldersGrid.innerHTML += `
-              <div class="bg-gray-800 hover:bg-gray-700 rounded-lg shadow p-4 transition duration-200 foldersGrid1">
-                <div class="flex justify-between items-start mb-3">
-                  <i class="fas fa-folder text-2xl text-blue-400"></i>
-                  <button class="text-gray-400 hover:text-gray-200">
-                    <i class="fas fa-ellipsis-h"></i>
-                  </button>
-                </div>
-                <h3 class="font-semibold text-white foldername">No Name</h3>
-                <p class="text-sm text-gray-400">QR Codes(0)</p>
-                <p class="text-xs text-gray-500 mt-2"></p>
-              </div>
-            `;
-        }
-  
-      }
-  
       function dateConvert(dateString) {
         const date = new Date(dateString);
   
@@ -171,25 +177,26 @@
       const nextPage = document.getElementById("nextPage");
   
       $('#foldersGrid').on('click', ' .foldersGrid1', function() {
-        // Get the folder name from the clicked element
+      // Get the folder name from the clicked element
         renderQrCodes(qrCodes = []);
-        var folderName = $(this).find('.foldername').text(); 
+        var folder_name = $(this).attr('folder_name');  
         $.ajax({
           url: "{{route('folder_details')}}", // URL of the PHP script
           method: 'POST',
           data: {
-            folder: folderName,
+            folder_name: folder_name,
             "_token": "{{ csrf_token() }}",
           },
           dataType: 'json',
-          success: function(response) {
-            qrCodes = response;
+          success: function(response) { 
+            qrCodes = response; 
             $("#qrcount").text(qrCodes.length);
             renderQrCodes(qrCodes);
-  
+
           }
         });
       });
+
   
       function renderQrCodes(qrCodes) {
         let qrcode = qrCodes;//.sort((a, b) => Number(a.id) - Number(b.id));
