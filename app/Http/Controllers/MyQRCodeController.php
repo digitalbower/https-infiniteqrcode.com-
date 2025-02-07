@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MyQRCodeController extends Controller
 {
@@ -15,55 +16,10 @@ class MyQRCodeController extends Controller
         $folders = DB::table('qr_basic_info')
         ->selectRaw('folder_name as name, COUNT(*) AS count, DATE(created_At) AS date')
         ->where('userid', $userId)
-        ->groupBy('folder_name', DB::raw('DATE(created_At)'))
+        ->groupBy('folder_name', 'date')
         ->orderBy('created_At', 'asc')
-        ->distinct()
         ->get();
 
-
-        
-        $folder = $request->folder;
-        $codes = DB::table('qr_basic_info')
-            ->where('folder_name', $folder)
-            ->where('userid', $userId)
-            ->pluck('project_code')
-            ->toArray(); 
-
-        $tables = [
-            'urlcode', 'btcqr', 'apkqr', 'dynamicurlcode', 'emailqr', 'epcqr', 'eventqr',
-            'facebookqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr', 'textqr', 'twitterqr',
-            'vcard', 'vcardplus', 'videoqr', 'wifiqr', 'couponqr', 'businessqr',
-            'socmedqr', 'ratingqr'
-        ];
-
-        $combinedResults = [];
-
-        foreach ($tables as $table) {
-            $results = DB::table($table)
-                ->select('id', 'url', 'code', 'qrtype', 'created_at AS date', 'userid')
-                ->where('userid', $userId)
-                ->whereIn('code', $codes)
-                ->get()
-                ->toArray();
-            
-            $combinedResults = array_merge($combinedResults, $results);
-        }
-
-        $qrCodes = [];
-
-        foreach ($combinedResults as $item) {
-            if (isset($item->code)) {
-                $projectName = DB::table('qr_basic_info')
-                    ->where('project_code', $item->code)
-                    ->orderBy('created_at', 'ASC')
-                    ->value('project_name');
-
-                $item->projectname = $projectName ?? '';
-                $qrCodes[] = (array) $item;
-            }
-        }
-
-        $userid = Auth::user()->username;
         $tables = [
             'urlcode', 'btcqr', 'apkqr', 'dynamicurlcode', 'emailqr', 'epcqr', 'eventqr',
             'facebookqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr', 'textqr', 'twitterqr',
@@ -76,16 +32,20 @@ class MyQRCodeController extends Controller
         foreach ($tables as $table) {
             $subQuery = DB::table($table)
                 ->select('id', 'url', 'code', 'qrtype', 'created_at as date', 'userid', 'editstatus');
-            
-            if ($query === null) {
-                $query = $subQuery->where('userid', $userId);
-            } else {
-                $query->unionAll($subQuery->where('userid', $userId));
-            }
+                if ($query === null) {
+                    $query = $subQuery->where('userid', $userId);
+                } else {
+                    $query->unionAll($subQuery->where('userid', $userId));
+                }
+          
         }
 
-        $results = $query->get();
-
+       if ($query !== null) {
+            $results = $query->get(); 
+        } else {
+            $results = collect(); 
+        }
+        
         $qrCodes = [];
 
         foreach ($results as $row) {
@@ -94,7 +54,8 @@ class MyQRCodeController extends Controller
             }
 
             $projectName = DB::table('qr_basic_info')
-                ->where('project_code', $row->code)
+                ->where('userid', $userId)
+                ->where('project_code',$row->code)
                 ->orderBy('id', 'ASC')
                 ->value('project_name');
 
@@ -104,34 +65,22 @@ class MyQRCodeController extends Controller
 
             $qrCodes[] = (array) $row;
         }
-
-
-        return view('my-qr-code',compact('userId','folders','results'));
-    }
-
-    public function folders_list(){
-
-        $userId = Auth::user()->username;
-       
-        $folders = DB::table('qr_basic_info')
-            ->selectRaw('folder_name as name, COUNT(*) AS count, DATE(created_At) AS date')
-            ->where('userid', $userId)
-            ->groupBy('folder_name', DB::raw('DATE(created_At)'))
-            ->orderBy('created_At', 'asc')
-            ->distinct()
-            ->get();
-
-        return response()->json($folders);
+       return view('my-qr-code',compact('folders','qrCodes'));
     }
     public function folder_details(Request $request){
-        $userid = Auth::user()->id; dd($userid);
-        $folder = $request->folder;
-        $codes = DB::table('qr_basic_info')
-            ->where('folder_name', $folder)
-            ->where('userid', $userid)
-            ->pluck('project_code')
-            ->toArray(); 
+        $userid = Auth::user()->id; 
+        $folder_name = $request->folder_name;   
 
+        $qrCodes = [];
+
+        $projectCodes = DB::table('qr_basic_info')
+        ->where('folder_name', $folder_name)
+        ->where('userid', $userid)
+        ->pluck('project_code') // Get only project_code column as an array
+        ->toArray();
+        if (empty($projectCodes)) {
+            return response()->json([]);
+        }  
         $tables = [
             'urlcode', 'btcqr', 'apkqr', 'dynamicurlcode', 'emailqr', 'epcqr', 'eventqr',
             'facebookqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr', 'textqr', 'twitterqr',
@@ -139,80 +88,29 @@ class MyQRCodeController extends Controller
             'socmedqr', 'ratingqr'
         ];
 
-        $combinedResults = [];
+        $combinedResults = collect();
 
         foreach ($tables as $table) {
             $results = DB::table($table)
-                ->select('id', 'url', 'code', 'qrtype', 'created_at AS date', 'userid')
+                ->select('id', 'url', 'code', 'qrtype', 'created_at as date', 'userid')
                 ->where('userid', $userid)
-                ->whereIn('code', $codes)
-                ->get()
-                ->toArray();
-            
-            $combinedResults = array_merge($combinedResults, $results);
+                ->whereIn('code', $projectCodes)
+                ->get();
+    
+            $combinedResults = $combinedResults->merge($results);
         }
-
-        $qrCodes = [];
 
         foreach ($combinedResults as $item) {
-            if (isset($item->code)) {
-                $projectName = DB::table('qr_basic_info')
-                    ->where('project_code', $item->code)
-                    ->orderBy('created_at', 'ASC')
-                    ->value('project_name');
-
-                $item->projectname = $projectName ?? '';
-                $qrCodes[] = (array) $item;
-            }
-        }
-
-        return response()->json($qrCodes);
-    }
-    public function qrcode_list(){
-
-        $userid = Auth::user()->username;
-        $tables = [
-            'urlcode', 'btcqr', 'apkqr', 'dynamicurlcode', 'emailqr', 'epcqr', 'eventqr',
-            'facebookqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr', 'textqr', 'twitterqr',
-            'vcard', 'vcardplus', 'videoqr', 'wifiqr', 'couponqr', 'businessqr',
-            'socmedqr', 'ratingqr'
-        ];
-
-        $query = null;
-
-        foreach ($tables as $table) {
-            $subQuery = DB::table($table)
-                ->select('id', 'url', 'code', 'qrtype', 'created_at as date', 'userid', 'editstatus');
-            
-            if ($query === null) {
-                $query = $subQuery->where('userid', $userid);
-            } else {
-                $query->unionAll($subQuery->where('userid', $userid));
-            }
-        }
-
-        $results = $query->get();
-
-        $qrCodes = [];
-
-        foreach ($results as $row) {
-            if (!isset($row->code)) {
-                continue;
-            }
-
             $projectName = DB::table('qr_basic_info')
-                ->where('project_code', $row->code)
-                ->orderBy('id', 'ASC')
+                ->where('project_code', $item->code)
+                ->orderBy('created_at', 'asc')
                 ->value('project_name');
-
-            unset($row->qrimage);
-            
-            $row->projectname = $projectName ?? '';
-
-            $qrCodes[] = (array) $row;
+    
+            $item->projectname = $projectName ?? '';
+            $qrCodes[] = $item;
         }
 
         return response()->json($qrCodes);
-
     }
+
 }

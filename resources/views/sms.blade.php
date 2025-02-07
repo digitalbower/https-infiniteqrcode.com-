@@ -1,332 +1,433 @@
-
-         
-         
-
-<!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
-      rel="stylesheet">
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      rel="stylesheet">
-    <script>
-            tailwind.config = {
-              theme: {
-                extend: {
-                  colors: {
-                    primary: '#4A90E2',
-                    secondary: '#50E3C2',
-                    accent: '#F5A623',
-                    background: '#1F2937',
-                    card: '#374151',
-                  },
-                  fontFamily: {
-                    sans: ['Poppins', 'sans-serif'],
-                  },
-                }
-              }
-            }
-          </script>
-    <script>
-            const toggleButton = document.getElementById('toggle-btn');
-            const chevronIcon = document.getElementById('chevron-icon');
-        
-            toggleButton.addEventListener('click', () => {
-              // Toggle the rotation class
-              chevronIcon.classList.toggle('rotate-180');
-              chevronIcon.classList.toggle('rotate-0');
-            });
-          </script>
-  </head>
-
-  <body class="bg-background text-white font-sans">
-
-    <div class="flex flex-col h-screen">
-
-      <header
-      class="bg-gradient-to-l lg:hidden from-[#5f72ab36] bg-opecity-40 to-white text-white p-4 flex justify-between items-center">
-      <img src="/QR code Logo - 750250.svg" class="w-[200px]" />
-      <button id="menu-toggle"
-        class="text-white focus:outline-none lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
-          viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-      <!-- Tabs (Visible on Desktop) -->
-      <nav class="hidden lg:flex space-x-6">
-        <button class="text-white hover:text-primary">Dashboard</button>
-        <a href="/Profile.html"> <button
-            class="text-white hover:text-primary">Profile</button></a>
-        <button class="text-white hover:text-primary">QR Code
-          Generator</button>
-        <button class="text-white hover:text-primary">Yields</button>
-      </nav>
-    </header>
-
-    <!-- Sidebar (Hidden on Mobile) -->
-    <aside id="sidebar"
-      class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  bg-gradient-to-t from-[#1F2937] from-50% to-white text-white p-4 z-50 transition-all transform -translate-x-full lg:translate-x-0 lg:block">
-      <div class="flex justify-between items-center py-2 mb-8">
-        <img src="/QR code Logo - 750250.svg" class="w-[200px]" />
-      </div>
-
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 mx-auto relative mb-2 rounded-full bg-gray-500">
-          <img src="/download.jpeg" alt="User Profile"
-            class="w-full h-full object-cover rounded-full" />
-          <div
-            class="absolute -bottom-1 -left-3 bg-white flex items-center p-3 w-8 h-8 rounded-full justify-center">
-            <i class="fas fa-edit text-[#6c8ef6] text-xl mx-auto "></i>
-          </div>
-        </div>
-        <p class="font-semibold">Esther Howard</p>
-      </div>
-
-      <nav class="flex-1 px py-6">
-        <ul class="space-y-2">
-          <!-- Dashboard -->
-          <li>
-            <a href="/"
-              class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
-            </a>
-          </li>
-          <li>
-            <a href="/Choose-QR-Code.html"
-              class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-tachometer-alt mr-3"></i> Choose QR Code
-            </a>
-          </li>
-          <li>
-            <a href="/Profile.html" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-user mr-3"></i> Profile
-            </a>
-          </li>
-          
-          <!-- Profile -->
-         
-          <!-- QR Code Generator -->
-          <li>
-            <button
-              class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-qrcode mr-3"></i> Analytics
-            </button>
-          </li>
-          <!-- Dropdown Menu -->
-          <li class="relative group">
-            <button
-              class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700"
-              onclick="toggleDropdown(this)">
-              <i class="fas fa-qrcode mr-3"></i> Create QR Code
-              <i class="fas fa-chevron-down ml-auto"></i>
-            </button>
-            <div
-              class=" left-0 h-full hidden mt-1 w-full bg-gray-800 rounded shadow-md dropdown-items">
-              <ul class="divide-y divide-gray-700">
-                <!-- Dropdown Items with Font Awesome Icons -->
-                <li><a href="/Url.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-link mr-2"></i> URL</a></li>
-                <li><a href="/vcard.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-address-card mr-2"></i> vCard</a></li>
-                <li><a href="/text.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-font mr-2"></i> Text</a></li>
-                <li><a href="/emailform.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-envelope mr-2"></i> Email</a></li>
-                <li><a href="/sms.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-sms mr-2"></i> SMS</a></li>
-                <li><a href="/wifi.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-wifi mr-2"></i> Wi-Fi</a></li>
-                <li><a href="/Bitcoin.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-btc mr-2"></i> Bitcoin</a></li>
-                <li><a href="/Twitter.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fab fa-twitter mr-2"></i> Twitter</a></li>
-                <li><a href="/Epc.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-cogs mr-2"></i> EPC</a></li>
-                <li><a href="/Pdf.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-file-pdf mr-2"></i> PDF</a></li>
-                <li><a href="/mp3.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-headphones-alt mr-2"></i> MP3</a></li>
-                <li><a href="/image.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-image mr-2"></i> Images</a></li>
-                <li><a href="/video.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-video mr-2"></i> Video</a></li>
-                <li><a href="/app-store.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-store mr-2"></i> App Stores</a></li>
-                <li><a href="/Url.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-sync-alt mr-2"></i> Dynamic URL</a></li>
-                <li><a href="/facebook.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fab fa-facebook mr-2"></i> Facebook</a></li>
-                <li><a href="/Instagram.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fab fa-instagram mr-2"></i>Instagram</a></li>
-
-                <li><a href="/Event.html"
-                    class="block px-4 py-2 hover:bg-gray-700"><i
-                      class="fas fa-calendar-alt mr-2"></i> Event</a></li>
-              </ul>
-
-            </div>
-          </li>
-
-          <script>
-          function toggleDropdown(button) {
-            const dropdown = button.nextElementSibling; // Get the dropdown menu
-            dropdown.classList.toggle('hidden'); // Toggle visibility
-            const icon = button.querySelector('i.fas.fa-chevron-down');
-            if (dropdown.classList.contains('hidden')) {
-              icon.classList.replace('fa-chevron-up', 'fa-chevron-down'); // Change to down icon
-            } else {
-              icon.classList.replace('fa-chevron-down', 'fa-chevron-up'); // Change to up icon
-            }
-          }
-        </script>
-
-          <!-- Yields -->
-          <li>
-            <button
-              class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-              <i class="fas fa-chart-line mr-3"></i> Yields
-            </button>
-          </li>
-          <li class="mx-0 pt-4">
-            <button
-              class="bg-[#6c8ef6] flex items-center w-full text-white py-3 px-12 rounded-lg shadow-md hover:bg-[#6c8ef6] transition duration-300">
-              <i class="fas fa-arrow-up mr-2"></i> Upgrade
-            </button>
-          </li>
-          <li class="mx-0 pt-4">
-            <button
-              class="bg-[#F5A623] flex items-center w-full text-white py-3 px-12 rounded-lg shadow-md hover:bg-[#F5A623] transition duration-300">
-              <i class="fas fa-sign-out-alt mr-2"></i> Logout
-            </button>
-          </li>
-        </ul>
-      </nav>
-
-    </aside>
-
+@extends('layouts.layout')
+@section('title', 'Create SMS QrCode')
+@section('content')
       <!-- Main Content Area -->
-      <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
+    <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
 
-        <div class="container mx-auto pb-12 md:px-6 sm:px-8 lg:px-12">
-          <div class="flex-1 w-full p-4 lg:px-12">
-            <div class="container text-center mx-auto pt-2  lg:px-12">
-              <h1
-                class="text-4xl text-center font-extrabold text-center mb-10 text-white border-[#F5A623] border-b-4 pb-3 inline-block">
-                Create Your URL QR Code
-              </h1>
-            </div>
-  
-            <!-- Step Container -->
-            <div class="flex items-center justify-center mb-5 space-x-0">
-              <!-- Step 1 -->
-              <div
-                class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
-                <svg stroke="currentColor" fill="none" stroke-width="2"
-                  viewBox="0 0 24 24" stroke-linecap="round"
-                  stroke-linejoin="round" class="h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-              </div>
-  
-              <!-- Line Gap -->
-              <div class="w-10 h-1 bg-gray-300"></div>
-  
-              <!-- Step 2 -->
-              <div
-                class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
-                2
-              </div>
-              <div class="w-10 h-1 bg-gray-300"></div>
-  
-              <!-- Step 2 -->
-              <div
-                class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
-                3
-              </div>
-            </div>
-  
+      <div class="container mx-auto pb-12 md:px-6 sm:px-8 lg:px-12">
+        <div class="flex-1 w-full p-4 lg:px-12">
+          <div class="container text-center mx-auto pt-2  lg:px-12">
+            <h1
+              class="text-4xl text-center font-extrabold text-center mb-10 text-white border-[#F5A623] border-b-4 pb-3 inline-block">
+              Create Your URL QR Code
+            </h1>
           </div>
-  
-          <div class="p-8 bg-gray-950 rounded-lg border-gray-900 border shadow-sm">
-    <h2 class="text-2xl font-medium text-white text-center">QR Code Generator</h2>
-    
-    @if(session('success'))
-        <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">{{ session('success') }}</div>
-    @endif
-    
-    <form action="{{ route('myqrcode') }}" method="POST">
-        @csrf
-        <div class="bg-white p-6 rounded-lg shadow">
-            <label class="block text-gray-600">Phone Number</label>
-            <div class="flex gap-x-2 items-center mt-2">
-                <select name="countrycode" class="border p-2 rounded-md text-black">
-                    <option value="+1">🇺🇸 USA (+1)</option>
-                    <option value="+91">🇮🇳 India (+91)</option>
-                </select>
-                <input type="tel" name="phone" class="border p-2 rounded-md w-full" required>
+
+          <!-- Step Container -->
+          <div class="flex items-center justify-center mb-5 space-x-0">
+            <!-- Step 1 -->
+            <div
+              class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
+              <svg stroke="currentColor" fill="none" stroke-width="2"
+                viewBox="0 0 24 24" stroke-linecap="round"
+                stroke-linejoin="round" class="h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
             </div>
-            <label class="block text-gray-600 mt-4">QR Code SMS Text:</label>
-            <textarea name="sms" class="border p-2 w-full rounded-md text-black" rows="4" required></textarea>
-            <label class="block text-gray-600 mt-4">QR Project Name</label>
-            <input type="text" name="projectname" class="border p-2 w-full rounded-md text-black" required>
-            <label class="block text-gray-600 mt-4">Start Date</label>
-            <input type="date" name="startdate" class="border p-2 w-full rounded-md text-black" required>
-            <label class="block text-gray-600 mt-4">End Date</label>
-            <input type="date" name="enddate" class="border p-2 w-full rounded-md text-black" required>
-            <label class="block text-gray-600 mt-4">Usage</label>
-            <select name="usage" class="border p-2 w-full text-black rounded-md" required>
-                <option value="personal">Personal</option>
-                <option value="business">Business</option>
-            </select>
-            <label class="block text-gray-600 mt-4">Remarks</label>
-            <textarea name="remarks" class="text-black border p-2 w-full rounded-md"></textarea>
-            <button type="submit" class="mt-4 bg-yellow-500 text-white p-2 rounded-md w-full">Generate QR Code</button>
+
+            <!-- Line Gap -->
+            <div class="w-10 h-1 bg-gray-300"></div>
+
+            <!-- Step 2 -->
+            <div
+              class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
+              2
+            </div>
+            <div class="w-10 h-1 bg-gray-300"></div>
+
+            <!-- Step 2 -->
+            <div
+              class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
+              3
+            </div>
+          </div>
+
         </div>
-    </form>
-</div>
+
+        <div
+          class="lg:lg:lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
+          <div class="col-span-8">
+            @if(session('success'))
+              <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">{{ session('success') }}</div>
+            @endif
+            <form action="{{ route('myqrcode') }}" style="margin-bottom: 1rem;" id="saveForm" method="POST">
+              @csrf
+              <div class="flex justify-start">
+                <h2
+                  class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
+              </div>
+              <div
+                class=" lg:p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
+
+                <div class="space-y-4">
+                  <div class="mx-auto p-2 lg:p-6 bg-white">
+                    <form style="margin-bottom: 1rem;">
+                      <!-- QR Code Text Input -->
+                      <div>
+                        <label class="text-base text-gray-600">Phone Number</label>
+                        <div class="flex gap-x-2 items-center mt-2">
+                          <select class="w-full text-xs md:text-sm rounded-md text-black border p-1 h-10 md:h-auto py-2 md:p-2 lg:pr-10 w-1/3" name="countrycode" id="countrycode" readonly>
+                            <option value="+1">🇺🇸 USA (+1)</option>
+                            <option value="+91">🇮🇳 India (+91)</option>
+                            <option value="+44">🇬🇧 UK (+44)</option>
+                            <option value="+1">🇨🇦 Canada (+1)</option>
+                            <option value="+61">🇦🇺 Australia (+61)</option>
+                            <option value="+49">🇩🇪 Germany (+49)</option>
+                            <option value="+33">🇫🇷 France (+33)</option>
+                            <option value="+81">🇯🇵 Japan (+81)</option>
+                            <option value="+55">🇧🇷 Brazil (+55)</option>
+                            <option value="+971">🇦🇪 UAE (+971)</option>
+                            <option value="+966">🇸🇦 SA (+966)</option>
+                          </select>
+                          <input type="tel" max="999999999999" name="phone" id="phone" placeholder="Phone" class="w-full w-full rounded-md text-black border text-xs md:text-sm p-2 h-10 md:h-auto pr-10">
+
+                        </div>
+                        @error('phone')
+                        <small class="text-red-700 phone">{{ $message }}</small>
+                        @enderror
+                      </div>
+                      <div
+                        style="margin-bottom: 1rem; position: relative;">
+                       <div class="py-2 mt-4">
+                       <label for="url"
+                          class="text-base text-gray-600">QR
+                          Code SMS Text:</label>
+                       </div>
+                        <textarea
+                          type="text"
+                          id="sms"
+                          name="sms" class="text-gray-900" rows="5"
+                          placeholder="Enter SMS text for QR Code"
+                          style="width: 100%; border: 1px solid #ccc; padding: 0.75rem 1.5rem 0.75rem 1rem; border-radius: 4px; box-sizing: border-box; font-size: 1rem;"></textarea>
+
+                        @error('sms')
+                              <small class="text-red-700 sms">{{ $message }}</small>
+                        @enderror
+                        <input type="hidden" name="qroption" id="qroption" class="text-gray-600">
+
+
+                        <div class="char-counter" style="margin-top: 5px;font-size: 14px;color: #555;">
+                          Characters: <span id="charCount">0</span> / 160
+                        </div>
+                      </div>
+                      <!-- Enhanced Image Upload Input -->
+                  </div>
+                </div>
+              </div>
+              <div class="flex mt-10 justify-start">
+                <h2
+                  class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information</h2>
+              </div>
+              <div
+                class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
+
+                <div class="space-y-4">
+                  <div class="mx-auto w-full lg:p-6 bg-white text-black">
+
+                    <div class="space-y-4">
+                      <div class="mx-auto w-full lg:p-6 bg-white text-black">
+
+                        <div class="space-y-4">
+
+                          <!-- QR Project Name -->
+                          <div>
+                            <label for="projectName"
+                              class="block font-medium text-gray-800">QR Project Name</label>
+                            <div>
+                              <input id="projectName" placeholder="Enter project name" name="projectname"
+                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                              @error('projectname')
+                              <small class="text-red-700 projectName">{{ $message }}</small>
+                              @enderror
+                            </div>
+                          </div>
+
+                          <!-- Select Folder -->
+                          <div class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <!-- Folder Dropdown -->
+                            <div class="relative">
+                              <button type="button"
+                                id="folderDropdownButton"
+                                class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
+                                 <span id="selectedFolder">Select a folder</span>
+                                  
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  class="h-5 w-5"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  stroke-width="2">
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                              <!-- Dropdown List -->
+                              <div
+                                id="folderDropdown"
+                                class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
+                                @php
+                                $userId = auth()->user()->id; 
+
+                                $folders = DB::table('qr_basic_info')
+                                ->selectRaw('folder_name as name, COUNT(*) AS count, DATE(created_At) AS date')
+                                ->where('userid', $userId)
+                                ->groupBy('folder_name', 'date')
+                                ->orderBy('created_At', 'asc')
+                                ->get();
+
+                                @endphp
+                                <ul id="folderList" class="divide-y divide-gray-200">
+                                  @foreach ($folders as $folder)
+                                    <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100">
+                                      <span>{{$folder->name}}</span>
+                                    </li>
+                                  @endforeach
+                                </ul>
+                                <div class="flex justify-center"> <button
+                              id="addFolderButton" type="button"
+                              class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5 mr-1"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  d="M12 4v16m8-8H4" />
+                              </svg>
+                              Add New Folder
+                            </button>
+                            <!-- <button
+                                id="FolderB" type="button"
+                                class="w-full text-green-500  font-semibold py-2 hover:bg-green-100 p-2 flex items-center justify-center">
+                                    Create 
+                              </button> -->
+                            </div>
+                              </div>
+                            </div>
+                            <input id="folderinput" placeholder="Folder Name" type="hidden" name="folderinput" readonly value="" class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                            @error('folderinput')
+                            <small class="text-red-700 folderinput">{{ $message }}</small>
+                            @enderror
+                          </div>
+                          <!-- Date Range -->
+                          <div
+                            class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
+                            <div class="flex-1">
+                              <label for="startDate"
+                                class="block font-medium text-gray-800">Start Date</label>
+                              <input id="startDate" min="<?php echo date('Y-m-d'); ?>" type="date"
+                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="startdate">
+                                @error('startdate')
+                                <small class="text-red-700 start_date">{{ $message }}</small>
+                                @enderror
+                              </div>
+                            <div class="flex-1">
+                              <label for="endDate"
+                                class="block font-medium text-gray-800">End Date</label>
+                              <div>
+                                <input id="endDate" type="date"
+                                  class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="enddate">
+                                @error('enddate')
+                                <small class="text-red-700 start_date">{{ $message }}</small>
+                                @enderror
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Usage -->
+                          <div>
+                            <label for="usage"
+                              class="block font-medium text-gray-800">Usage</label>
+                            <select id="usage" name="usage"
+                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                              <option value="">Select Usage</option>
+                              <option value="personal">Personal</option>
+                              <option value="business">Business</option>
+                              <option value="event">Event</option>
+                            </select>
+                            @error('usage')
+                            <small class="text-red-700 usage">{{ $message }}</small>
+                            @enderror
+                          </div>
+
+                          <!-- Remarks -->
+                          <div>
+                            <label for="remarks"
+                              class="block font-medium text-gray-800">Remarks</label>
+                            <textarea id="remarks" name="remarks"
+                              placeholder="Enter any additional remarks"
+                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                          </div>
+                          <div class="flex justify-between mt-8">
+                            <button type="button" onclick="location.href='QrOption.php'"
+                              class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
+                            <span id="message" class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
+                            <div id="loadingIndicator" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
+                              <div class="flex flex-col items-center">
+                                <div class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full"></div>
+                                <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
+                              </div>
+                            </div>
+                            <button type="submit" id="nextBtn"
+                            class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate Qr Code</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="col-span-4">
+            <style>
+              canvas{
+                width: 100% !important;
+              }
+              .tab-button.active {
+
+                background-color: #00aaff;
+                color: white;
+              }
+            </style>
+            <div class=" col-span-4  flex justify-center">
+
+              <!-- Header -->
+              <div class="p-1 w-full mt-10">
+                <!-- Tab Navigation -->
+                <div
+                  class="flex bg-gray-200 rounded-full justify-around shadow-md">
+                  <button
+                    id="preview-btn"
+                    class="tab-button text-sm text-gray-500 px-0 w-full py-3 rounded-full transition duration-300 focus:outline-none active">
+                    Preview
+                  </button>
+                  <button
+                    id="detail-btn"
+                    class="tab-button text-sm text-gray-500 px-0 w-full py-3 rounded-full transition duration-300 focus:outline-none ">
+                    QRCode
+                  </button>
+                </div>
+
+                <!-- Preview Tab Content -->
+                <div id="detail-content" class="tab-content mt-10 w-full hidden">
+                  <div
+                    class="bg-gray-800 w-full  mx-auto mt-10 rounded-3xl shadow-lg border-4 min-h-[550px] border-gray-900 relative overflow-hidden">
+                    <!-- Top Indicator -->
+                    <div
+                      class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-700 rounded"></div>
+
+                    <!-- Content -->
+                    <div class="p-6 mt-5">
+                      <!-- Header -->
+                      <h2
+                        class="text-center text-lg font-semibold text-white mb-4">
+                        Scan QR Code for Contact
+                      </h2>
+
+                      <!-- QR Code Preview -->
+                      <div id="qr-preview"
+                        class="bg-white w-full border-3 rounded-lg shadow-sm overflow-hidden">
+
+                      </div>
+
+                      <!-- Action Buttons -->
+                      <div class="mt-6 flex flex-col gap-4 items-center">
+                        <!-- <button id="downloadBtn"
+                          class="px-4 py-2 bg-blue-500 text-white font-medium rounded-lg shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
+                          Generate vCard
+                        </button> -->
+
+                        <!-- <button
+                          class="px-4 py-2 bg-gray-700 text-white font-medium rounded-lg shadow hover:bg-gray-800 focus:ring focus:ring-gray-500">
+                          Save Contact
+                        </button> -->
+                      </div>
+                    </div>
+
+                    <!-- Bottom Indicator -->
+                    <div
+                      class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-700 rounded-full"></div>
+                  </div>
+                </div>
+
+                <!-- Details Tab Content -->
+                <div id="preview-content"
+                  class="tab-content  mt-10 w-full">
+                  <div 
+                    class=" relative w-full  mx-auto rounded-3xl shadow-lg border-4 min-h-[500px] border-gray-900 relative overflow-hidden">
+                    <!-- Top Indicator -->
+                    <div
+                      class="absolute top-2 left-1/2 -translate-x-1/2 w-20 z-40 h-1.5 bg-gray-700 rounded"></div>
+
+                    <!-- Content -->
+
+                    <div style="background-image: url(./images//ai-generated-nature-landscapes-background-free-photo.jpg)"
+                      class="w-full absolute  h-full px-4 text-white  rounded-lg shadow-lg overflow-hidden">
+                      <!-- Profile Header -->
+                  
+
+                      <!-- Contact Actions -->
+                     
+
+                      <!-- Profile Description -->
+                      <div class="border h-[350px] overflow-y-auto pt-3 mt-10 text-card-foreground shadow-sm w-full max-w-md bg-white rounded-3xl" data-v0-t="card"><div class="p-2"><div class="flex flex-col gap-4"><div class="flex items-center gap-2"><span class="text-neutral-600">To:</span><span class="bg-[#e8e0d9] text-[#8b7b71] px-4 py-1 rounded-full text-sm mobile1">Savannah C. Riley</span></div>
+                      <p class="text-neutral-800 text-base leading-relaxed smsarea">Congratulations, you've won the $500 gift card in our Summer Giveaway Contest. Please DM us to claim your prize.</p></div></div></div>
+
+                      <!-- Contact Information -->
+                     
+                      <div class="mt-2 flex justify-center">
+    <button class="bg-blue-600 text-white text-sm px-4 py-2 rounded-full flex items-center hover:bg-blue-700">
+              Send sms
+    </button>
+  </div>
+  <div
+                      class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-900 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Bottom Indicator -->
+                    
+                  </div>
+                </div>
+              </div>
+              <!-- Tab Buttons -->
+              <!-- Content Area -->
+            </div>
+          </div>
        
        
       
 
     </main>
 
-  </div>
-
   
- 
-                  
-  </body>
+  <script src="{{asset('js/create-folder.js')}}"></script>
+  <script>
+    function getQueryParam(param) {
+        var params = new URLSearchParams(window.location.search);
+        return params.get(param);
+    }
 
-</html>
+    $(document).ready(function() { 
+        var passedValue = getQueryParam('option'); 
+        if (passedValue !== null) {
+            $('#qroption').val(passedValue);
+        }
+    });
+  </script>
+@endsection
 
                        
                      

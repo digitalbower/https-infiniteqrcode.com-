@@ -87,13 +87,13 @@ class HomeController extends Controller
     // Generate QR Code and Save to DB
     public function myqrcode(Request $request) {
         $request->validate([
-            'countrycode' => 'required',
             'phone' => 'required',
             'sms' => 'required',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
             'usage' => 'required',
+            'folderinput'=>'required'
         ]);
 
         $message = [
@@ -103,47 +103,57 @@ class HomeController extends Controller
     
         
         // Generate QR Code and save to storage
-    //    $data = 'https://infiniteqrcode.com/sms';
-       
-     $projectCode = 'P' . time() . rand(100, 999);
+       $data = 'https://infiniteqrcode.com/';
+        
+
+        
     
+   
+    $projectCode = 'P' . time() . rand(100, 999);
     $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
-    // Generate QR Code with Logo (Merge Logo)
+        // Generate QR Code with Logo (Merge Logo)
 
+        $qrCode = QrCode::format('svg')
+            //  Merge logo
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($data);
 
+        // Save QR Code to Storage
+        Storage::disk('public')->put($qrCodePath, $qrCode);
+
+        // Generate the full URL of the QR Code
+        $qrCodeUrl = asset('storage/' . $qrCodePath);
+    
         // Save in DB
         $sms = Sms::create([
             'code' => $projectCode,
+            'qrtype' => $request->qroption,
+            'qrsms' => $request->sms,
             'countrycode' => $request->countrycode,
             'phonenumber' => $request->phone,
-            'qrsms' => $request->sms,
-            'project_name' => $request->projectname,
-            'start_date' => $request->startdate,
-            'end_date' => $request->enddate,
-            'usage' => $request->usage,
-            'remarks' => $request->remarks,
-            'qr_code_path' => $qrCodePath,
+            'url'=>$qrCodeUrl ,
+            'qrimage'=>$qrCodePath,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+             
         ]);
-
         $qrBasicInfo = QrBasicInfo::create([
             'project_code' => $projectCode,
             'project_name' => $request->projectname,
-            'folder_name' => 'qrcodes', // Storing in 'qrcodes' folder
-            'qrtype' => 'SMS', // Assuming QR type is SMS
+            'folder_name' => $request->folderinput, // Storing in 'qrcodes' folder
+            'qrtype' => $request->qroption, // Assuming QR type is SMS
             'start_date' => $request->startdate,
             'end_date' => $request->enddate,
             'usage_type' => $request->usage,
             'remarks' => $request->remarks,
-            'userid' => auth()->user()->id ?? 'Guest', // Store user ID or 'Guest'
-            'qrtable' => json_encode($message), // Store QR content
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+            'qrtable' => 'smsqr', // Store QR content
             'total_scans' => 0,
             'unique_scans' => 0,
             
         ]);
-       
-    
-        $data = route('mysms', ['id' => $qrBasicInfo->id]);
+
         $qrCode = QrCode::format('svg')
         // Merge logo
         ->size(300)
