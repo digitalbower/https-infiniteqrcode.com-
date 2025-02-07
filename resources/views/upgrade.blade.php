@@ -358,22 +358,22 @@
                                               </div>
                                             <form action="{{ route('process.payment') }}" method="POST">
         @csrf
-        <label for="cardholderName">Cardholder's Name</label>
-        <input type="text" id="cardholderName" name="cardholderName" required><br>
+        <label for="cardholderName" class="text-black">Cardholder's Name</label>
+        <input type="text" id="cardholderName" class="text-black" name="cardholderName" required><br>
 
-        <label for="cardNumber">Card Number</label>
-        <input type="text" id="cardNumber" name="cardNumber" required><br>
+        <label for="cardNumber" class="text-black">Card Number</label>
+        <input type="text" id="cardNumber" class="text-black" name="cardNumber" required><br>
 
-        <label for="expMonth">Expiration Month</label>
-        <input type="text" id="expMonth" name="expMonth" required><br>
+        <label for="expMonth" class="text-black">Expiration Month</label>
+        <input type="text" id="expMonth" class="text-black" name="expMonth" required><br>
 
-        <label for="expYear">Expiration Year</label>
-        <input type="text" id="expYear" name="expYear" required><br>
+        <label for="expYear" class="text-black">Expiration Year</label>
+        <input type="text" id="expYear" class="text-black" name="expYear" required><br>
 
-        <label for="cvc">CVC</label>
-        <input type="text" id="cvc" name="cvc" required><br>
+        <label for="cvc" class="text-black">CVC</label>
+        <input type="text" id="cvc" class="text-black" name="cvc" required><br>
 
-        <button type="submit">Submit Payment</button>
+        <button type="submit" class="text-black">Submit Payment</button>
     </form>
                                         <div id="card-errors" role="alert"></div>
                                         <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-3">
@@ -520,7 +520,7 @@
                             }
                         
                             // Fetch client secret
-                            const response1 = await fetch('bsave/create-payment-intent', {
+                            const response1 = await fetch('/process-payment', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             });
@@ -557,7 +557,7 @@
                             }
                         
                             // Send data to backend
-                            const response = await fetch("bsave/process_payment.php", {
+                            const response = await fetch("processPayment", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({

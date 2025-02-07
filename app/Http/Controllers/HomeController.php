@@ -96,16 +96,17 @@ class HomeController extends Controller
             'usage' => 'required',
         ]);
 
-        $message = "Phone: " . $request->countrycode . $request->phone . "\nMessage: " . $request->sms;
+        $message = [
+            'Phone' => $request->countrycode . $request->phone,
+            'Message' => $request->sms,
+        ];
+    
         
         // Generate QR Code and save to storage
-       $data = 'https://infiniteqrcode.com/';
-        
-
-        
+    //    $data = 'https://infiniteqrcode.com/sms';
+       
+     $projectCode = 'P' . time() . rand(100, 999);
     
-   
-    $projectCode = 'P' . time() . rand(100, 999);
     $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
     // Generate QR Code with Logo (Merge Logo)
@@ -138,9 +139,11 @@ class HomeController extends Controller
             'qrtable' => json_encode($message), // Store QR content
             'total_scans' => 0,
             'unique_scans' => 0,
-            'created_At' => now(),
+            
         ]);
-
+       
+    
+        $data = route('mysms', ['id' => $qrBasicInfo->id]);
         $qrCode = QrCode::format('svg')
         // Merge logo
         ->size(300)
@@ -181,6 +184,17 @@ class HomeController extends Controller
     {
         return view('signin');
     }
+
+    public function mysms($id)
+    {
+        $qrCode = QrBasicInfo::findOrFail($id);
+        // $userId = Auth::user()->id;
+        
+
+        return view('mysms', compact('qrCode'));
+    }
+
+    
    
 
     public function dashboard()

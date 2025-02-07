@@ -53,7 +53,7 @@ Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
 
 
 Route::post('/myqrcode', [HomeController::class, 'myqrcode'])->name('myqrcode');
-Route::get('/mysms', [HomeController::class, 'mysms'])->name('mysms');
+Route::get('/mysms/{id}', [HomeController::class, 'mysms'])->name('mysms');
 
 
 

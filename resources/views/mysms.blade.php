@@ -20,49 +20,57 @@
 <body class="flex justify-center items-center min-h-screen font-poppins bg-cover bg-center">
 <div class="flex justify-center items-center min-h-screen font-poppins bg-cover bg-center">
     
-        <section class="absolute w-full h-full top-0 left-0 z-0 overflow-hidden bg-[#ddd1ca]">
-            <div class="absolute bottom-[-100px] w-10 h-10 bg-gray-100 rounded-full opacity-50 animate-rise" style="left: 10%; animation-duration: 8s;"></div>
-            <div class="absolute bottom-[-100px] w-5 h-5 bg-gray-100 rounded-full opacity-50 animate-rise" style="left: 20%; animation-duration: 5s; animation-delay: 1s;"></div>
-        </section>
-        <div class="w-full p-4 absolute h-full text-white overflow-hidden flex justify-center items-center">
-            <div class="border w-full relative max-w-xl h-auto min-h-[400px] max-h-[400px] pt-3 mt-10 text-card-foreground shadow-sm bg-white rounded-3xl">
-                <div class="p-4">
-                    <div class="flex flex-col gap-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-neutral-600">To:</span>
-                            <span class="bg-[#e8e0d9] text-[#8b7b71] px-4 py-1 rounded-full text-sm">{{ $qrCodes->phone }}</span>
-                        </div>
-                        <hr class="bg-[#d3a58a]"/>
-                        <p class="text-neutral-800 text-base leading-relaxed">{{ $qrCodes->sms }}</p>
+    <!-- Background Animation -->
+    <section class="absolute w-full h-full top-0 left-0 z-0 overflow-hidden bg-[#ddd1ca]">
+        <div class="absolute bottom-[-100px] w-10 h-10 bg-gray-100 rounded-full opacity-50 animate-rise" style="left: 10%; animation-duration: 8s;"></div>
+        <div class="absolute bottom-[-100px] w-5 h-5 bg-gray-100 rounded-full opacity-50 animate-rise" style="left: 20%; animation-duration: 5s; animation-delay: 1s;"></div>
+    </section>
+
+    <!-- SMS Card -->
+    <div class="w-full p-4 absolute h-full text-white overflow-hidden flex justify-center items-center">
+        <div class="border w-full relative max-w-xl h-auto min-h-[400px] max-h-[400px] pt-3 mt-10 text-card-foreground shadow-sm bg-white rounded-3xl">
+            <div class="p-4">
+                <div class="flex flex-col gap-4">
+                    <!-- Phone Number -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-neutral-600">To:</span>
+                        <span class="bg-[#e8e0d9] text-[#8b7b71] px-4 py-1 rounded-full text-sm">{{ $qrCode->phone }}</span>
                     </div>
-                </div>
-                <div class="mt-4 flex justify-center bottom-4 absolute w-full px-4 text-center ">
-                    <button class="bg-[#d3a58a] w-full text-white text-center flex justify-center text-sm px-4 py-2 rounded-lg flex items-center">
-                        <a id="smsLink" href="#" target="_blank">SEND</a>
-                    </button>
+                    <hr class="bg-[#d3a58a]"/>
+                    <!-- Message Content -->
+                    <p class="text-neutral-800 text-base leading-relaxed">{{ $qrCode->sms }}</p>
                 </div>
             </div>
+
+            <!-- Send SMS Button -->
+            <div class="mt-4 flex justify-center bottom-4 absolute w-full px-4 text-center ">
+                <button id="sendSmsButton" class="bg-[#d3a58a] w-full text-white text-center flex justify-center text-sm px-4 py-2 rounded-lg">
+                    SEND
+                </button>
+            </div>
         </div>
-   
+    </div>
 </div>
 
+<!-- JavaScript for Sending SMS -->
 <script>
-
 document.getElementById("sendSmsButton").addEventListener("click", function() {
-    let phone = "{{ $qrCodes->phone }}";
-    let message = "{{ $qrCodes->sms }}";
+    let phone = "{{ $qrCode->phone }}";
+    let message = "{{ $qrCode->sms }}";
 
-    fetch('/send-sms', {
-        method: 'POST',
+    fetch("{{ route('send.sms') }}", { // Laravel route for sending SMS
+        method: "POST",
         headers: { 
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}" 
         },
         body: JSON.stringify({ phone: phone, sms: message })
     })
     .then(response => response.json())
-    .then(data => alert(data.success || data.error));
+    .then(data => alert(data.success || data.error))
+    .catch(error => console.error("Error:", error));
 });
-</script>       
+</script>
+    
 </body>
 </html>
