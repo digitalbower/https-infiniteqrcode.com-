@@ -373,7 +373,7 @@
 
                     <!-- Content -->
 
-                    <div style="background-image: url(./demoimg/ai-generated-nature-landscapes-background-free-photo.jpg)"
+                    <div style="background-image: url(./images//ai-generated-nature-landscapes-background-free-photo.jpg)"
                       class="w-full absolute  h-full px-4 text-white  rounded-lg shadow-lg overflow-hidden">
                       <!-- Profile Header -->
                   
