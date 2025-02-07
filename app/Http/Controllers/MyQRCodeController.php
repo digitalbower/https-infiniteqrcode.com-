@@ -2,13 +2,284 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Imageqr;
+use App\Models\MP3qr;
+use App\Models\Pdfqr;
+use App\Models\QrBasicInfo;
+use App\Models\Videoqr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class MyQRCodeController extends Controller
 {
+    public function createPdfQrcode(Request $request){
+    
+        $request->validate([
+            'pdfpath' => 'required|mimes:pdf',
+            'projectname' => 'required',
+            'startdate' => 'required|date',
+            'enddate' => 'required|date',
+            'usage' => 'required',
+            'folderinput'=>'required'
+        ]);
+        
+       
+        // Generate QR Code and save to storage
+        $data = 'https://infiniteqrcode.com/';
+ 
+        $projectCode = 'P' . time() . rand(100, 999);
+        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
+
+        // Generate QR Code with Logo (Merge Logo)
+
+        $qrCode = QrCode::format('svg')
+            //  Merge logo
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($data);
+
+        // Save QR Code to Storage
+        Storage::disk('public')->put($qrCodePath, $qrCode);
+
+        // Generate the full URL of the QR Code
+        $qrCodeUrl = asset('storage/' . $qrCodePath);
+
+        if ($request->file('pdfpath')) {
+            $file = $request->file('pdfpath');
+            $fileName = time() . '.' . $file->getClientOriginalExtension(); 
+            $filePath = $file->storeAs('pdfs', $fileName, 'public');
+        }
+         // Save in DB
+        $pdf =Pdfqr::create([
+            'code' => $projectCode,
+            'qrtype' => $request->qroption,
+            'pdfpath'=>$filePath,
+            'url'=>$qrCodeUrl ,
+            'qrimage'=>$qrCodePath,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+        ]);
+        $qrBasicInfo = QrBasicInfo::create([
+            'project_code' => $projectCode,
+            'project_name' => $request->projectname,
+            'folder_name' => $request->folderinput, 
+            'qrtype' => $request->qroption,
+            'start_date' => $request->startdate,
+            'end_date' => $request->enddate,
+            'usage_type' => $request->usage,
+            'remarks' => $request->remarks,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+            'qrtable' => 'pdfqr', 
+            'total_scans' => 0,
+            'unique_scans' => 0,
+            'created_At' => now(),
+        ]);
+
+        return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
+    }
+    public function createMp3Qrcode(Request $request){
+    
+        $request->validate([
+            'qrtext' => 'required',
+            'mp3path' => 'required|file|mimes:mp3',
+            'projectname' => 'required',
+            'startdate' => 'required|date',
+            'enddate' => 'required|date',
+            'usage' => 'required',
+            'folderinput'=>'required'
+        ]);
+        
+       
+        // Generate QR Code and save to storage
+        $data = 'https://infiniteqrcode.com/';
+ 
+        $projectCode = 'P' . time() . rand(100, 999);
+        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
+
+        // Generate QR Code with Logo (Merge Logo)
+
+        $qrCode = QrCode::format('svg')
+            //  Merge logo
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($data);
+
+        // Save QR Code to Storage
+        Storage::disk('public')->put($qrCodePath, $qrCode);
+
+        // Generate the full URL of the QR Code
+        $qrCodeUrl = asset('storage/' . $qrCodePath);
+
+        // Store the file
+        if ($request->hasFile('mp3path')) {
+            $file = $request->file('mp3path');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('mp3s', $fileName, 'public');
+
+        }
+         // Save in DB
+        $pdf =MP3qr::create([
+            'code' => $projectCode,
+            'qrtype' => $request->qroption,
+            'qrtext' => $request->qrtext,
+            'mp3path'=>$filePath,
+            'url'=>$qrCodeUrl,
+            'qrimage'=>$qrCodePath,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+        ]);
+        $qrBasicInfo = QrBasicInfo::create([
+            'project_code' => $projectCode,
+            'url'=>$qrCodeUrl,
+            'project_name' => $request->projectname,
+            'folder_name' => $request->folderinput, 
+            'qrtype' => $request->qroption, 
+            'start_date' => $request->startdate,
+            'end_date' => $request->enddate,
+            'usage_type' => $request->usage,
+            'remarks' => $request->remarks,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+            'qrtable' => 'mp3qr', 
+            'total_scans' => 0,
+            'unique_scans' => 0,
+            'created_At' => now(),
+        ]);
+
+        return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
+    }
+    public function createImageQrcode(Request $request){
+    
+        $request->validate([
+            'imagepath' => 'required|file|mimes:jpeg,png,jpg',
+            'projectname' => 'required',
+            'startdate' => 'required|date',
+            'enddate' => 'required|date',
+            'usage' => 'required',
+            'folderinput'=>'required'
+        ]);
+        
+       
+        // Generate QR Code and save to storage
+        $data = 'https://infiniteqrcode.com/';
+ 
+        $projectCode = 'P' . time() . rand(100, 999);
+        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
+
+        // Generate QR Code with Logo (Merge Logo)
+
+        $qrCode = QrCode::format('svg')
+            //  Merge logo
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($data);
+
+        // Save QR Code to Storage
+        Storage::disk('public')->put($qrCodePath, $qrCode);
+
+        // Generate the full URL of the QR Code
+        $qrCodeUrl = asset('storage/' . $qrCodePath);
+
+        // Store the file
+        if ($request->hasFile('imagepath')) {
+            $file = $request->file('imagepath');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('images', $fileName, 'public');
+
+        }
+         // Save in DB
+        $img =Imageqr::create([
+            'code' => $projectCode,
+            'qrtype' => $request->qroption,
+            'imagepath'=>$filePath,
+            'url'=>$qrCodeUrl ,
+            'qrimage'=>$qrCodePath,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+        ]);
+        $qrBasicInfo = QrBasicInfo::create([
+            'project_code' => $projectCode,
+            'project_name' => $request->projectname,
+            'folder_name' => $request->folderinput, 
+            'qrtype' => $request->qroption, 
+            'start_date' => $request->startdate,
+            'end_date' => $request->enddate,
+            'usage_type' => $request->usage,
+            'remarks' => $request->remarks,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+            'qrtable' => 'imageqr', 
+            'total_scans' => 0,
+            'unique_scans' => 0,
+            'created_At' => now(),
+        ]);
+
+        return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
+    }
+    public function createVideoQrcode(Request $request){
+    
+        $request->validate([
+            'videopath' => 'required|file|mimes:mp4,mov',
+            'projectname' => 'required',
+            'startdate' => 'required|date',
+            'enddate' => 'required|date',
+            'usage' => 'required',
+            'folderinput'=>'required'
+        ]);
+        
+       
+        // Generate QR Code and save to storage
+        $data = 'https://infiniteqrcode.com/';
+ 
+        $projectCode = 'P' . time() . rand(100, 999);
+        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
+
+        // Generate QR Code with Logo (Merge Logo)
+
+        $qrCode = QrCode::format('svg')
+            //  Merge logo
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($data);
+
+        // Save QR Code to Storage
+        Storage::disk('public')->put($qrCodePath, $qrCode);
+
+        // Generate the full URL of the QR Code
+        $qrCodeUrl = asset('storage/' . $qrCodePath);
+
+        // Store the file
+        if ($request->hasFile('videopath')) {
+            $file = $request->file('videopath');
+            $fileName = time() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('videos', $fileName, 'public');
+
+        }
+         // Save in DB
+        $video =Videoqr::create([
+            'code' => $projectCode,
+            'qrtype' => $request->qroption,
+            'videopath'=>$filePath,
+            'url'=>$qrCodeUrl ,
+            'qrimage'=>$qrCodePath,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+        ]);
+        $qrBasicInfo = QrBasicInfo::create([
+            'project_code' => $projectCode,
+            'project_name' => $request->projectname,
+            'folder_name' => $request->folderinput, 
+            'qrtype' => $request->qroption, 
+            'start_date' => $request->startdate,
+            'end_date' => $request->enddate,
+            'usage_type' => $request->usage,
+            'remarks' => $request->remarks,
+            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+            'qrtable' => 'videoqr', 
+            'total_scans' => 0,
+            'unique_scans' => 0,
+            'created_At' => now(),
+        ]);
+
+        return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
+    }
     public function myqrcodelist(Request $request)
     {
         $userId = Auth::user()->id; 

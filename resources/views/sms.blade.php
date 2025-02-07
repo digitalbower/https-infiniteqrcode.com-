@@ -237,7 +237,7 @@
                                 <input id="endDate" type="date"
                                   class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="enddate">
                                 @error('enddate')
-                                <small class="text-red-700 start_date">{{ $message }}</small>
+                                <small class="text-red-700 enddate">{{ $message }}</small>
                                 @enderror
                               </div>
                             </div>

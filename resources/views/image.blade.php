@@ -53,7 +53,9 @@
                 <h2
                   class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
               </div>
-              <form style="margin-bottom: 1rem;" enctype="multipart/form-data" id="saveForm">
+              <form style="margin-bottom: 1rem;" action="{{route('create-imageqr')}}" method="POST" enctype="multipart/form-data" id="saveForm">
+                @csrf
+                <input type="hidden" name="qroption" id="qroption">
                 <div
                   class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                   <div class="space-y-4">
@@ -74,7 +76,7 @@
                           <input
                             type="file"
                             id="image-upload"
-                            name="image-upload"
+                            name="imagepath"
                             accept=".jpg, .jpeg, .png, .gif"
                             style="opacity: 0; width: 100%; height: 100%; position: absolute; left: 0; top: 0; cursor: pointer;" />
                           <div
@@ -86,9 +88,11 @@
                           </div>
                            
                             <p id="fileName"></p>
+                            @error('imagepath')
+                            <small class="text-red-700 imgupload">{{ $message }}</small>
+                            @enderror
                           </div>
   
-                          <label class="imgupload"></label>
                         </div>
                       </div>
                     </div>
@@ -110,7 +114,9 @@
                           <div>
                             <input id="projectName" placeholder="Enter project name" name="projectname"
                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <label class="projectName"></label>
+                              @error('projectname')
+                                <small class="text-red-700 projectName">{{ $message }}</small>
+                              @enderror
                           </div>
                         </div>
                         <!-- Select Folder -->
@@ -138,7 +144,24 @@
                             <div
                               id="folderDropdown"
                               class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
-                              <ul id="folderList" class="divide-y divide-gray-200"></ul>
+                              @php
+                              $userId = auth()->user()->id; 
+  
+                              $folders = DB::table('qr_basic_info')
+                              ->selectRaw('folder_name as name, COUNT(*) AS count, DATE(created_At) AS date')
+                              ->where('userid', $userId)
+                              ->groupBy('folder_name', 'date')
+                              ->orderBy('created_At', 'asc')
+                              ->get();
+  
+                              @endphp
+                              <ul id="folderList" class="divide-y divide-gray-200">
+                                @foreach ($folders as $folder)
+                                <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100">
+                                  <span>{{$folder->name}}</span>
+                                </li>
+                                @endforeach
+                              </ul>
                               <div class="flex justify-center"> <button
                                 id="addFolderButton" type="button"
                                 class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
@@ -165,7 +188,9 @@
                             </div>
                           </div>
                           <input id="folderinput" placeholder="Folder Name" type="hidden" name="folderinput" readonly value="" class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                          <label class="folderinput"></label>
+                          @error('folderinput')
+                          <small class="text-red-700 folderinput">{{ $message }}</small>
+                          @enderror
                         </div>
                         <!-- Date Range -->
                         <div
@@ -176,7 +201,9 @@
                             <div>
                               <input id="startDate" min="" type="date"
                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="startdate">
-                              <label class="start"></label>
+                                @error('startdate')
+                                <small class="text-red-700 start">{{ $message }}</small>
+                                @enderror
                             </div>
                           </div>
                           <div class="flex-1">
@@ -184,7 +211,10 @@
                               class="block font-medium text-gray-800">End Date</label>
                             <input id="endDate" type="date"
                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="enddate">
-                          </div>
+                            @error('enddate')
+                            <small class="text-red-700 enddate">{{ $message }}</small>
+                            @enderror
+                            </div>
                         </div>
   
                         <!-- Usage -->
@@ -198,6 +228,9 @@
                             <option value="business">Business</option>
                             <option value="event">Event</option>
                           </select>
+                          @error('usage')
+                            <small class="text-red-700 usage">{{ $message }}</small>
+                          @enderror
                         </div>
   
                         <!-- Remarks -->
@@ -333,6 +366,7 @@
         </div>
       </main>
 
+      <script src="{{asset('js/create-folder.js')}}"></script>
 
 <script>
   const previewBtn = document.getElementById("preview-btn");
@@ -356,6 +390,19 @@
     previewContent.classList.add("hidden");
   });
 </script>
+<script>
+    function getQueryParam(param) {
+        var params = new URLSearchParams(window.location.search);
+        return params.get(param);
+    }
+  
+    $(document).ready(function() { 
+        var passedValue = getQueryParam('option'); 
+        if (passedValue !== null) {
+            $('#qroption').val(passedValue);
+        }
+    });
+  </script>
 @endsection 
                           
            
