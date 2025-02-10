@@ -46,33 +46,41 @@
                     <div class="col-span-8">
                         <div class="flex justify-start">
                             <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
-                        </div>
-                        <form autocomplete="on" class="space-y-4 text-black" id="saveVcard" onsubmit="return false"
-                            action="#" enctype="multipart/form-data">
+                        </div>                        
+                        <form class="space-y-4 text-black"  id="vcardqr_form" style="margin-bottom: 1rem;" enctype="multipart/form-data" action="{{ route('create-vcardqr') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="qroption" id="qroption">
                             <div class="lg:p-8 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                                 <div>
                                     <label class="block font-medium mb-1">Profile Picture:</label>
                                     <input type="file" placeholder="propicture" accept=".jpg, .jpeg, .png, .gif"
                                         class="border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                        name="propicture" id="propicture" required />
+                                        name="contactimg" id="propicture" />
                                 </div>
-                                <label for="" class="propicture text-red-600"></label>
+                                <small id="contactimg"></small>
+                                @error('contactimg')
+                                <small class="text-red-700 propicture">{{ $message }}</small>
+                                @enderror
                                 <div>
                                     <label class="block font-medium mb-1">Your Name:* </label>
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
                                             <input type="text" placeholder="First name" name="first_name"
                                                 id="first_name"
-                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" />
+                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" value="{{old('first_name')}}"/>
                                             <br>
-                                            <label for="" class="fname text-red-600"></label>
+                                            @error('first_name')
+                                            <small class="text-red-700 fname">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                         <div>
                                             <input type="text" placeholder="Last name" name="last_name"
                                                 id="lastname"
-                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" />
+                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" value="{{old('last_name')}}"/>
                                             <br>
-                                            <label for="" class="lname text-red-600"></label>
+                                            @error('last_name')
+                                            <small class="text-red-700 lname">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                         
                                     </div>
@@ -92,14 +100,18 @@
                                         <div>
                                             <input type="tel" placeholder="Mobile"
                                                 class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                                name="mobile" id="mobile" />
-                                            <label class="mobile  text-red-600"></label>
+                                                name="mobile" id="mobile"  value="{{old('mobile')}}" />
+                                            @error('mobile')
+                                                <small class="text-red-700 mobile">{{ $message }}</small>
+                                            @enderror   
                                         </div>
                                         <div>
                                             <input type="email" placeholder="your@email.com"
                                                 class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                                name="email" id="email" />
-                                            <label class="email  text-red-600"></label>
+                                                name="email" id="email" value="{{old('email')}}" />
+                                                @error('email')
+                                                <small class="text-red-700 email">{{ $message }}</small>
+                                            @enderror 
                                         </div>
                                     </div>
                                 </div>
@@ -108,22 +120,32 @@
                                     <label class="block font-medium mb-1">Company:*</label>
                                     <input type="text" placeholder="Company"
                                         class="border rounded-md p-2 focus:ring-2 mb-2 focus:ring-blue-500"
-                                        name="company" id="company" />
-
+                                        name="company" id="company" value="{{old('company')}}" />
+                                      
                                 </div>
+                                <small id="company_name"></small>
+                                @error('company')
+                                 <small class="text-red-700 company">{{ $message }}</small>
+                                @enderror 
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block font-medium mb-1">Street:</label>
                                         <input type="text" placeholder="Street"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="street" id="street" />
+                                            name="street" id="street" value="{{old('street')}}"/>
+                                        @error('street')
+                                            <small class="text-red-700 street">{{ $message }}</small>
+                                        @enderror 
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">Website:</label>
-                                        <input type="text" placeholder="Street"
+                                        <input type="text" placeholder="Website"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="Website" id="Website" />
+                                            name="website" id="Website" value="{{old('website')}}"/>
+                                        @error('website')
+                                            <small class="text-red-700 street">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
@@ -131,13 +153,19 @@
                                         <label class="block font-medium mb-1">City:</label>
                                         <input type="text" placeholder="City"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="city" id="city" />
+                                            name="city" id="city"  value="{{old('city')}}"/>
+                                        @error('city')
+                                            <small class="text-red-700 city">{{ $message }}</small>
+                                        @enderror 
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">ZIP:</label>
                                         <input type="text" placeholder="ZIP"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="zip" id="zip" />
+                                            name="zip" id="zip" value="{{old('zip')}}"/>
+                                        @error('zip')
+                                            <small class="text-red-700 zip">{{ $message }}</small>
+                                        @enderror 
                                     </div>
                                 </div>
 
@@ -146,13 +174,19 @@
                                         <label class="block font-medium mb-1">State:</label>
                                         <input type="text" placeholder="State"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="state" id="state" />
+                                            name="state" id="state" value="{{old('state')}}"/>
+                                        @error('state')
+                                            <small class="text-red-700 state">{{ $message }}</small>
+                                        @enderror 
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">Country:</label>
                                         <input type="text" placeholder="Country"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="country" id="country" />
+                                            name="country" id="country" value="{{old('country')}}"/>
+                                        @error('country')
+                                            <small class="text-red-700 country">{{ $message }}</small>
+                                        @enderror 
                                     </div>
                                 </div>
 
@@ -178,8 +212,10 @@
                                                 <div>
                                                     <input id="projectName" placeholder="Enter project name"
                                                         name="projectname"
-                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                    <label class="project text-red-700"></label>
+                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                                        @error('projectname')
+                                                        <small class="text-red-700 project">{{ $message }}</small>
+                                                        @enderror
                                                 </div>
                                             </div>
 
@@ -201,7 +237,26 @@
                                                     <!-- Dropdown List -->
                                                     <div id="folderDropdown"
                                                         class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
-                                                        <ul id="folderList" class="divide-y divide-gray-200"></ul>
+                                                        @php
+                                                        $userId = auth()->user()->id; 
+                            
+                                                        $folders = DB::table('qr_basic_info')
+                                                        ->selectRaw('folder_name as name')
+                                                        ->where('userid', $userId)
+                                                        ->groupBy('folder_name')
+                                                        ->get();
+                            
+                                                        @endphp
+                                                        <ul id="folderList" class="divide-y divide-gray-200">
+                                                          @foreach ($folders as $folder)
+                                                             @php
+                                                                $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                            @endphp
+                                                            <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
+                                                                <span>{{ $folder->name }}</span>
+                                                            </li>
+                                                          @endforeach
+                                                        </ul>   
                                                         <div class="flex justify-center"> <button id="addFolderButton"
                                                                 type="button"
                                                                 class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
@@ -220,7 +275,9 @@
                                                 <input id="folderinput" placeholder="Folder Name" type="hidden"
                                                     name="folderinput" readonly value=""
                                                     class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                                                <label class="folderinput"></label>
+                                                    @error('folderinput')
+                                                    <small class="text-red-700 folderinput">{{ $message }}</small>
+                                                    @enderror
                                             </div>
 
 
@@ -233,8 +290,10 @@
                                                         <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                                             type="date"
                                                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            name="startdate">
-                                                        <label class="start text-red-700"></label>
+                                                            name="startdate" value="{{old('startdate')}}">
+                                                            @error('startdate')
+                                                            <small class="text-red-700 start">{{ $message }}</small>
+                                                            @enderror
                                                     </div>
                                                 </div>
                                                 <div class="flex-1">
@@ -243,8 +302,10 @@
                                                     <div>
                                                         <input id="endDate" type="date"
                                                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            name="enddate">
-                                                        <label class="end text-red-700"></label>
+                                                            name="enddate"  value="{{old('enddate')}}">
+                                                            @error('enddate')
+                                                            <small class="text-red-700 end">{{ $message }}</small>
+                                                            @enderror
                                                     </div>
                                                 </div>
                                             </div>
@@ -255,10 +316,10 @@
                                                     class="block font-medium text-gray-800">Usage</label>
                                                 <select id="usage" name="usage"
                                                     class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                    <option value="Usage">Select Usage</option>
-                                                    <option value="personal">Personal</option>
-                                                    <option value="business">Business</option>
-                                                    <option value="event">Event</option>
+                                                    <option value="">Select Usage</option>
+                                                    <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
+                                                    <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
+                                                    <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
                                                 </select>
                                             </div>
 
@@ -267,7 +328,7 @@
                                                 <label for="remarks"
                                                     class="block font-medium text-gray-800">Remarks</label>
                                                 <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
                                             </div>
                                             <div class="flex justify-between mt-8">
                                                 <button type="button" onclick="location.href='QrOption.php'"
@@ -510,5 +571,175 @@
                 </div>
 
         </main>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+        <script src="{{asset('js/create-folder.js')}}"></script>
+        <script>
+        $(document).ready(function () {
+            var passedValue = getQueryParam('option'); 
+            if (passedValue !== null) {
+                $('#qroption').val(passedValue);
+            }
+            $.validator.addMethod("greaterThan", function (value, element, param) {
+                var startDate = $(param).val();
+                return this.optional(element) || new Date(value) > new Date(startDate);
+            }, "End date must be greater than start date");
+            $.validator.addMethod("imageType", function (value, element) {
+                return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
+            }, "Only JPG, JPEG, or PNG files are allowed.");
+            $("#vcardqr_form").validate({   
+                rules: {  
+                contactimg:{
+                    required: true,
+                    imageType: true
+                },
+                first_name:"required",
+                last_name:"required",
+                mobile:"required",
+                email:"required",
+                company:"required",
+                street:"required",
+                website:{
+                    required: true,
+                    url: true
+                },
+                city:"required",
+                zip:"required",
+                state:"required",
+                country:"required",
+                projectname:"required",
+                folderinput:"required",
+                startdate: {
+                    required: true,
+                    date: true
+                },
+                enddate: {
+                    required: true,
+                    date: true,
+                    greaterThan: "#startDate" // Custom validation rule
+                }
+                },  
+                messages: {  
+                contactimg: {
+                    required: "Please select an image",
+                    imageType: "Only JPG, JPEG, PNG, or GIF files are allowed."
+                },
+                first_name:"Enter First Name",
+                last_name:"Enter Last Name",
+                mobile:"Enter mobile",
+                email:"Enter email",
+                company:"Enter company",
+                street:"Enter street",
+                website:{
+                    required:"Enter website",
+                    url:"Enter a valid URL"
+                },
+                city:"Enter city",
+                zip:"Enter zip",
+                state:"Enter state",
+                country:"Enter country",
+                projectname:"Enter Project Name",
+                folderinput:"Choose the Folder Name",
+                startdate: {
+                    required: "Please enter a start date",
+                    date: "Enter a valid date"
+                },
+                enddate: {
+                    required: "Please enter an end date",
+                    date: "Enter a valid date",
+                    greaterThan: "End date must be later than start date"
+                }
+                },  
+                errorElement: "small",
+                errorClass: "text-red-500",
+                errorPlacement: function (error, element) {
+                if (element.attr("type") == "file") error.appendTo("#contactimg");
+                else if(element.attr("name") == "company") error.appendTo("#company_name")
+                    else error.insertAfter(element);
+                }
+            });
+            });
+            $("#propicture").change(function(e) {
+                e.preventDefault();
+                const fileInput = $("#propicture")[0]; // Or .get(0)
+                if (fileInput.files && fileInput.files[0]) {
+                const fileName = fileInput.files[0].name;
 
-<@endsection
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $("#propreview")
+                    .attr("src", e.target.result)
+                    .show(); // Display the image
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+
+                } else {
+                console.log("No file selected");
+                }
+             });
+             document.getElementById('propicture').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+
+                    // Create a modal or container for cropping
+                    const cropperContainer = document.getElementById('cropperContainer1');
+                    cropperContainer.classList.remove('hidden');
+                    document.getElementById('cropImage1').src = e.target.result;
+
+                    const cropper = new Cropper(document.getElementById('cropImage1'), {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                    });
+
+                    const saveButton = document.getElementById('saveButton1');
+                    //saveButton.innerText = 'Save Cropped Image';
+                    saveButton.onclick = function() {
+                        cropper.getCroppedCanvas().toBlob(function(blob) {
+                       
+                        
+                                // Create an object URL for the blob and update the image source
+                                const imageUrl = URL.createObjectURL(blob);
+                                document.getElementById('propreview').src = imageUrl;
+                            cropper.destroy();
+                            cropperContainer.remove();
+                        });
+                    };
+
+                    cropperContainer.appendChild(saveButton);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+            function syncFields() {
+                
+                // Sync values from source form to target form
+                document.getElementById('firstName').value = document.getElementById('first_name').value;
+                document.getElementById('lastName').value = document.getElementById('lastname').value;
+                document.getElementById('phone').value = document.getElementById('mobile').value;
+                document.getElementById('pemail').value = document.getElementById('email').value;
+                document.getElementById('pcompany').value = document.getElementById('company').value;
+                document.getElementById('paddress').value = document.getElementById('street').value;
+                document.getElementById('pwebsite').value = document.getElementById('Website').value;
+                document.getElementById('pcity').value = document.getElementById('city').value;
+                document.getElementById('pstate').value = document.getElementById('state').value;
+                document.getElementById('pzip').value = document.getElementById('zip').value;
+                document.getElementById('pcountry').value = document.getElementById('country').value;
+            }
+                    // Add event listeners to all inputs in the source form
+            const sourceInputs = document.querySelectorAll('#vcardqr_form input');
+            sourceInputs.forEach(input => {
+                input.addEventListener('input', syncFields);
+            });
+        });
+            function getQueryParam(param) {
+            var params = new URLSearchParams(window.location.search);
+            return params.get(param);
+
+            }
+        </script>
+@endsection

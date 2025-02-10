@@ -41,10 +41,20 @@ Route::get('/subscription', [SubscriptionController::class, 'subscription'])->na
 Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade'); //Upgrade
 
 //Create QR code 
+Route::post('create-emailqr',[MyQRCodeController::class, 'createEmailQrcode'])->name('create-emailqr');  
+Route::post('create-wifiqr',[MyQRCodeController::class, 'createWifiQrcode'])->name('create-wifiqr');  
+Route::post('create-bitcoinqr',[MyQRCodeController::class, 'createBitcoinQrcode'])->name('create-bitcoinqr');  
 Route::post('create-pdfqr',[MyQRCodeController::class, 'createPdfQrcode'])->name('create-pdfqr');  
 Route::post('create-mp3qr',[MyQRCodeController::class, 'createMp3Qrcode'])->name('create-mp3qr'); 
 Route::post('create-imageqr',[MyQRCodeController::class, 'createImageQrcode'])->name('create-imageqr'); 
 Route::post('create-videoqr',[MyQRCodeController::class, 'createVideoQrcode'])->name('create-videoqr'); 
+Route::post('create-appqr',[MyQRCodeController::class, 'createAppstoreQrcode'])->name('create-appqr'); 
+Route::post('create-urlqr',[MyQRCodeController::class, 'createUrlQrcode'])->name('create-urlqr'); 
+Route::post('create-vcardqr',[MyQRCodeController::class, 'createVcardQrcode'])->name('create-vcardqr'); 
+Route::post('create-socialqr',[MyQRCodeController::class, 'createSocialQrcode'])->name('create-socialqr'); 
+
+
+
 
 Route::get('/myqrcodelist', [MyQRCodeController::class, 'myqrcodelist'])->name('myqrcodelist'); //My OR Codes List 
 Route::post('/folder_details', [MyQRCodeController::class, 'folder_details'])->name('folder_details'); //Folders Details in My QR Code

@@ -46,7 +46,7 @@
                             <div class="flex justify-start">
                                 <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
                             </div>
-                            <form style="margin-bottom: 1rem;" action="{{route('create-mp3qr')}}" method="POST" enctype="multipart/form-data" id="saveForm">
+                            <form style="margin-bottom: 1rem;" action="{{route('create-mp3qr')}}" id="mp3qr_form" method="POST" enctype="multipart/form-data" id="saveForm">
                                 @csrf
                                 <input type="hidden" name="qroption" id="qroption">
                                 <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
@@ -61,7 +61,7 @@
                                                     Mp3 Name:</label>
                                                 <div>
                                                     <input type="text" id="qrtext" class="p-2"
-                                                        name="qrtext" placeholder="Enter text Mp3 Name"
+                                                        name="qrtext" placeholder="Enter text Mp3 Name" value="{{old('qrtext')}}"
                                                         style="width: 100%; border: 1px solid #ccc;  border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
                                                     @error('qrtext')
                                                     <small class="text-red-700 qrtext">{{ $message }}</small>
@@ -78,7 +78,7 @@
                                                     style="position: relative; width: auto;  overflow: hidden; cursor: pointer;">
                                                     
                                                     <input type="file" id="image-upload" name="mp3path"
-                                                        accept=".mp3"
+                                                        accept="audio/mp3"
                                                         style="opacity: 0; width: 100%; height: 100%; position: absolute; left: 0; top: 0; cursor: pointer;" />
                                                     <div class=" space-y-4">
                                                         <img src="{{asset('images/upload_4302134.png')}}" alt="Upload"
@@ -86,6 +86,7 @@
                                                         <p class="text-gray-500 text-sm" id="fileName">Upload your
                                                             MP3 file</p>
                                                     </div>
+                                                    <small id="mp3file"></small>
                                                     @error('mp3path')
                                                     <small class="text-red-700 imgupload">{{ $message }}</small>
                                                     @enderror
@@ -95,30 +96,32 @@
                                     </div>
                                 </div>
                                 <div class="flex mt-10 justify-start">
-                                    <h2 class="text-2xl font-medium mb-3 text-center text-white">Enter Basic
-                                        Information</h2>
+                                    <h2 class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information
+                                    </h2>
                                 </div>
+    
+    
                                 <div class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
-
+    
                                     <div class="space-y-4">
                                         <div class="mx-auto w-full lg:p-6 bg-white text-black">
-
+    
                                             <div class="space-y-4">
-
+    
                                                 <!-- QR Project Name -->
                                                 <div>
-                                                    <label for="projectName"
-                                                        class="block font-medium text-gray-800">QR Project Name</label>
+                                                    <label for="projectName" class="block font-medium text-gray-800">QR
+                                                        Project Name * </label>
                                                     <div>
                                                         <input id="projectName" placeholder="Enter project name"
                                                             name="projectname"
-                                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                        @error('projectname')
-                                                        <small class="text-red-700 projectName">{{ $message }}</small>
-                                                        @enderror
+                                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                                            @error('projectname')
+                                                            <small class="text-red-700 project">{{ $message }}</small>
+                                                            @enderror
                                                     </div>
                                                 </div>
-
+    
                                                 <!-- Select Folder -->
                                                 <div
                                                     class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -128,8 +131,8 @@
                                                             class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
                                                             <span id="selectedFolder">Select a folder</span>
                                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                                fill="none" viewBox="0 0 24 24"
-                                                                stroke="currentColor" stroke-width="2">
+                                                                fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                                stroke-width="2">
                                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                                     d="M19 9l-7 7-7-7" />
                                                             </svg>
@@ -141,52 +144,48 @@
                                                             $userId = auth()->user()->id; 
                                 
                                                             $folders = DB::table('qr_basic_info')
-                                                            ->selectRaw('folder_name as name, COUNT(*) AS count, DATE(created_At) AS date')
+                                                            ->selectRaw('folder_name as name')
                                                             ->where('userid', $userId)
-                                                            ->groupBy('folder_name', 'date')
-                                                            ->orderBy('created_At', 'asc')
+                                                            ->groupBy('folder_name')
                                                             ->get();
                                 
                                                             @endphp
                                                             <ul id="folderList" class="divide-y divide-gray-200">
                                                               @foreach ($folders as $folder)
-                                                              <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100">
-                                                                <span>{{$folder->name}}</span>
-                                                              </li>
+                                                                 @php
+                                                                    $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                                @endphp
+                                                                <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
+                                                                    <span>{{ $folder->name }}</span>
+                                                                </li>
                                                               @endforeach
-                                                            </ul>
-                                                            <div class="flex justify-center"> <button
-                                                                    id="addFolderButton" type="button"
+                                                            </ul>   
+                                                            <div class="flex justify-center"> <button id="addFolderButton"
+                                                                    type="button"
                                                                     class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
                                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                                         class="h-5 w-5 mr-1" fill="none"
                                                                         viewBox="0 0 24 24" stroke="currentColor"
                                                                         stroke-width="2">
                                                                         <path stroke-linecap="round"
-                                                                            stroke-linejoin="round"
-                                                                            d="M12 4v16m8-8H4" />
+                                                                            stroke-linejoin="round" d="M12 4v16m8-8H4" />
                                                                     </svg>
                                                                     Add New Folder
                                                                 </button>
-                                                                <!-- <button
-                                                                    id="FolderB" type="button"
-                                                                    class="w-full text-green-500  font-semibold py-2 hover:bg-green-100 p-2 flex items-center justify-center">
-                                                                        Create
-                                                                </button> -->
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <input id="folderinput" placeholder="Folder Name" type="hidden"
                                                         name="folderinput" readonly value=""
                                                         class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                                                    @error('folderinput')
-                                                    <small class="text-red-700 folderinput">{{ $message }}</small>
-                                                    @enderror
+                                                        @error('folderinput')
+                                                        <small class="text-red-700 folderinput">{{ $message }}</small>
+                                                        @enderror
                                                 </div>
-
+    
+    
                                                 <!-- Date Range -->
-                                                <div
-                                                    class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
+                                                <div class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
                                                     <div class="flex-1">
                                                         <label for="startDate"
                                                             class="block font-medium text-gray-800">Start Date</label>
@@ -194,65 +193,65 @@
                                                             <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                                                 type="date"
                                                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                                name="startdate">
-                                                            @error('startdate')
-                                                            <small class="text-red-700 start">{{ $message }}</small>
-                                                            @enderror
+                                                                name="startdate" value="{{old('startdate')}}">
+                                                                @error('startdate')
+                                                                <small class="text-red-700 start">{{ $message }}</small>
+                                                                @enderror
                                                         </div>
                                                     </div>
                                                     <div class="flex-1">
-                                                        <label for="endDate"
-                                                            class="block font-medium text-gray-800">End Date</label>
-                                                        <input id="endDate" type="date"
-                                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            name="enddate">
-                                                        @error('enddate')
-                                                        <small class="text-red-700 enddate">{{ $message }}</small>
-                                                        @enderror
+                                                        <label for="endDate" class="block font-medium text-gray-800">End
+                                                            Date</label>
+                                                        
+                                                            <input id="endDate" type="date"
+                                                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                name="enddate"  value="{{old('enddate')}}">
+                                                                @error('enddate')
+                                                                <small class="text-red-700 end">{{ $message }}</small>
+                                                                @enderror
+                                                        
                                                     </div>
                                                 </div>
-
+    
                                                 <!-- Usage -->
                                                 <div>
                                                     <label for="usage"
                                                         class="block font-medium text-gray-800">Usage</label>
                                                     <select id="usage" name="usage"
                                                         class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                        <option value="Usage">Select Usage</option>
-                                                        <option value="personal">Personal</option>
-                                                        <option value="business">Business</option>
-                                                        <option value="event">Event</option>
+                                                        <option value="">Select Usage</option>
+                                                        <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
+                                                        <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
+                                                        <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
                                                     </select>
-                                                    @error('usage')
-                                                        <small class="text-red-700 usage">{{ $message }}</small>
-                                                    @enderror
                                                 </div>
-
+    
                                                 <!-- Remarks -->
                                                 <div>
                                                     <label for="remarks"
                                                         class="block font-medium text-gray-800">Remarks</label>
                                                     <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
                                                 </div>
                                             </div>
-                                            <div class="flex w-full justify-between mt-8">
-                                                <button type="button" onclick="location.href='QrOption.php'"
-                                                    class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
-                                                <span id="message"
-                                                    class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
-                                                <div id="loadingIndicator"
-                                                    class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
-                                                    <div class="flex flex-col items-center">
-                                                        <div
-                                                            class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full">
+                                                <div class="flex justify-between mt-8">
+                                                    <button type="button" onclick="location.href='QrOption.php'"
+                                                        class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
+                                                    <span id="message"
+                                                        class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
+                                                    <div id="loadingIndicator"
+                                                        class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
+                                                        <div class="flex flex-col items-center">
+                                                            <div
+                                                                class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full">
+                                                            </div>
+                                                            <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
                                                         </div>
-                                                        <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
                                                     </div>
-                                                </div>
-                                                <button type="submit" id="nextBtn"
-                                                    class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate
-                                                    Qr Code</button>
+    
+                                                    <button type="submit" id="nextBtn"
+                                                        class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate
+                                                        Qr Code</button>
                                             </div>
                                         </div>
                                     </div>
@@ -418,16 +417,164 @@
   });
 </script>
 <script>
-    function getQueryParam(param) {
-        var params = new URLSearchParams(window.location.search);
-        return params.get(param);
+  $(document).ready(function () {
+    var passedValue = getQueryParam('option'); 
+    if (passedValue !== null) {
+        $('#qroption').val(passedValue);
     }
-  
-    $(document).ready(function() { 
-        var passedValue = getQueryParam('option'); 
-        if (passedValue !== null) {
-            $('#qroption').val(passedValue);
+    $.validator.addMethod("greaterThan", function (value, element, param) {
+        var startDate = $(param).val();
+        return this.optional(element) || new Date(value) > new Date(startDate);
+    }, "End date must be greater than start date");
+    $("#mp3qr_form").validate({   
+        rules: {  
+            qrtext: "required",
+            mp3path:"required",
+            projectname:"required",
+            folderinput:"required",
+            startdate: {
+                required: true,
+                date: true
+            },
+            enddate: {
+                required: true,
+                date: true,
+                greaterThan: "#startDate" // Custom validation rule
+            }
+          },  
+          messages: {  
+            qrtext: "Enter Mp3 Name",
+            mp3path:"Please upload an MP3 file.",
+            projectname:"Enter Project Name",
+            folderinput:"Choose the Folder Name",
+            startdate: {
+                required: "Please enter a start date",
+                date: "Enter a valid date"
+            },
+            enddate: {
+                required: "Please enter an end date",
+                date: "Enter a valid date",
+                greaterThan: "End date must be later than start date"
+            }
+        },  
+        errorElement: "small",
+        errorClass: "text-red-500",
+        errorPlacement: function (error, element) {
+        if (element.attr("type") == "file") error.appendTo("#mp3file");
+          else error.insertAfter(element);
         }
     });
+    });
+    function getQueryParam(param) {
+      var params = new URLSearchParams(window.location.search);
+      return params.get(param);
+
+    }
+  </script>
+  <script>
+    $(document).ready(function() {
+      const audioPlayer = $('#audio-player')[0];
+      const currentTimeEl = $('#currentTime');
+      const durationEl = $('#duration');
+      const timeDisplay = $('#timeDisplay');
+
+      $("#qrtext").on('change', function(e) {
+        e.preventDefault();
+        $(".qrtext1").text($(this).val());
+
+      });
+      // Handle file upload
+      $('#image-upload').on('change', function(event) {
+        const file = event.target.files[0]; // Get the selected file
+        if (file) {
+          const fileURL = URL.createObjectURL(file); // Generate a URL for the file
+          $('#audioSource').attr('src', fileURL); // Set the source for the audio player
+          $('#audio-player').removeClass('hidden')[0].load(); // Show and reload the audio player
+          // $('#audioPlayer')[0].play(); // Play the audio
+          timeDisplay.removeClass('hidden'); // Show the timer display
+          const fileName = file.name;
+          $("#fileName").text(fileName);
+          $(".filename").text(fileName);
+          // When the file metadata is loaded, display the duration
+          audioPlayer.onloadedmetadata = function() {
+            durationEl.text(formatTime(audioPlayer.duration));
+          };
+        } else {
+          alert('Please upload a valid MP3 file.');
+        }
+      });
+
+      // Update current time as the audio plays
+      audioPlayer.ontimeupdate = function() {
+        currentTimeEl.text(formatTime(audioPlayer.currentTime));
+      };
+
+      // Format time in mm:ss
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }
+    });
+  </script>
+  <script>
+    // Get references to the elements
+    const audioPlayButton = document.getElementById('audio-play-button');
+    const audioPauseButton = document.getElementById('audio-pause-button');
+    const audioResetButton = document.getElementById('audio-reset-button');
+    const audioPlayer = document.getElementById('audio-player');
+    const audioContainer = document.getElementById('audio-container');
+    const progressBar = document.getElementById('progress-bar');
+    const currentTimeElement = document.getElementById('current-time');
+    const durationElement = document.getElementById('duration');
+
+    // Play audio
+    audioPlayButton.addEventListener('click', () => {
+      audioContainer.classList.remove('hidden');
+      audioPlayer.play();
+    });
+
+    // Pause audio
+    audioPauseButton.addEventListener('click', () => {
+      audioPlayer.pause();
+    });
+
+    // Reset audio
+    audioResetButton.addEventListener('click', () => {
+      audioPlayer.pause();
+      audioPlayer.currentTime = 0;
+      progressBar.value = 0;
+      updateCurrentTime();
+    });
+
+    // Update progress bar as audio plays
+    audioPlayer.addEventListener('timeupdate', () => {
+      const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+      progressBar.value = progress;
+      updateCurrentTime();
+    });
+
+    // Update duration once audio metadata is loaded
+    audioPlayer.addEventListener('loadedmetadata', () => {
+      durationElement.textContent = formatTime(audioPlayer.duration);
+    });
+
+    // Seek audio when progress bar is changed
+    progressBar.addEventListener('input', () => {
+      const seekTime = (progressBar.value / 100) * audioPlayer.duration;
+      audioPlayer.currentTime = seekTime;
+    });
+
+    // Helper to format time in MM:SS
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Update current time display
+    function updateCurrentTime() {
+      currentTimeElement.textContent = formatTime(audioPlayer.currentTime);
+    }
   </script>
 @endsection

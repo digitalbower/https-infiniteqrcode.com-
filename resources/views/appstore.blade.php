@@ -55,7 +55,9 @@
         <div class="flex justify-start">
           <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
         </div>
-        <form class="space-y-4 text-black" id="saveForm" onsubmit="return false" action="#">
+        <form class="space-y-4 text-black"  id="appqr_form" style="margin-bottom: 1rem;" action="{{ route('create-appqr') }}" method="POST">
+          @csrf
+          <input type="hidden" name="qroption" id="qroption">
           <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
             <div class="space-y-4">
               <div class="mx-auto  lg:p-6 bg-white text-black">
@@ -64,159 +66,201 @@
                   <div class="relative mb-4">
                     <label for="url" class="font-medium text-gray-700 mb-1 block">App Store
                       URL:</label>
-                    <input type="hidden" name="qroption" id="qroption" class="text-gray-600"
-                      value="Static">
-                    <input type="hidden" name="qrcode" id="qrcode" class="text-gray-600"
-                      value="ZW5BZM">
-                    <input type="hidden" name="url" id="url" class="text-gray-600" value="https://infiniteqrcode.com/redirects/appstore?id=ZW5BZM">
-                    <input type="text" id="apkurl" name="apkurl" placeholder="Enter your app URL"
+                    <input type="text" id="apkurl" name="appurl" placeholder="Enter your app URL" value="{{old('appurl')}}"
                       class="w-full border border-gray-300 rounded-md p-2 mb-2 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
-                    <label class="url"></label>
+                    @error('appurl')
+                    <small class="text-red-700 url">{{ $message }}</small>
+                    @enderror
                   </div>
                   <div class="relative mb-4">
                     <label for="url" class="font-medium text-gray-700 mb-1 block">Play Store URL:</label>
-                    <input type="text" id="playurl" name="playurl" placeholder="Enter your play store URL"
+                    <input type="text" id="playurl" name="playstoreurl" placeholder="Enter your play store URL" value="{{old('playstoreurl')}}"
                       class="w-full border border-gray-300 rounded-md p-2 mb-2 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
-                    <label class="playurl"></label>
+                    
+                    @error('playurl')
+                    <small class="text-red-700 playurl">{{ $message }}</small>
+                    @enderror
                   </div>
                   <div class="relative mb-4">
                     <label for="url" class="font-medium text-gray-700 mb-1 block">Windows Web Store
                       URL:</label>
 
-                    <input type="text" id="weburl" name="weburl" placeholder="Enter your play store URL"
+                    <input type="text" id="weburl" name="windowsurl" placeholder="Enter your play store URL" value="{{old('windowsurl')}}"
                       class="w-full border border-gray-300 rounded-md p-1 mb-1 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
-                    <label class="weburl"></label>
+                    @error('windowsurl')
+                    <small class="text-red-700 weburl">{{ $message }}</small>
+                    @enderror
 
                   </div>
                   <div class="relative mb-4">
                     <label for="url" class="font-medium text-gray-700 mb-2 block">Huawei AppGallery
                       URL:</label>
-                    <input type="text" id="hueiurl" name="hueiurl" placeholder="Enter your play store URL"
+                    <input type="text" id="hueiurl" name="Huawei" placeholder="Enter your play store URL" value="{{old('Huawei')}}"
                       class="w-full border border-gray-300 rounded-md p-1 mb-1 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
-                    <label class="hueiurl"></label>
+                    @error('Huawei')
+                    <small class="text-red-700 hueiurl">{{ $message }}</small>
+                    @enderror
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="flex mt-10 justify-start">
-            <h2 class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information</h2>
-          </div>
-          <div class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
-         
-                <div class="space-y-4">
-                  <div class="mx-auto w-full lg:p-6 bg-white text-black">
+            <h2 class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information
+            </h2>
+        </div>
+
+
+        <div class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
+
+            <div class="space-y-4">
+                <div class="mx-auto w-full lg:p-6 bg-white text-black">
+
                     <div class="space-y-4">
-                      <!-- QR Project Name -->
-                      <div>
-                        <label for="projectName" class="block font-medium text-gray-800">QR Project Name * </label>
+
+                        <!-- QR Project Name -->
                         <div>
-                          <input id="projectName" placeholder="Enter project name" name="projectname"
-                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                          <label class="projectName text-red-700"></label>
-                        </div>
-                      </div>
-                      <!-- Select Folder -->
-                      <div
-                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <!-- Folder Dropdown -->
-                        <div class="relative">
-                          <button type="button" id="folderDropdownButton"
-                            class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
-                            <span id="selectedFolder">Select a folder</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                              stroke="currentColor" stroke-width="2">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </button>
-                          <!-- Dropdown List -->
-                          <div id="folderDropdown"
-                            class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
-                            <ul id="folderList" class="divide-y divide-gray-200"></ul>
-<div class="flex justify-center"> <button
-                          id="addFolderButton" type="button"
-                          class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 mr-1"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2">
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M12 4v16m8-8H4" />
-                          </svg>
-                          Add New Folder
-                        </button>
-                        <!-- <button
-                            id="FolderB" type="button"
-                            class="w-full text-green-500  font-semibold py-2 hover:bg-green-100 p-2 flex items-center justify-center">
-                                Create 
-                          </button> -->
-                        </div>
-                          </div>
-                        </div>
-                        <input id="folderinput" placeholder="Folder Name" type="hidden" name="folderinput" readonly
-                          value=""
-                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                        <label class="folderinput"></label>
-                      </div>
-                      <!-- Date Range -->
-                      <div class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
-                        <div class="flex-1">
-                          <label for="startDate" class="block font-medium text-gray-800">Start Date</label>
-                          <div>
-                            <input id="startDate" min="2025-02-05" type="date"
-                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              name="startdate">
-                            <label class="start text-red-700"></label>
-                          </div>
-                        </div>
-                        <div class="flex-1">
-                          <label for="endDate" class="block font-medium text-gray-800">End Date</label>
-                          <div>
-                            <input id="endDate" type="date"
-                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                              name="enddate">
-                            <label class="end text-red-700"></label>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Usage -->
-                      <div>
-                        <label for="usage" class="block font-medium text-gray-800">Usage</label>
-                        <select id="usage" name="usage"
-                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                          <option value="Usage">Select Usage</option>
-                          <option value="personal">Personal</option>
-                          <option value="business">Business</option>
-                          <option value="event">Event</option>
-                        </select>
-                      </div>
-                      <!-- Remarks -->
-                      <div>
-                        <label for="remarks" class="block font-medium text-gray-800">Remarks</label>
-                        <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                      </div>
-                      <div class="flex justify-between mt-8">
-                        <button type="button" onclick="location.href='QrOption.php'"
-                          class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
-                        <span id="message"
-                          class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
-                        <div id="loadingIndicator"
-                          class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
-                          <div class="flex flex-col items-center">
-                            <div
-                              class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full">
+                            <label for="projectName" class="block font-medium text-gray-800">QR
+                                Project Name * </label>
+                            <div>
+                                <input id="projectName" placeholder="Enter project name"
+                                    name="projectname"
+                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                    @error('projectname')
+                                    <small class="text-red-700 project">{{ $message }}</small>
+                                    @enderror
                             </div>
-                            <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
-                          </div>
                         </div>
-                        <button type="submit" id="nextBtn"
-                          class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate Qr Code</button>
+
+                        <!-- Select Folder -->
+                        <div
+                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <!-- Folder Dropdown -->
+                            <div class="relative">
+                                <button type="button" id="folderDropdownButton"
+                                    class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
+                                    <span id="selectedFolder">Select a folder</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                <!-- Dropdown List -->
+                                <div id="folderDropdown"
+                                    class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
+                                    @php
+                                    $userId = auth()->user()->id; 
+        
+                                    $folders = DB::table('qr_basic_info')
+                                    ->selectRaw('folder_name as name')
+                                    ->where('userid', $userId)
+                                    ->groupBy('folder_name')
+                                    ->get();
+        
+                                    @endphp
+                                    <ul id="folderList" class="divide-y divide-gray-200">
+                                      @foreach ($folders as $folder)
+                                         @php
+                                            $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                        @endphp
+                                        <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
+                                            <span>{{ $folder->name }}</span>
+                                        </li>
+                                      @endforeach
+                                    </ul>   
+                                    <div class="flex justify-center"> <button id="addFolderButton"
+                                            type="button"
+                                            class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="h-5 w-5 mr-1" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor"
+                                                stroke-width="2">
+                                                <path stroke-linecap="round"
+                                                    stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                            Add New Folder
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <input id="folderinput" placeholder="Folder Name" type="hidden"
+                                name="folderinput" readonly value=""
+                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                @error('folderinput')
+                                <small class="text-red-700 folderinput">{{ $message }}</small>
+                                @enderror
+                        </div>
+
+
+                        <!-- Date Range -->
+                        <div class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
+                            <div class="flex-1">
+                                <label for="startDate"
+                                    class="block font-medium text-gray-800">Start Date</label>
+                                <div>
+                                    <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
+                                        type="date"
+                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        name="startdate" value="{{old('startdate')}}">
+                                        @error('startdate')
+                                        <small class="text-red-700 start">{{ $message }}</small>
+                                        @enderror
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <label for="endDate" class="block font-medium text-gray-800">End
+                                    Date</label>
+                                <div>
+                                    <input id="endDate" type="date"
+                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                        name="enddate"  value="{{old('enddate')}}">
+                                        @error('enddate')
+                                        <small class="text-red-700 end">{{ $message }}</small>
+                                        @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Usage -->
+                        <div>
+                            <label for="usage"
+                                class="block font-medium text-gray-800">Usage</label>
+                            <select id="usage" name="usage"
+                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Select Usage</option>
+                                <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
+                                <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
+                                <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                            </select>
+                        </div>
+
+                        <!-- Remarks -->
+                        <div>
+                            <label for="remarks"
+                                class="block font-medium text-gray-800">Remarks</label>
+                            <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
+                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                        </div>
+                        <div class="flex justify-between mt-8">
+                            <button type="button" onclick="location.href='QrOption.php'"
+                                class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
+                            <span id="message"
+                                class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
+                            <div id="loadingIndicator"
+                                class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
+                                <div class="flex flex-col items-center">
+                                    <div
+                                        class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full">
+                                    </div>
+                                    <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="nextBtn"
+                                class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate
+                                Qr Code</button>
                       </div>
                     </div>
                   </div>
@@ -378,43 +422,7 @@
 
 </main>
 
-</div>
-
-
-<script>
-const menuToggle = document.getElementById('menu-toggle');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-const closeSidebar = document.getElementById('close-sidebar');
-
-// Function to show sidebar and hide hamburger icon
-const showSidebar = () => {
-sidebar.classList.remove('-translate-x-full');  // Show the sidebar
-overlay.classList.remove('hidden');  // Show the overlay
-menuToggle.classList.add('hidden');  // Hide the hamburger menu icon
-};
-
-// Function to hide sidebar and show hamburger icon
-const hideSidebar = () => {
-sidebar.classList.add('-translate-x-full');  // Hide the sidebar
-overlay.classList.add('hidden');  // Hide the overlay
-menuToggle.classList.remove('hidden');  // Show the hamburger menu icon
-};
-
-// Show Sidebar when the menu toggle button is clicked
-menuToggle.addEventListener('click', showSidebar);
-
-// Close Sidebar when the close button is clicked
-closeSidebar.addEventListener('click', hideSidebar);
-
-// Close Sidebar when the overlay is clicked
-overlay.addEventListener('click', hideSidebar);
-</script>
-
-<script
-type="text/javascript"
-src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
-<script src={{asset('js/create-folder.js')}}"></script>
+<script src="{{asset('js/create-folder.js')}}"></script>
 <script>
 const previewBtn = document.getElementById("preview-btn");
 const detailBtn = document.getElementById("detail-btn");
@@ -438,225 +446,58 @@ detailBtn.addEventListener("click", () => {
 });
 </script>
 <script>
-$("#image-upload").change(function (e) {
-  e.preventDefault();
-  const fileInput = $("#image-upload")[0]; // Or .get(0)
-  if (fileInput.files && fileInput.files[0]) {
-    const fileName = fileInput.files[0].name;
-    console.log(fileName);
-    $("#fileName").text(fileName);
-  } else {
-    console.log("No file selected");
-  }
-});
-$(document).ready(function () {
-  var qrCode;
-  $("#nextBtn").on('click', async function (e) {
-    if (validateForm()) {
-      const blob = await qrCode.getRawData("png");
-      var formData = new FormData($("#saveForm")[0]);
-      formData.append("qrCodeBase64", blob, "qr-code.png");
-      $("#loadingIndicator").removeClass("hidden");
-      $.ajax({
-        type: "POST",
-        url: "qrbackend/storeapk.php",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (response) {
-          var data = JSON.parse(response);
-          if (data.success) {
-            setTimeout(() => {
-              location.href = 'my-qr-codes.php';
-            }, 2000);
-
-          } else {
-            $("#message").removeClass('hidden');
-            $("#message").text('Error: ' + data.error);
-            $("#message").addClass("text-red-700 bg-white-700");
-          }
-        },
-        complete: function (data) {
-          $("#loadingIndicator").addClass('hidden');
-        },
-        error: function (data) {
-
-          $("#loadingIndicator").addClass('hidden');
-        },
-      });
-    }
-  });
-  $("#url").change(function (e) {
-    e.preventDefault();
-    var apklink = $(this).val();
-
-    qrCode.update({
-      data: apklink,
-    });
-    qrPreview.innerHTML = "";
-    qrCode.append(qrPreview);
-  });
-
-  function generateQRCodeWithLogo() {
-    var canvas = document.getElementById("qr-preview");
-    var url = $("#url").val();
-    qrCode = new QRCodeStyling({
-      "type": "canvas",
-      "shape": "square",
-      "width": 280,
-      "height": 280,
-      "data": url,
-      "margin": 0,
-      "qrOptions": {
-        "typeNumber": "0",
-        "mode": "Byte",
-        "errorCorrectionLevel": "Q"
-      },
-      "imageOptions": {
-        "saveAsBlob": true,
-        "hideBackgroundDots": true,
-        "imageSize": 0.4,
-        "margin": 0
-      },
-      "dotsOptions": {
-        "type": "extra-rounded",
-        "color": "#6a1a4c",
-        "roundSize": true
-      },
-      "backgroundOptions": {
-        "round": 0,
-        "color": "#ffffff"
-      },
-      "dotsOptionsHelper": {
-        "colorType": {
-          "single": true,
-          "gradient": false
-        },
-        "gradient": {
-          "linear": true,
-          "radial": false,
-          "color1": "#6a1a4c",
-          "color2": "#6a1a4c",
-          "rotation": "0"
-        }
-      },
-      "cornersSquareOptions": {
-        "type": "extra-rounded",
-        "color": "#000000"
-      },
-      "cornersSquareOptionsHelper": {
-        "colorType": {
-          "single": true,
-          "gradient": false
-        },
-        "gradient": {
-          "linear": true,
-          "radial": false,
-          "color1": "#000000",
-          "color2": "#000000",
-          "rotation": "0"
-        }
-      },
-      "cornersDotOptions": {
-        "type": "",
-        "color": "#000000"
-      },
-      "cornersDotOptionsHelper": {
-        "colorType": {
-          "single": true,
-          "gradient": false
-        },
-        "gradient": {
-          "linear": true,
-          "radial": false,
-          "color1": "#000000",
-          "color2": "#000000",
-          "rotation": "0"
-        }
-      },
-      "backgroundOptionsHelper": {
-        "colorType": {
-          "single": true,
-          "gradient": false
-        },
-        "gradient": {
-          "linear": true,
-          "radial": false,
-          "color1": "#ffffff",
-          "color2": "#ffffff",
-          "rotation": "0"
-        }
+  $(document).ready(function () {
+      var passedValue = getQueryParam('option'); 
+      if (passedValue !== null) {
+          $('#qroption').val(passedValue);
       }
-
+      $.validator.addMethod("greaterThan", function (value, element, param) {
+          var startDate = $(param).val();
+          return this.optional(element) || new Date(value) > new Date(startDate);
+      }, "End date must be greater than start date");
+      $("#appqr_form").validate({   
+        rules: {  
+          appurl: "required",
+          playstoreurl: "required",  
+          windowsurl:"required",
+          Huawei:"required",
+          projectname:"required",
+          folderinput:"required",
+          startdate: {
+                required: true,
+                date: true
+            },
+            enddate: {
+                required: true,
+                date: true,
+                greaterThan: "#startDate" // Custom validation rule
+            }
+        },  
+        messages: {  
+          appurl: "Enter App Store URL",
+          playstoreurl: "Enter Play Store URL",  
+          windowsurl:"Enter Windows Web Store URL",
+          Huawei:"Enter Huawei AppGallery URL",
+          projectname:"Enter Project Name",
+          folderinput:"Choose the Folder Name",
+          startdate: {
+                required: "Please enter a start date",
+                date: "Enter a valid date"
+            },
+            enddate: {
+                required: "Please enter an end date",
+                date: "Enter a valid date",
+                greaterThan: "End date must be later than start date"
+            }
+        },  
+        errorElement: "small",
+        errorClass: "text-red-500",
+      });
     });
-    qrCode.append(canvas);
+    function getQueryParam(param) {
+      var params = new URLSearchParams(window.location.search);
+      return params.get(param);
 
-  }
-  generateQRCodeWithLogo();
-
-  function validateForm() {
-    let isValid = true;
-    // Get form elements
-    const apkupload = document.getElementById("apkurl").value.trim();
-    const hueiurl = document.getElementById("hueiurl").value.trim();
-    const playurl = document.getElementById("playurl").value.trim();
-    const weburl = document.getElementById("weburl").value.trim();
-
-    const qrtext = document.getElementById("url");
-    const projectName = document.getElementById("projectName");
-    const folderInput = document.getElementById("folderinput");
-    const startDate = document.getElementById("startDate");
-    const endDate = document.getElementById("endDate");
-    const fileInput = $("#apk-upload")[0]; // Access raw DOM element
-
-    /*  if (!apkupload.files || apkupload.files.length === 0) {
-       // Validation failed: No file selected
-       $(".apkupload").text("Please select a file before submitting.");
-       $(".apkupload").addClass("text-red-700 bg-white-700");
-       isValid = false;
-     } else {
-       $(".apkupload").text('');
-     } */
-
-    // Validate Project Name
-
-    if (apkupload != "" || hueiurl != "" || playurl != "" || weburl != "") {
-
-      $(".url").text('');
-    } else {
-      $(".url").text('Enter any one of  urls');
-      $(".url").addClass("text-red-700 bg-white-700");
-      isValid = false;
     }
-
-
-    if (projectName.value.trim() === "") {
-
-      $(".projectName").text('Enter the Project Name');
-      $(".projectName").addClass("text-red-700 bg-white-700");
-      isValid = false;
-    } else {
-      $(".projectName").text('');
-    }
-    if (folderInput.value.trim() === "") {
-
-      $(".folderinput").text('Choose The Folder ');
-      $(".folderinput").addClass("text-red-700 bg-white-700");
-      isValid = false;
-    } else {
-      $(".folderinput").text('');
-    }
-    if (endDate.value.trim() < startDate.value.trim()) {
-      $(".start").text('End Date cannot be lesser than Start Date');
-      $(".start").addClass("text-red-700 bg-white-700")
-    } else {
-      $(".start").text('');
-    }
-    return isValid;
-  }
-});
 </script>
-
-
-
 @endsection
