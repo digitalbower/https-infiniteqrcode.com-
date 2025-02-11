@@ -25,6 +25,7 @@ class AuthController extends Controller
         $user->password= Hash::make($request->password);
         $user->countrycode= $request->countrycode;
         $user->phonenumber= $request->phonenumber;
+        $user->plan = 'free';
         $user->save();
 
         Auth::login($user);

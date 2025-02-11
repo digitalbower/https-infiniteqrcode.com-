@@ -126,8 +126,6 @@ class HomeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/sms?id=". $projectCode; 
-
         // Save in DB
         $sms = Sms::create([
             'code' => $projectCode,
@@ -135,7 +133,7 @@ class HomeController extends Controller
             'qrsms' => $request->sms,
             'countrycode' => $request->countrycode,
             'phonenumber' => $request->phone,
-            'url'=>$url ,
+            'url'=>$qrCodeUrl  ,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              
@@ -149,7 +147,7 @@ class HomeController extends Controller
             'end_date' => $request->enddate,
             'usage_type' => $request->usage,
             'remarks' => $request->remarks,
-            'url'=>$url ,
+            'url'=>$qrCodeUrl  ,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
             'qrtable' => 'smsqr', // Store QR content
             'total_scans' => 0,

@@ -56,7 +56,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
  
-         $url = $data."redirects/email?id=". $projectCode; 
           // Save in DB
          Emailqr::create([
              'code' => $projectCode,
@@ -64,7 +63,7 @@ class MyQRCodeController extends Controller
              'email'=>$request->email,
              'subject'=>$request->subject,
              'message'=>$request->message,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'qrimage'=>$qrCodePath,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
          ]);
@@ -77,7 +76,7 @@ class MyQRCodeController extends Controller
              'end_date' => $request->enddate,
              'usage_type' => $request->usage,
              'remarks' => $request->remarks,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              'qrtable' => 'emailqr', 
              'total_scans' => 0,
@@ -119,7 +118,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
  
-         $url = $data."redirects/wifi?id=". $projectCode; 
           // Save in DB
          Wifiqr::create([
              'code' => $projectCode,
@@ -127,7 +125,7 @@ class MyQRCodeController extends Controller
              'ssid'=>$request->ssid,
              'password'=>$request->password,
              'enctype'=>$request->enctype,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'qrimage'=>$qrCodePath,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
          ]);
@@ -140,7 +138,7 @@ class MyQRCodeController extends Controller
              'end_date' => $request->enddate,
              'usage_type' => $request->usage,
              'remarks' => $request->remarks,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              'qrtable' => 'wifiqr', 
              'total_scans' => 0,
@@ -183,8 +181,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
  
-        $url = $data."redirects/bitcoin?id=". $projectCode; 
-
           // Save in DB
          Bitcoinqr::create([
              'code' => $projectCode,
@@ -193,7 +189,7 @@ class MyQRCodeController extends Controller
              'quantity'=>$request->quantity,
              'btcaddr'=>$request->btcaddr,
              'btcnetwrk'=>$request->btcnetwrk,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'qrimage'=>$qrCodePath,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
          ]);
@@ -206,7 +202,7 @@ class MyQRCodeController extends Controller
              'end_date' => $request->enddate,
              'usage_type' => $request->usage,
              'remarks' => $request->remarks,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              'qrtable' => 'btcqr', 
              'total_scans' => 0,
@@ -227,7 +223,6 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
         
-       
         // Generate QR Code and save to storage
         $data = 'https://infiniteqrcode.com/';
  
@@ -248,8 +243,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/pdf?id=". $projectCode; 
-
         if ($request->file('pdfpath')) {
             $file = $request->file('pdfpath');
             $fileName = time() . '.' . $file->getClientOriginalExtension(); 
@@ -260,7 +253,7 @@ class MyQRCodeController extends Controller
             'code' => $projectCode,
             'qrtype' => $request->qroption,
             'pdfpath'=>$filePath,
-            'url'=>$url ,
+            'url'=>$qrCodeUrl ,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
         ]);
@@ -273,7 +266,7 @@ class MyQRCodeController extends Controller
             'end_date' => $request->enddate,
             'usage_type' => $request->usage,
             'remarks' => $request->remarks,
-            'url'=>$url ,
+            'url'=>$qrCodeUrl ,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
             'qrtable' => 'pdfqr', 
             'total_scans' => 0,
@@ -316,8 +309,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/mp3?id=". $projectCode; 
-
         // Store the file
         if ($request->hasFile('mp3path')) {
             $file = $request->file('mp3path');
@@ -331,7 +322,7 @@ class MyQRCodeController extends Controller
             'qrtype' => $request->qroption,
             'qrtext' => $request->qrtext,
             'mp3path'=>$filePath,
-            'url'=>$url,
+            'url'=>$qrCodeUrl,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
         ]);
@@ -345,7 +336,7 @@ class MyQRCodeController extends Controller
             'end_date' => $request->enddate,
             'usage_type' => $request->usage,
             'remarks' => $request->remarks,
-            'url'=>$url,
+            'url'=>$qrCodeUrl,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
             'qrtable' => 'mp3qr', 
             'total_scans' => 0,
@@ -387,8 +378,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/image?id=". $projectCode; 
-
         // Store the file
         if ($request->hasFile('imagepath')) {
             $file = $request->file('imagepath');
@@ -401,7 +390,7 @@ class MyQRCodeController extends Controller
             'code' => $projectCode,
             'qrtype' => $request->qroption,
             'imagepath'=>$filePath,
-            'url'=>$url ,
+            'url'=>$qrCodeUrl ,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
         ]);
@@ -414,7 +403,7 @@ class MyQRCodeController extends Controller
             'end_date' => $request->enddate,
             'usage_type' => $request->usage,
             'remarks' => $request->remarks,
-            'url'=>$url,
+            'url'=>$qrCodeUrl,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
             'qrtable' => 'imageqr', 
             'total_scans' => 0,
@@ -456,8 +445,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/video?id=". $projectCode; 
-
         // Store the file
         if ($request->hasFile('videopath')) {
             $file = $request->file('videopath');
@@ -470,7 +457,7 @@ class MyQRCodeController extends Controller
             'code' => $projectCode,
             'qrtype' => $request->qroption,
             'videopath'=>$filePath,
-            'url'=>$url ,
+            'url'=>$qrCodeUrl ,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
         ]);
@@ -483,7 +470,7 @@ class MyQRCodeController extends Controller
             'end_date' => $request->enddate,
             'usage_type' => $request->usage,
             'remarks' => $request->remarks,
-            'url'=>$url,
+            'url'=>$qrCodeUrl,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
             'qrtable' => 'videoqr', 
             'total_scans' => 0,
@@ -525,8 +512,6 @@ class MyQRCodeController extends Controller
  
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
-
-         $url = $data."redirects/app?id=". $projectCode; 
  
           // Save in DB
           Appstoreqr::create([
@@ -536,7 +521,7 @@ class MyQRCodeController extends Controller
              'playstoreurl'=>$request->playstoreurl,
              'windowsurl'=>$request->windowsurl,
              'Huawei'=>$request->Huawei,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'qrimage'=>$qrCodePath,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
          ]);
@@ -549,7 +534,7 @@ class MyQRCodeController extends Controller
              'end_date' => $request->enddate,
              'usage_type' => $request->usage,
              'remarks' => $request->remarks,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              'qrtable' => 'apkqr', 
              'total_scans' => 0,
@@ -588,15 +573,13 @@ class MyQRCodeController extends Controller
  
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
-
-         $url = $data."redirects/url?id=". $projectCode; 
  
           // Save in DB
           Urlqr::create([
              'code' => $projectCode,
              'qrtype' => $request->qroption,
              'qrurl'=>$request->qrurl,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'qrimage'=>$qrCodePath,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
          ]);
@@ -609,7 +592,7 @@ class MyQRCodeController extends Controller
              'end_date' => $request->enddate,
              'usage_type' => $request->usage,
              'remarks' => $request->remarks,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              'qrtable' => 'urlcode', 
              'total_scans' => 0,
@@ -660,8 +643,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-         $url = $data."redirects/vcard?id=". $projectCode; 
-
          if ($request->hasFile('contactimg')) {
             $file = $request->file('contactimg');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
@@ -685,7 +666,7 @@ class MyQRCodeController extends Controller
             'zip'=> $request->zip,
             'state'=> $request->state,
             'country'=> $request->country,
-            'url'=>$url,
+            'url'=>$qrCodeUrl,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
          ]);
@@ -698,7 +679,7 @@ class MyQRCodeController extends Controller
              'end_date' => $request->enddate,
              'usage_type' => $request->usage,
              'remarks' => $request->remarks,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              'qrtable' => 'vcard', 
              'total_scans' => 0,
@@ -754,8 +735,6 @@ class MyQRCodeController extends Controller
  
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
-
-         $url = $data."redirects/social?id=". $projectCode; 
  
           // Save in DB
           SocialMediaqr::create([
@@ -779,7 +758,7 @@ class MyQRCodeController extends Controller
             'teltext'=> $request->teltext,
             'snpurl'=> $request->snpurl,
             'snptext'=> $request->snptext,
-            'url'=>$url,
+            'url'=>$qrCodeUrl,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
          ]);
@@ -792,7 +771,7 @@ class MyQRCodeController extends Controller
              'end_date' => $request->enddate,
              'usage_type' => $request->usage,
              'remarks' => $request->remarks,
-             'url'=>$url,
+             'url'=>$qrCodeUrl,
              'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              'qrtable' => 'socmedqr', 
              'total_scans' => 0,
@@ -840,7 +819,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
  
-         $url = $data."redirects/email?id=". $projectCode; 
           // Save in DB
         $email = Emailqr::where('code',$code)->first();
         $email->code= $projectCode;
@@ -848,7 +826,7 @@ class MyQRCodeController extends Controller
         $email->email=$request->email;
         $email->subject=$request->subject;
         $email->message=$request->message;
-        $email->url=$url;
+        $email->url=$qrCodeUrl;
         $email->qrimage=$qrCodePath;
         $email->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $email->save();
@@ -862,7 +840,7 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$url;
+        $qrBasicInfo->url=$qrCodeUrl;
         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $qrBasicInfo->qrtable= 'emailqr'; 
         $qrBasicInfo->total_scans= 0;
@@ -908,8 +886,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
  
-         $url = $data."redirects/sms?id=". $projectCode; 
-
           // Save in DB
         $sms = Sms::where('code',$code)->first();
         $sms->code= $projectCode;
@@ -917,7 +893,7 @@ class MyQRCodeController extends Controller
         $sms->qrsms=$request->sms;
         $sms->countrycode=$request->countrycode;
         $sms->phonenumber=$request->phone;
-        $sms->url=$url;
+        $sms->url=$qrCodeUrl;
         $sms->qrimage=$qrCodePath;
         $sms->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $sms->save();
@@ -931,7 +907,7 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$url;
+        $qrBasicInfo->url=$qrCodeUrl;
         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $qrBasicInfo->qrtable= 'smsqr'; 
         $qrBasicInfo->total_scans= 0;
@@ -979,8 +955,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-         $url = $data."redirects/bitcoin?id=". $projectCode; 
-
           // Save in DB
         $wifi = Wifiqr::where('code',$code)->first();
         $wifi->code= $projectCode;
@@ -988,7 +962,7 @@ class MyQRCodeController extends Controller
         $wifi->ssid=$request->ssid;
         $wifi->password=$request->password;
         $wifi->enctype=$request->enctype;
-        $wifi->url=$url;
+        $wifi->url=$qrCodeUrl;
         $wifi->qrimage=$qrCodePath;
         $wifi->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $wifi->save();
@@ -1002,7 +976,7 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$url;
+        $qrBasicInfo->url=$qrCodeUrl;
         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $qrBasicInfo->qrtable= 'wifiqr'; 
         $qrBasicInfo->total_scans= 0;
@@ -1051,8 +1025,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
  
-        $url = $data."redirects/bitcoin?id=". $projectCode; 
-
           // Save in DB
           $bitcoin = Bitcoinqr::where('code',$code)->first();
           $bitcoin->code= $projectCode;
@@ -1061,7 +1033,7 @@ class MyQRCodeController extends Controller
           $bitcoin->quantity=$request->quantity;
           $bitcoin->btcaddr=$request->btcaddr;
           $bitcoin->btcnetwrk=$request->btcnetwrk;
-          $bitcoin->url=$url;
+          $bitcoin->url=$qrCodeUrl;
           $bitcoin->qrimage=$qrCodePath;
           $bitcoin->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
           $bitcoin->save();
@@ -1075,7 +1047,7 @@ class MyQRCodeController extends Controller
           $qrBasicInfo->end_date= $request->enddate;
           $qrBasicInfo->usage_type= $request->usage;
           $qrBasicInfo->remarks= $request->remarks;
-          $qrBasicInfo->url=$url;
+          $qrBasicInfo->url=$qrCodeUrl;
           $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
           $qrBasicInfo->qrtable= 'btcqr'; 
           $qrBasicInfo->total_scans= 0;
@@ -1123,8 +1095,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/pdf?id=". $projectCode; 
-
 
         if ($request->file('pdfpath')) {
             $file = $request->file('pdfpath');
@@ -1136,7 +1106,7 @@ class MyQRCodeController extends Controller
           $pdf->code= $projectCode;
           $pdf->qrtype= $request->qroption;
           $pdf->pdfpath=$filePath;
-          $pdf->url=$url;
+          $pdf->url=$qrCodeUrl;
           $pdf->qrimage=$qrCodePath;
           $pdf->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
           $pdf->save();
@@ -1150,7 +1120,7 @@ class MyQRCodeController extends Controller
           $qrBasicInfo->end_date= $request->enddate;
           $qrBasicInfo->usage_type= $request->usage;
           $qrBasicInfo->remarks= $request->remarks;
-          $qrBasicInfo->url=$url;
+          $qrBasicInfo->url=$qrCodeUrl;
           $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
           $qrBasicInfo->qrtable= 'pdfqr'; 
           $qrBasicInfo->total_scans= 0;
@@ -1198,8 +1168,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/mp3?id=". $projectCode; 
-
         // Store the file
         if ($request->hasFile('mp3path')) {
             $file = $request->file('mp3path');
@@ -1214,7 +1182,7 @@ class MyQRCodeController extends Controller
         $mp3->qrtype= $request->qroption;
         $mp3->qrtext = $request->qrtext;
         $mp3->mp3path=$filePath;
-        $mp3->url=$url;
+        $mp3->url=$qrCodeUrl;
         $mp3->qrimage=$qrCodePath;
         $mp3->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $mp3->save();
@@ -1228,7 +1196,7 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$url;
+        $qrBasicInfo->url=$qrCodeUrl;
         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $qrBasicInfo->qrtable= 'mp3qr'; 
         $qrBasicInfo->total_scans= 0;
@@ -1275,8 +1243,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/image?id=". $projectCode; 
-
         // Store the file
         if ($request->hasFile('imagepath')) {
             $file = $request->file('imagepath');
@@ -1289,7 +1255,7 @@ class MyQRCodeController extends Controller
         $img->code= $projectCode;
         $img->qrtype= $request->qroption;
         $img->imagepath=$filePath;
-        $img->url=$url;
+        $img->url=$qrCodeUrl;
         $img->qrimage=$qrCodePath;
         $img->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $img->save();
@@ -1303,7 +1269,7 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$url;
+        $qrBasicInfo->url=$qrCodeUrl;
         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $qrBasicInfo->qrtable= 'imageqr'; 
         $qrBasicInfo->total_scans= 0;
@@ -1351,8 +1317,6 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        $url = $data."redirects/video?id=". $projectCode; 
-
         // Store the file
         if ($request->hasFile('videopath')) {
             $file = $request->file('videopath');
@@ -1365,7 +1329,7 @@ class MyQRCodeController extends Controller
         $video->code= $projectCode;
         $video->qrtype= $request->qroption;
         $video->videopath=$filePath;
-        $video->url=$url;
+        $video->url=$qrCodeUrl;
         $video->qrimage=$qrCodePath;
         $video->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $video->save();
@@ -1379,7 +1343,7 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$url;
+        $qrBasicInfo->url=$qrCodeUrl;
         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $qrBasicInfo->qrtable= 'videoqr'; 
         $qrBasicInfo->total_scans= 0;
@@ -1427,7 +1391,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-         $url = $data."redirects/app?id=". $projectCode; 
         // Save in DB
         $app = Appstoreqr::where('code',$code)->first();
         $app->code= $projectCode;
@@ -1436,7 +1399,7 @@ class MyQRCodeController extends Controller
         $app->playstoreurl=$request->playstoreurl;
         $app->windowsurl=$request->windowsurl;
         $app->Huawei=$request->Huawei;
-        $app->url=$url;
+        $app->url=$qrCodeUrl;
         $app->qrimage=$qrCodePath;
         $app->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $app->save();
@@ -1450,7 +1413,7 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$url;
+        $qrBasicInfo->url=$qrCodeUrl;
         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $qrBasicInfo->qrtable= 'apkqr'; 
         $qrBasicInfo->total_scans= 0;
@@ -1495,13 +1458,12 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-         $url = $data."redirects/url?id=". $projectCode; 
  
          $app = Urlqr::where('code',$code)->first();
          $app->code= $projectCode;
          $app->qrtype= $request->qroption;
          $app->qrurl=$request->qrurl;
-         $app->url=$url;
+         $app->url=$qrCodeUrl;
          $app->qrimage=$qrCodePath;
          $app->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
          $app->save();
@@ -1515,7 +1477,7 @@ class MyQRCodeController extends Controller
          $qrBasicInfo->end_date= $request->enddate;
          $qrBasicInfo->usage_type= $request->usage;
          $qrBasicInfo->remarks= $request->remarks;
-         $qrBasicInfo->url=$url;
+         $qrBasicInfo->url=$qrCodeUrl;
          $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
          $qrBasicInfo->qrtable= 'urlcode'; 
          $qrBasicInfo->total_scans= 0;
@@ -1571,8 +1533,6 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-         $url = $data."redirects/vcard?id=". $projectCode; 
-
          if ($request->hasFile('contactimg')) {
             $file = $request->file('contactimg');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
@@ -1596,7 +1556,7 @@ class MyQRCodeController extends Controller
         $vcard->zip= $request->zip;
         $vcard->state= $request->state;
         $vcard->country= $request->country;
-        $vcard->url=$url;
+        $vcard->url=$qrCodeUrl;
         $vcard->qrimage=$qrCodePath;
         $vcard->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $vcard->save();
@@ -1610,7 +1570,7 @@ class MyQRCodeController extends Controller
          $qrBasicInfo->end_date= $request->enddate;
          $qrBasicInfo->usage_type= $request->usage;
          $qrBasicInfo->remarks= $request->remarks;
-         $qrBasicInfo->url=$url;
+         $qrBasicInfo->url=$qrCodeUrl;
          $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
          $qrBasicInfo->qrtable= 'vcard'; 
          $qrBasicInfo->total_scans= 0;
@@ -1672,8 +1632,6 @@ class MyQRCodeController extends Controller
  
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
-
-         $url = $data."redirects/social?id=". $projectCode; 
  
        
          $social = SocialMediaqr::where('code',$code)->first();
@@ -1698,7 +1656,7 @@ class MyQRCodeController extends Controller
          $social->teltext=  $request->teltext;
          $social->snpurl=  $request->snpurl;
          $social->snptext= $request->snptext;
-         $social->url=$url;
+         $social->url=$qrCodeUrl;
          $social->qrimage=$qrCodePath;
          $social->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
          $social->save();
@@ -1712,7 +1670,7 @@ class MyQRCodeController extends Controller
           $qrBasicInfo->end_date= $request->enddate;
           $qrBasicInfo->usage_type= $request->usage;
           $qrBasicInfo->remarks= $request->remarks;
-          $qrBasicInfo->url=$url;
+          $qrBasicInfo->url=$qrCodeUrl;
           $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
           $qrBasicInfo->qrtable= 'socmedqr'; 
           $qrBasicInfo->total_scans= 0;

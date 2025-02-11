@@ -58,7 +58,7 @@
             </div>
             <div class="flex-1 w-auto">
                <a href='analytics.php?id=$qrCode["code"]'> <h3 class="font-medium text-white">{{$qrCode['projectname']}}</h3></a>
-              <a href="{{$qrCode['url']}}" target="_blank" class="md:text-sm md:line-clamp-none line-clamp-1 max-w-[200px] text-[11px] text-blue-400 hover:underline">{{$qrCode['url']}}</a>
+              {{-- <a href="{{$qrCode['url']}}" target="_blank" class="md:text-sm md:line-clamp-none line-clamp-1 max-w-[200px] text-[11px] text-blue-400 hover:underline">{{$qrCode['url']}}</a> --}}
               <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                 <span>{{$qrCode['qrtype']}}</span>
                 <span>{{$qrCode['date']}}</span>
@@ -233,7 +233,6 @@
               </div>
               <div class="flex-1 w-auto">
                  <a href='analytics.php?id=${qr.code}'> <h3 class="font-medium text-white">${qr.projectname}</h3></a>
-                <a href="${qr.url}" target="_blank" class="md:text-sm md:line-clamp-none line-clamp-1 max-w-[200px] text-[11px] text-blue-400 hover:underline">${qr.url}</a>
                 <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                   <span>${qr.qrtype}</span>
                   <span>${(qr.date)}</span>

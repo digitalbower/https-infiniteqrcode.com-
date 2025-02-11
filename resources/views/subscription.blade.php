@@ -13,7 +13,7 @@
               <div class="flex items-start justify-between mb-6">
                 <div>
                   <h3 class="text-3xl font-bold text-gray-100">{{ ucfirst($plans->plan) }} Plan</h3>
-                  <p class="text-xl text-gray-400">${{$plans->price}}/{{ $plans->duration == '' ? '7 days' : $plans->duration; }}</p>
+                  <p class="text-xl text-gray-400">${{$plans->price == '' ? '0' : $plans->price;}}/{{ $plans->duration == '' ? '7 days' : $plans->duration; }}</p>
                 </div>
                 <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300" onclick="location.href='upgrade';">Upgrade</button>
               </div>
