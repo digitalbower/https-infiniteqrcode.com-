@@ -47,9 +47,9 @@
                         <div class="flex justify-start">
                             <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
                         </div>                        
-                        <form class="space-y-4 text-black"  id="vcardqr_form" style="margin-bottom: 1rem;" enctype="multipart/form-data" action="{{ route('create-vcardqr') }}" method="POST">
+                        <form class="space-y-4 text-black"  id="editvcardqr_form" style="margin-bottom: 1rem;" enctype="multipart/form-data" action="{{ route('update-vcardqr',$vcard->code) }}" method="POST">
                             @csrf
-                            <input type="hidden" name="qroption" id="qroption">
+                            <input type="hidden" name="qroption" id="qroption" value="{{$vcard->qrtype}}">
                             <div class="lg:p-8 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                                 <div>
                                     <label class="block font-medium mb-1">Profile Picture:</label>
@@ -67,7 +67,7 @@
                                         <div>
                                             <input type="text" placeholder="First name" name="first_name"
                                                 id="first_name"
-                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" value="{{old('first_name')}}"/>
+                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" value="{{$vcard->first_name}}"/>
                                             <br>
                                             @error('first_name')
                                             <small class="text-red-700 fname">{{ $message }}</small>
@@ -76,7 +76,7 @@
                                         <div>
                                             <input type="text" placeholder="Last name" name="last_name"
                                                 id="lastname"
-                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" value="{{old('last_name')}}"/>
+                                                class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500" value="{{$vcard->last_name}}"/>
                                             <br>
                                             @error('last_name')
                                             <small class="text-red-700 lname">{{ $message }}</small>
@@ -100,7 +100,7 @@
                                         <div>
                                             <input type="tel" placeholder="Mobile"
                                                 class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                                name="mobile" id="mobile"  value="{{old('mobile')}}" />
+                                                name="mobile" id="mobile"  value="{{$vcard->mobile}}" />
                                             @error('mobile')
                                                 <small class="text-red-700 mobile">{{ $message }}</small>
                                             @enderror   
@@ -108,7 +108,7 @@
                                         <div>
                                             <input type="email" placeholder="your@email.com"
                                                 class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                                name="email" id="email" value="{{old('email')}}" />
+                                                name="email" id="email" value="{{$vcard->email}}" />
                                                 @error('email')
                                                 <small class="text-red-700 email">{{ $message }}</small>
                                             @enderror 
@@ -120,7 +120,7 @@
                                     <label class="block font-medium mb-1">Company:*</label>
                                     <input type="text" placeholder="Company"
                                         class="border rounded-md p-2 focus:ring-2 mb-2 focus:ring-blue-500"
-                                        name="company" id="company" value="{{old('company')}}" />
+                                        name="company" id="company" value="{{$vcard->company}}" />
                                       
                                 </div>
                                 <small id="company_name"></small>
@@ -133,7 +133,7 @@
                                         <label class="block font-medium mb-1">Street:</label>
                                         <input type="text" placeholder="Street"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="street" id="street" value="{{old('street')}}"/>
+                                            name="street" id="street" value="{{$vcard->street}}"/>
                                         @error('street')
                                             <small class="text-red-700 street">{{ $message }}</small>
                                         @enderror 
@@ -142,7 +142,7 @@
                                         <label class="block font-medium mb-1">Website:</label>
                                         <input type="text" placeholder="Website"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="website" id="Website" value="{{old('website')}}"/>
+                                            name="website" id="Website" value="{{$vcard->website}}"/>
                                         @error('website')
                                             <small class="text-red-700 street">{{ $message }}</small>
                                         @enderror
@@ -153,7 +153,7 @@
                                         <label class="block font-medium mb-1">City:</label>
                                         <input type="text" placeholder="City"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="city" id="city"  value="{{old('city')}}"/>
+                                            name="city" id="city"  value="{{$vcard->city}}"/>
                                         @error('city')
                                             <small class="text-red-700 city">{{ $message }}</small>
                                         @enderror 
@@ -162,7 +162,7 @@
                                         <label class="block font-medium mb-1">ZIP:</label>
                                         <input type="text" placeholder="ZIP"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="zip" id="zip" value="{{old('zip')}}"/>
+                                            name="zip" id="zip" value="{{$vcard->zip}}"/>
                                         @error('zip')
                                             <small class="text-red-700 zip">{{ $message }}</small>
                                         @enderror 
@@ -174,7 +174,7 @@
                                         <label class="block font-medium mb-1">State:</label>
                                         <input type="text" placeholder="State"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="state" id="state" value="{{old('state')}}"/>
+                                            name="state" id="state" value="{{$vcard->state}}"/>
                                         @error('state')
                                             <small class="text-red-700 state">{{ $message }}</small>
                                         @enderror 
@@ -183,7 +183,7 @@
                                         <label class="block font-medium mb-1">Country:</label>
                                         <input type="text" placeholder="Country"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="country" id="country" value="{{old('country')}}"/>
+                                            name="country" id="country" value="{{$vcard->country}}"/>
                                         @error('country')
                                             <small class="text-red-700 country">{{ $message }}</small>
                                         @enderror 
@@ -212,7 +212,7 @@
                                                 <div>
                                                     <input id="projectName" placeholder="Enter project name"
                                                         name="projectname"
-                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$vcard->project_name}}">
                                                         @error('projectname')
                                                         <small class="text-red-700 project">{{ $message }}</small>
                                                         @enderror
@@ -250,7 +250,7 @@
                                                         <ul id="folderList" class="divide-y divide-gray-200">
                                                           @foreach ($folders as $folder)
                                                              @php
-                                                                $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                                $isSelected = $vcard->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                                             @endphp
                                                             <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                                                 <span>{{ $folder->name }}</span>
@@ -290,7 +290,7 @@
                                                         <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                                             type="date"
                                                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            name="startdate" value="{{old('startdate')}}">
+                                                            name="startdate" value="{{$vcard->start_date}}">
                                                             @error('startdate')
                                                             <small class="text-red-700 start">{{ $message }}</small>
                                                             @enderror
@@ -302,7 +302,7 @@
                                                     <div>
                                                         <input id="endDate" type="date"
                                                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                            name="enddate"  value="{{old('enddate')}}">
+                                                            name="enddate"  value="{{$vcard->end_date}}">
                                                             @error('enddate')
                                                             <small class="text-red-700 end">{{ $message }}</small>
                                                             @enderror
@@ -317,9 +317,9 @@
                                                 <select id="usage" name="usage"
                                                     class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                                     <option value="">Select Usage</option>
-                                                    <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                                    <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                                    <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                                    <option value="personal" {{ $vcard->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                                    <option value="business" {{ $vcard->usage_type== 'business' ? 'selected' : '' }}>Business</option>
+                                                    <option value="event" {{ $vcard->usage_type== 'event' ? 'selected' : '' }}>Event</option>
                                                 </select>
                                             </div>
 
@@ -328,7 +328,7 @@
                                                 <label for="remarks"
                                                     class="block font-medium text-gray-800">Remarks</label>
                                                 <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$vcard->remarks}}</textarea>
                                             </div>
                                             <div class="flex justify-between mt-8">
                                                 <button type="button" onclick="location.href='QrOption.php'"
@@ -576,10 +576,6 @@
         <script src="{{asset('js/create-folder.js')}}"></script>
         <script>
         $(document).ready(function () {
-            var passedValue = getQueryParam('option'); 
-            if (passedValue !== null) {
-                $('#qroption').val(passedValue);
-            }
             $.validator.addMethod("greaterThan", function (value, element, param) {
                 var startDate = $(param).val();
                 return this.optional(element) || new Date(value) > new Date(startDate);
@@ -587,7 +583,7 @@
             $.validator.addMethod("imageType", function (value, element) {
                 return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
             }, "Only JPG, JPEG, or PNG files are allowed.");
-            $("#vcardqr_form").validate({   
+            $("#editvcardqr_form").validate({   
                 rules: {  
                 contactimg:{
                     required: true,
@@ -736,10 +732,5 @@
                 input.addEventListener('input', syncFields);
             });
         });
-            function getQueryParam(param) {
-            var params = new URLSearchParams(window.location.search);
-            return params.get(param);
-
-            }
         </script>
 @endsection

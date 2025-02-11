@@ -49,7 +49,9 @@
           <div
             class="lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
             <div class="col-span-8">
-              <form action="#" id="saveForm" onsubmit="return false;" method="post">
+              <form class="space-y-4 text-black"  id="urlqr_form" style="margin-bottom: 1rem;" action="{{ route('create-urlqr') }}" method="POST">
+                @csrf
+                <input type="hidden" name="qroption" id="qroption">
                 <div class="flex justify-start">
                   <h2
                     class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
@@ -61,8 +63,10 @@
                         <label for="url" style="font-weight: bold; margin-bottom: 0.5rem; display: block;">QR
                           Code URL:</label>
                         <div>
-                          <input type="url" id="url" name="url" placeholder="Enter URL for QR Code" style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;">
-                          <label class="url text-red-700"></label>
+                          <input type="text" id="qrurl" name="qrurl" placeholder="Enter URL for QR Code" style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;" value="{{old('qrurl')}}">
+                          @error('qrurl')
+                          <small class="text-red-700 url">{{ $message }}</small>
+                          @enderror
                         </div>
                        
                       </div>
@@ -70,141 +74,161 @@
                   </div>
                 </div>
                 <div class="flex mt-10 justify-start">
-                  <h2
-                    class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information</h2>
-                </div>
-                <div
-                  class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
-  
-                  <div class="space-y-4">
-                    <div class="mx-auto w-full lg:p-6 bg-white text-black">
-  
-                      <div class="space-y-4">
-  
-                        <!-- QR Project Name -->
-                        <div>
-                          <label for="projectName"
-                            class="block font-medium text-gray-800">QR Project Name</label>
-                          <div>
-                            <input id="projectName" placeholder="Enter project name" name="projectname"
-                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <label class="project text-red-700"></label>
-                          </div>
-                        </div>
-  
-                        <!-- Select Folder -->
-  
-                        <div class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                          <!-- Folder Dropdown -->
-                          <div class="relative">
-                            <button type="button"
-                              id="folderDropdownButton"
-                              class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
-                              <span id="selectedFolder">Select a folder</span>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2">
-                                <path
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="M19 9l-7 7-7-7" />
-                              </svg>
-                            </button>
-                            <!-- Dropdown List -->
-                            <div
-                              id="folderDropdown"
-                              class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
-                              <ul id="folderList" class="divide-y divide-gray-200"></ul>
-                              <div class="flex justify-center"> <button
-                                id="addFolderButton" type="button"
-                                class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  class="h-5 w-5 mr-1"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  stroke-width="2">
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M12 4v16m8-8H4" />
-                                </svg>
-                                Add New Folder
-                              </button>
-                              <!-- <button
-                                  id="FolderB" type="button"
-                                  class="w-full text-green-500  font-semibold py-2 hover:bg-green-100 p-2 flex items-center justify-center">
-                                      Create 
-                                </button> -->
-                              </div>
-                            </div>
-                          </div>
-                          <input id="folderinput" placeholder="Folder Name" type="hidden" name="folderinput" readonly value="" class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                          <label class="folderinput"></label>
-                        </div>
-                        <!-- Date Range -->
-                        <div
-                          class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
-                          <div class="flex-1">
-                            <label for="startDate"
-                              class="block font-medium text-gray-800">Start Date</label>
-                            <div>
-                              <input id="startDate" min="" type="date"
-                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="startdate">
-                              <label class="start text-red-700"></label>
-                            </div>
-                          </div>
-                          <div class="flex-1">
-                            <label for="endDate"
-                              class="block font-medium text-gray-800">End Date</label>
-                            <div>
-                              <input id="endDate" type="date"
-                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="enddate">
-                              <label class="end text-red-700"></label>
-                            </div>
-                          </div>
-                        </div>
-  
-                        <!-- Usage -->
-                        <div>
-                          <label for="usage"
-                            class="block font-medium text-gray-800">Usage</label>
-                          <select id="usage" name="usage"
-                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="Usage">Select Usage</option>
-                            <option value="personal">Personal</option>
-                            <option value="business">Business</option>
-                            <option value="event">Event</option>
-                          </select>
-                        </div>
-  
-                        <!-- Remarks -->
-                        <div>
-                          <label for="remarks"
-                            class="block font-medium text-gray-800">Remarks</label>
-                          <textarea id="remarks" name="remarks"
-                            placeholder="Enter any additional remarks"
-                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
-                        </div>
-                      </div>
-                      <div class="flex justify-between mt-8">
-            <button onclick="location.href='QrOption.php'"
-              class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
-            <span id="message" class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
-            <div id="loadingIndicator" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
-              <div class="flex flex-col items-center">
-                <div class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full"></div>
-                <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
+                  <h2 class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information
+                  </h2>
               </div>
-            </div>
-            <button id="nextBtn" type="submit"
-              class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate Qr Code</button>
-          </div>
+              <div class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
+
+                  <div class="space-y-4">
+                      <div class="mx-auto w-full lg:p-6 bg-white text-black">
+
+                          <div class="space-y-4">
+
+                              <!-- QR Project Name -->
+                              <div>
+                                  <label for="projectName" class="block font-medium text-gray-800">QR
+                                      Project Name * </label>
+                                  <div>
+                                      <input id="projectName" placeholder="Enter project name"
+                                          name="projectname"
+                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                          @error('projectname')
+                                          <small class="text-red-700 project">{{ $message }}</small>
+                                          @enderror
+                                  </div>
+                              </div>
+
+                              <!-- Select Folder -->
+                              <div
+                                  class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                  <!-- Folder Dropdown -->
+                                  <div class="relative">
+                                      <button type="button" id="folderDropdownButton"
+                                          class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
+                                          <span id="selectedFolder">Select a folder</span>
+                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                              fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                              stroke-width="2">
+                                              <path stroke-linecap="round" stroke-linejoin="round"
+                                                  d="M19 9l-7 7-7-7" />
+                                          </svg>
+                                      </button>
+                                      <!-- Dropdown List -->
+                                      <div id="folderDropdown"
+                                          class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
+                                          @php
+                                          $userId = auth()->user()->id; 
+              
+                                          $folders = DB::table('qr_basic_info')
+                                          ->selectRaw('folder_name as name')
+                                          ->where('userid', $userId)
+                                          ->groupBy('folder_name')
+                                          ->get();
+              
+                                          @endphp
+                                          <ul id="folderList" class="divide-y divide-gray-200">
+                                            @foreach ($folders as $folder)
+                                               @php
+                                                  $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                              @endphp
+                                              <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
+                                                  <span>{{ $folder->name }}</span>
+                                              </li>
+                                            @endforeach
+                                          </ul>   
+                                          <div class="flex justify-center"> <button id="addFolderButton"
+                                                  type="button"
+                                                  class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
+                                                  <svg xmlns="http://www.w3.org/2000/svg"
+                                                      class="h-5 w-5 mr-1" fill="none"
+                                                      viewBox="0 0 24 24" stroke="currentColor"
+                                                      stroke-width="2">
+                                                      <path stroke-linecap="round"
+                                                          stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                                  </svg>
+                                                  Add New Folder
+                                              </button>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <input id="folderinput" placeholder="Folder Name" type="hidden"
+                                      name="folderinput" readonly value=""
+                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                      @error('folderinput')
+                                      <small class="text-red-700 folderinput">{{ $message }}</small>
+                                      @enderror
+                              </div>
+
+
+                              <!-- Date Range -->
+                              <div class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
+                                  <div class="flex-1">
+                                      <label for="startDate"
+                                          class="block font-medium text-gray-800">Start Date</label>
+                                      <div>
+                                          <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
+                                              type="date"
+                                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                              name="startdate" value="{{old('startdate')}}">
+                                              @error('startdate')
+                                              <small class="text-red-700 start">{{ $message }}</small>
+                                              @enderror
+                                      </div>
+                                  </div>
+                                  <div class="flex-1">
+                                      <label for="endDate" class="block font-medium text-gray-800">End
+                                          Date</label>
+                                      
+                                          <input id="endDate" type="date"
+                                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                              name="enddate"  value="{{old('enddate')}}">
+                                              @error('enddate')
+                                              <small class="text-red-700 end">{{ $message }}</small>
+                                              @enderror
+                                      
+                                  </div>
+                              </div>
+
+                              <!-- Usage -->
+                              <div>
+                                  <label for="usage"
+                                      class="block font-medium text-gray-800">Usage</label>
+                                  <select id="usage" name="usage"
+                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                      <option value="">Select Usage</option>
+                                      <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
+                                      <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
+                                      <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                  </select>
+                              </div>
+
+                              <!-- Remarks -->
+                              <div>
+                                  <label for="remarks"
+                                      class="block font-medium text-gray-800">Remarks</label>
+                                  <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
+                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                              </div>
+                          </div>
+                              <div class="flex justify-between mt-8">
+                                  <button type="button" onclick="location.href='QrOption.php'"
+                                      class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
+                                  <span id="message"
+                                      class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
+                                  <div id="loadingIndicator"
+                                      class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
+                                      <div class="flex flex-col items-center">
+                                          <div
+                                              class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full">
+                                          </div>
+                                          <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
+                                      </div>
+                                  </div>
+
+                                  <button type="submit" id="nextBtn"
+                                      class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate
+                                      Qr Code</button>
+                 </div>
                     </div>
                   </div>
                 </div>
@@ -321,7 +345,8 @@
           </div>
         </div>
       </main>
-  
+      <script src="{{asset('js/create-folder.js')}}"></script>
+
 <script>
   const previewBtn = document.getElementById("preview-btn");
   const detailBtn = document.getElementById("detail-btn");
@@ -343,5 +368,65 @@
     detailContent.classList.remove("hidden");
     previewContent.classList.add("hidden");
   });
+</script>
+<script>
+  $(document).ready(function () {
+      var passedValue = getQueryParam('option'); 
+      if (passedValue !== null) {
+          $('#qroption').val(passedValue);
+      }
+      $.validator.addMethod("greaterThan", function (value, element, param) {
+          var startDate = $(param).val();
+          return this.optional(element) || new Date(value) > new Date(startDate);
+      }, "End date must be greater than start date");
+      $("#urlqr_form").validate({   
+        rules: {  
+          qrurl: {
+            required:true,
+            url:true
+          },
+          projectname:"required",
+          folderinput:"required",
+          startdate: {
+                required: true,
+                date: true
+            },
+            enddate: {
+                required: true,
+                date: true,
+                greaterThan: "#startDate" // Custom validation rule
+            }
+        },  
+        messages: {  
+          qrurl: {
+            required:"Enter QR Code URL",
+            url:"Enter a valid URL"
+          },
+          projectname:"Enter Project Name",
+          folderinput:"Choose the Folder Name",
+          startdate: {
+                required: "Please enter a start date",
+                date: "Enter a valid date"
+            },
+            enddate: {
+                required: "Please enter an end date",
+                date: "Enter a valid date",
+                greaterThan: "End date must be later than start date"
+            }
+        },  
+        errorElement: "small",
+        errorClass: "text-red-500",
+      });
+    });
+    $("#qrurl").on('change', function(e) {
+        var url = $("#qrurl").val();
+        $(".url1").text($(this).val());
+         
+      });
+    function getQueryParam(param) {
+      var params = new URLSearchParams(window.location.search);
+      return params.get(param);
+
+    }
 </script>
 @endsection

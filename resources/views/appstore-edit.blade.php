@@ -55,9 +55,9 @@
         <div class="flex justify-start">
           <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
         </div>
-        <form class="space-y-4 text-black"  id="appqr_form" style="margin-bottom: 1rem;" action="{{ route('create-appqr') }}" method="POST">
+        <form class="space-y-4 text-black"  id="editappqr_form" style="margin-bottom: 1rem;" action="{{ route('update-appqr',$app->code) }}" method="POST">
           @csrf
-          <input type="hidden" name="qroption" id="qroption">
+          <input type="hidden" name="qroption" id="qroption" value="{{$app->qrtype}}">
           <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
             <div class="space-y-4">
               <div class="mx-auto  lg:p-6 bg-white text-black">
@@ -66,7 +66,7 @@
                   <div class="relative mb-4">
                     <label for="url" class="font-medium text-gray-700 mb-1 block">App Store
                       URL:</label>
-                    <input type="text" id="apkurl" name="appurl" placeholder="Enter your app URL" value="{{old('appurl')}}"
+                    <input type="text" id="apkurl" name="appurl" placeholder="Enter your app URL" value="{{$app->appurl}}"
                       class="w-full border border-gray-300 rounded-md p-2 mb-2 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
                     @error('appurl')
                     <small class="text-red-700 url">{{ $message }}</small>
@@ -74,7 +74,7 @@
                   </div>
                   <div class="relative mb-4">
                     <label for="url" class="font-medium text-gray-700 mb-1 block">Play Store URL:</label>
-                    <input type="text" id="playurl" name="playstoreurl" placeholder="Enter your play store URL" value="{{old('playstoreurl')}}"
+                    <input type="text" id="playurl" name="playstoreurl" placeholder="Enter your play store URL" value="{{$app->playstoreurl}}"
                       class="w-full border border-gray-300 rounded-md p-2 mb-2 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
                     
                     @error('playurl')
@@ -85,7 +85,7 @@
                     <label for="url" class="font-medium text-gray-700 mb-1 block">Windows Web Store
                       URL:</label>
 
-                    <input type="text" id="weburl" name="windowsurl" placeholder="Enter your play store URL" value="{{old('windowsurl')}}"
+                    <input type="text" id="weburl" name="windowsurl" placeholder="Enter your play store URL" value="{{$app->windowsurl}}"
                       class="w-full border border-gray-300 rounded-md p-1 mb-1 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
                     @error('windowsurl')
                     <small class="text-red-700 weburl">{{ $message }}</small>
@@ -95,7 +95,7 @@
                   <div class="relative mb-4">
                     <label for="url" class="font-medium text-gray-700 mb-2 block">Huawei AppGallery
                       URL:</label>
-                    <input type="text" id="hueiurl" name="Huawei" placeholder="Enter your play store URL" value="{{old('Huawei')}}"
+                    <input type="text" id="hueiurl" name="Huawei" placeholder="Enter your play store URL" value="{{$app->Huawei}}"
                       class="w-full border border-gray-300 rounded-md p-1 mb-1 text-base outline-none focus:ring-2 focus:ring-[#7f9b4e]" />
                     @error('Huawei')
                     <small class="text-red-700 hueiurl">{{ $message }}</small>
@@ -125,7 +125,7 @@
                             <div>
                                 <input id="projectName" placeholder="Enter project name"
                                     name="projectname"
-                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$app->project_name}}">
                                     @error('projectname')
                                     <small class="text-red-700 project">{{ $message }}</small>
                                     @enderror
@@ -163,7 +163,7 @@
                                     <ul id="folderList" class="divide-y divide-gray-200">
                                       @foreach ($folders as $folder)
                                          @php
-                                            $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                            $isSelected = $app->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                         @endphp
                                         <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                             <span>{{ $folder->name }}</span>
@@ -203,7 +203,7 @@
                                     <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                         type="date"
                                         class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        name="startdate" value="{{old('startdate')}}">
+                                        name="startdate" value="{{$app->start_date}}">
                                         @error('startdate')
                                         <small class="text-red-700 start">{{ $message }}</small>
                                         @enderror
@@ -215,7 +215,7 @@
                                 <div>
                                     <input id="endDate" type="date"
                                         class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        name="enddate"  value="{{old('enddate')}}">
+                                        name="enddate"  value="{{$app->end_date}}">
                                         @error('enddate')
                                         <small class="text-red-700 end">{{ $message }}</small>
                                         @enderror
@@ -230,9 +230,9 @@
                             <select id="usage" name="usage"
                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="">Select Usage</option>
-                                <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                <option value="personal" {{ $app->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                <option value="business" {{ $app->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                <option value="event" {{ $app->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                             </select>
                         </div>
 
@@ -241,7 +241,7 @@
                             <label for="remarks"
                                 class="block font-medium text-gray-800">Remarks</label>
                             <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ $app->remarks}}</textarea>
                         </div>
                         <div class="flex justify-between mt-8">
                             <button type="button" onclick="location.href='QrOption.php'"
@@ -447,15 +447,11 @@ detailBtn.addEventListener("click", () => {
 </script>
 <script>
   $(document).ready(function () {
-      var passedValue = getQueryParam('option'); 
-      if (passedValue !== null) {
-          $('#qroption').val(passedValue);
-      }
       $.validator.addMethod("greaterThan", function (value, element, param) {
           var startDate = $(param).val();
           return this.optional(element) || new Date(value) > new Date(startDate);
       }, "End date must be greater than start date");
-      $("#appqr_form").validate({   
+      $("#editappqr_form").validate({   
         rules: {  
           appurl: "required",
           playstoreurl: "required",  
@@ -494,10 +490,5 @@ detailBtn.addEventListener("click", () => {
         errorClass: "text-red-500",
       });
     });
-    function getQueryParam(param) {
-      var params = new URLSearchParams(window.location.search);
-      return params.get(param);
-
-    }
 </script>
 @endsection

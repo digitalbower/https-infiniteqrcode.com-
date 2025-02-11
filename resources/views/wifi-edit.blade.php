@@ -47,9 +47,9 @@
               <div
                 class="lg:lg:lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
                 <div class="col-span-8">
-                    <form class="mb-4"   id="wifiqr_form" style="margin-bottom: 1rem;" action="{{ route('create-wifiqr') }}" method="POST">
+                    <form class="mb-4"   id="editwifiqr_form" style="margin-bottom: 1rem;" action="{{ route('update-wifiqr',$wifi->code) }}" method="POST">
                       @csrf
-                      <input type="hidden" name="qroption" id="qroption">
+                      <input type="hidden" name="qroption" id="qroption" value="{{$wifi->qrtype}}">
                     <div class="flex justify-start">
                       <h2
                         class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
@@ -67,7 +67,7 @@
                                 id="ssid" autoComplete="off"
                                 name="ssid"
                                 placeholder="Enter Wi-Fi SSID" 
-                                class="w-full border border-gray-300 p-2 rounded-md" value="{{old('ssid')}}"/>
+                                class="w-full border border-gray-300 p-2 rounded-md" value="{{$wifi->ssid}}"/>
                               @error('ssid')
                               <small class="text-red-700 ssid">{{ $message }}</small>
                               @enderror
@@ -99,10 +99,10 @@
                                 name="enctype"
                                 class="w-full border border-gray-300 p-2 rounded-md">
                                 <option value="">Select Security Type</option>
-                                <option value="WPA" {{ old('enctype') == 'WPA' ? 'selected' : '' }}>WPA</option>
-                                <option value="WPA2" {{ old('enctype') == 'WPA2' ? 'selected' : '' }}>WPA2</option>
-                                <option value="WEP" {{ old('enctype') == 'WEP' ? 'selected' : '' }}>WEP</option>
-                                <option value="None" {{ old('enctype') == 'None' ? 'selected' : '' }}>None</option>
+                                <option value="WPA" {{ $wifi->enctype == 'WPA' ? 'selected' : '' }}>WPA</option>
+                                <option value="WPA2" {{ $wifi->enctype == 'WPA2' ? 'selected' : '' }}>WPA2</option>
+                                <option value="WEP" {{ $wifi->enctype == 'WEP' ? 'selected' : '' }}>WEP</option>
+                                <option value="None" {{ $wifi->enctype == 'None' ? 'selected' : '' }}>None</option>
                               </select>
                               @error('enctype')
                               <small class="text-red-700 ectype">{{ $message }}</small>
@@ -132,7 +132,7 @@
                                       <div>
                                           <input id="projectName" placeholder="Enter project name"
                                               name="projectname"
-                                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{ $wifi->project_name }}">
                                               @error('projectname')
                                               <small class="text-red-700 project">{{ $message }}</small>
                                               @enderror
@@ -170,7 +170,7 @@
                                               <ul id="folderList" class="divide-y divide-gray-200">
                                                 @foreach ($folders as $folder)
                                                    @php
-                                                      $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                      $isSelected = $wifi->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                                   @endphp
                                                   <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                                       <span>{{ $folder->name }}</span>
@@ -210,7 +210,7 @@
                                               <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                                   type="date"
                                                   class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                  name="startdate" value="{{old('startdate')}}">
+                                                  name="startdate" value="{{ $wifi->start_date }}">
                                                   @error('startdate')
                                                   <small class="text-red-700 start">{{ $message }}</small>
                                                   @enderror
@@ -222,7 +222,7 @@
                                           <div>
                                               <input id="endDate" type="date"
                                                   class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                  name="enddate"  value="{{old('enddate')}}">
+                                                  name="enddate"  value="{{ $wifi->end_date}}">
                                                   @error('enddate')
                                                   <small class="text-red-700 end">{{ $message }}</small>
                                                   @enderror
@@ -237,9 +237,9 @@
                                       <select id="usage" name="usage"
                                           class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                           <option value="">Select Usage</option>
-                                          <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                          <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                          <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                          <option value="personal" {{ $wifi->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                          <option value="business" {{ $wifi->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                          <option value="event" {{ $wifi->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                                       </select>
                                   </div>
 
@@ -248,7 +248,7 @@
                                       <label for="remarks"
                                           class="block font-medium text-gray-800">Remarks</label>
                                       <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ $wifi->remarks }}</textarea>
                                   </div>
                                   <div class="flex justify-between mt-8">
                                       <button type="button" onclick="location.href='QrOption.php'"
@@ -400,15 +400,11 @@
 </script>
 <script>
     $(document).ready(function () {
-      var passedValue = getQueryParam('option'); 
-      if (passedValue !== null) {
-          $('#qroption').val(passedValue);
-      }
       $.validator.addMethod("greaterThan", function (value, element, param) {
           var startDate = $(param).val();
           return this.optional(element) || new Date(value) > new Date(startDate);
       }, "End date must be greater than start date");
-      $("#wifiqr_form").validate({   
+      $("#editwifiqr_form").validate({   
         rules: {  
           ssid: "required",
           password: "required",  
@@ -418,12 +414,12 @@
           startdate: {
                 required: true,
                 date: true
-            },
-            enddate: {
-                required: true,
-                date: true,
-                greaterThan: "#startDate" // Custom validation rule
-            }
+          },
+          enddate: {
+              required: true,
+              date: true,
+              greaterThan: "#startDate" // Custom validation rule
+          }
         },  
         messages: {  
           ssid: "Enter Wi-Fi SSID",
@@ -434,12 +430,12 @@
           startdate: {
                 required: "Please enter a start date",
                 date: "Enter a valid date"
-            },
-            enddate: {
+          },
+          enddate: {
                 required: "Please enter an end date",
                 date: "Enter a valid date",
                 greaterThan: "End date must be later than start date"
-            }
+          }
         },  
         errorElement: "small",
         errorClass: "text-red-500",
@@ -474,10 +470,5 @@
     function escapeWiFiString(str) {
           return str.replace(/([\\;,:])/g, '\\$1');
         }
-    function getQueryParam(param) {
-      var params = new URLSearchParams(window.location.search);
-      return params.get(param);
-
-    }
   </script>
 @endsection

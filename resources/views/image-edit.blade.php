@@ -53,9 +53,9 @@
                 <h2
                   class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
               </div>
-              <form style="margin-bottom: 1rem;" action="{{route('create-imageqr')}}" method="POST" enctype="multipart/form-data" id="imageqr_form">
+              <form style="margin-bottom: 1rem;" action="{{route('update-imageqr',$image->code)}}" method="POST" enctype="multipart/form-data" id="editimageqr_form">
                 @csrf
-                <input type="hidden" name="qroption" id="qroption">
+                <input type="hidden" name="qroption" id="qroption" value="{{$image->qrtype}}">
                 <div
                   class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                   <div class="space-y-4">
@@ -119,7 +119,7 @@
                                   <div>
                                       <input id="projectName" placeholder="Enter project name"
                                           name="projectname"
-                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$image->project_name}}">
                                           @error('projectname')
                                           <small class="text-red-700 project">{{ $message }}</small>
                                           @enderror
@@ -157,7 +157,7 @@
                                           <ul id="folderList" class="divide-y divide-gray-200">
                                             @foreach ($folders as $folder)
                                                @php
-                                                  $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                  $isSelected = $image->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                               @endphp
                                               <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                                   <span>{{ $folder->name }}</span>
@@ -197,7 +197,7 @@
                                           <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                               type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="startdate" value="{{old('startdate')}}">
+                                              name="startdate" value="{{$image->start_date}}">
                                               @error('startdate')
                                               <small class="text-red-700 start">{{ $message }}</small>
                                               @enderror
@@ -209,7 +209,7 @@
                                       
                                           <input id="endDate" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="enddate"  value="{{old('enddate')}}">
+                                              name="enddate"  value="{{$image->end_date}}">
                                               @error('enddate')
                                               <small class="text-red-700 end">{{ $message }}</small>
                                               @enderror
@@ -224,9 +224,9 @@
                                   <select id="usage" name="usage"
                                       class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                       <option value="">Select Usage</option>
-                                      <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                      <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                      <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                      <option value="personal" {{$image->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                      <option value="business" {{ $image->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                      <option value="event" {{ $image->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                                   </select>
                               </div>
 
@@ -235,7 +235,7 @@
                                   <label for="remarks"
                                       class="block font-medium text-gray-800">Remarks</label>
                                   <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$image->remarks}}</textarea>
                               </div>
                           </div>
                               <div class="flex justify-between mt-8">
@@ -394,10 +394,6 @@
 </script>
 <script>
    $(document).ready(function() {
-    var passedValue = getQueryParam('option'); 
-    if (passedValue !== null) {
-        $('#qroption').val(passedValue);
-    }
     $.validator.addMethod("greaterThan", function (value, element, param) {
         var startDate = $(param).val();
         return this.optional(element) || new Date(value) > new Date(startDate);
@@ -405,7 +401,7 @@
     $.validator.addMethod("imageType", function (value, element) {
         return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
     }, "Only JPG, JPEG, or PNG files are allowed.");
-    $("#imageqr_form").validate({   
+    $("#editimageqr_form").validate({   
         rules: {  
             imagepath:{
                     required: true,
@@ -469,11 +465,6 @@
       });
 
 });  
-function getQueryParam(param) {
-        var params = new URLSearchParams(window.location.search);
-        return params.get(param);
-    }
- 
   </script>
 @endsection 
                           

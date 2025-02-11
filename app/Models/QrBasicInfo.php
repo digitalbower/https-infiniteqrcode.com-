@@ -21,6 +21,7 @@ class QrBasicInfo extends Model
         'end_date',
         'usage_type',
         'remarks',
+        'url',
         'userid',
         'qrtable',
         'total_scans',

@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'Create Image QrCode')
+@section('title', 'Create URL QrCode')
 @section('content')
       <!-- Main Content Area -->
       <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
@@ -47,54 +47,28 @@
           </div>
   
           <div
-            class="lg:lg:lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
+            class="lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
             <div class="col-span-8">
-              <div class="flex justify-start">
-                <h2
-                  class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
-              </div>
-              <form style="margin-bottom: 1rem;" action="{{route('create-imageqr')}}" method="POST" enctype="multipart/form-data" id="imageqr_form">
+              <form class="space-y-4 text-black"  id="editurlqr_form" style="margin-bottom: 1rem;" action="{{ route('update-urlqr',$url->code) }}" method="POST">
                 @csrf
-                <input type="hidden" name="qroption" id="qroption">
-                <div
-                  class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
+                <input type="hidden" name="qroption" id="qroption" value="{{$url->qrtype}}">
+                <div class="flex justify-start">
+                  <h2
+                    class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
+                </div>
+                <div class="lg:p-8 p-4 col-span-3 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                   <div class="space-y-4">
-                    <div class="mx-auto  lg:p-6 bg-white text-black">
-  
-                      <!-- QR Code Text Input -->
-                      
-  
-                      <!-- Enhanced Image Upload Input -->
-                      <div
-                        style="margin-bottom: 1rem; position: relative;">
-                        <label for="image-upload"
-                          style="font-weight: medium; margin-bottom: 0.5rem; display: block;">Upload
-                          Image:</label>
-                        <div class="lg:inline-block"
-                          style="position: relative; width: auto;  overflow: hidden; cursor: pointer;">
-  
-                          <input
-                            type="file"
-                            id="image-upload"
-                            name="imagepath"
-                            accept=".jpg, .jpeg, .png, .gif"
-                            style="opacity: 0; width: 100%; height: 100%; position: absolute; left: 0; top: 0; cursor: pointer;" />
-                          <div
-                            style=" padding: 0.75rem 1rem; pointer-events: none;">
-  
-                            <div class=" space-y-4">
-                            <img src="{{asset('images/upload_4302134.png')}}" alt="Upload " class="w-16 h-16" />
-                            <p class="text-gray-500 text-sm">Upload your Image file</p>
-                          </div>
-                           
-                            <p id="fileName"></p>
-                            <small id="imagefile"></small>
-                            @error('imagepath')
-                            <small class="text-red-700 imgupload">{{ $message }}</small>
-                            @enderror
-                          </div>
-  
+                    <div class="mx-auto p-6 bg-white text-black">
+                      <div style="margin-bottom: 1rem;">
+                        <label for="url" style="font-weight: bold; margin-bottom: 0.5rem; display: block;">QR
+                          Code URL:</label>
+                        <div>
+                          <input type="text" id="qrurl" name="qrurl" placeholder="Enter URL for QR Code" style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;" value="{{$url->qrurl}}">
+                          @error('qrurl')
+                          <small class="text-red-700 url">{{ $message }}</small>
+                          @enderror
                         </div>
+                       
                       </div>
                     </div>
                   </div>
@@ -103,8 +77,6 @@
                   <h2 class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information
                   </h2>
               </div>
-
-
               <div class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
 
                   <div class="space-y-4">
@@ -119,7 +91,7 @@
                                   <div>
                                       <input id="projectName" placeholder="Enter project name"
                                           name="projectname"
-                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$url->project_name}}">
                                           @error('projectname')
                                           <small class="text-red-700 project">{{ $message }}</small>
                                           @enderror
@@ -157,7 +129,7 @@
                                           <ul id="folderList" class="divide-y divide-gray-200">
                                             @foreach ($folders as $folder)
                                                @php
-                                                  $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                  $isSelected = $url->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                               @endphp
                                               <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                                   <span>{{ $folder->name }}</span>
@@ -197,7 +169,7 @@
                                           <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                               type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="startdate" value="{{old('startdate')}}">
+                                              name="startdate" value="{{$url->start_date}}">
                                               @error('startdate')
                                               <small class="text-red-700 start">{{ $message }}</small>
                                               @enderror
@@ -209,7 +181,7 @@
                                       
                                           <input id="endDate" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="enddate"  value="{{old('enddate')}}">
+                                              name="enddate"  value="{{$url->end_date}}">
                                               @error('enddate')
                                               <small class="text-red-700 end">{{ $message }}</small>
                                               @enderror
@@ -224,9 +196,9 @@
                                   <select id="usage" name="usage"
                                       class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                       <option value="">Select Usage</option>
-                                      <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                      <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                      <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                      <option value="personal" {{ $url->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                      <option value="business" {{ $url->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                      <option value="event" {{ $url->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                                   </select>
                               </div>
 
@@ -235,7 +207,7 @@
                                   <label for="remarks"
                                       class="block font-medium text-gray-800">Remarks</label>
                                   <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$url->remarks}}</textarea>
                               </div>
                           </div>
                               <div class="flex justify-between mt-8">
@@ -256,7 +228,7 @@
                                   <button type="submit" id="nextBtn"
                                       class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate
                                       Qr Code</button>
-                              </div>
+                 </div>
                     </div>
                   </div>
                 </div>
@@ -264,8 +236,8 @@
             </div>
             <div class="col-span-4">
               <style>
-                  canvas{
-                  width: 100% !important;
+                canvas{
+                  width:100%;
                 }
                 .tab-button.active {
                   background-color: #00aaff;
@@ -304,7 +276,7 @@
                         <!-- Header -->
                         <h2
                           class="text-center text-lg font-semibold text-white mb-4">
-                          Scan QR Code for Contact
+                          Scan QR Code for Events
                         </h2>
   
                         <!-- QR Code Preview -->
@@ -313,7 +285,18 @@
   
                         </div>
   
+                        <!-- Action Buttons -->
+                        <div class="mt-6 flex flex-col gap-4 items-center">
+                          <!-- <button id="downloadBtn"
+                            class="px-4 py-2 bg-blue-500 text-white font-medium rounded-lg shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
+                            Generate vCard
+                          </button> -->
   
+                          <!-- <button
+                            class="px-4 py-2 bg-gray-700 text-white font-medium rounded-lg shadow hover:bg-gray-800 focus:ring focus:ring-gray-500">
+                            Save Contact
+                          </button> -->
+                        </div>
                       </div>
   
                       <!-- Bottom Indicator -->
@@ -323,51 +306,45 @@
                   </div>
   
                   <!-- Details Tab Content -->
-                  <div id="preview-content"
-                    class="tab-content  mt-10 w-full">
+                  <div id="preview-content" class="tab-content mt-10 w-full">
                     <div
-                      class="bg-white relative w-full max-w-sm mx-auto rounded-3xl shadow-lg border-4 max-h-[500px] border-gray-900 relative overflow-hidden">
+                      class=" relative bg-gray-800 relative w-full max-w-sm mx-auto rounded-3xl shadow-lg border-4 min-h-[500px] border-gray-900 relative overflow-hidden">
                       <!-- Top Indicator -->
-                      <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 z-40 bg-gray-700 rounded"></div>
+                      <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-700 rounded"></div>
+  
                       <!-- Content -->
-                      <div class="bg-white flex items-center justify-center p-w">
-       
-      
+                      <div class="max-w-sm mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-gray-100 flex flex-col items-center">
+                          <!-- Top Bar -->
+                          <div class="w-full bg-gray-300 p-2 flex items-center">
+                            <!-- Browser Address Bar -->
+                            <div class="w-full max-w-md mt-2 mx-auto flex items-center space-x-2 bg-white p-2 rounded shadow">
+                              <div class="text-sm text-gray-500 truncate url1">http://www.mywebsite.com</div>
+                              <button class="text-gray-600 hover:text-gray-800">
+                                <i class="fa fa-times"></i>
+                              </button>
+                            </div>
+                          </div>
   
-       
-        <div class="relative max-w-sm w-full pb-14 mx-auto">
-          <div class="  min-h-[400px] h-full ">
-           
-  
-           <div class="w-full pt-10 px-4  ">
-           <img src="./demoimg/images.png" class="w-full   h-full object-cover rounded-lg " id="preimage"/>
-           </div>
-  
-          
-          </div>
-        </div>
-      </div>
-  
+                          <!-- Header Section -->
+                       <div>
+                        <img src="./demoimg/dynamic-url.png" class="w-full"/>
+                       </div>
+                        </div>
+                      </div>
                       <!-- Bottom Indicator -->
                       <div
-                        class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-600 rounded-full"></div>
+                        class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-900 rounded-full"></div>
                     </div>
                   </div>
                 </div>
-  
                 <!-- Tab Buttons -->
-  
                 <!-- Content Area -->
-  
               </div>
-  
-  
             </div>
           </div>
-        
         </div>
       </main>
-
       <script src="{{asset('js/create-folder.js')}}"></script>
 
 <script>
@@ -393,27 +370,20 @@
   });
 </script>
 <script>
-   $(document).ready(function() {
-    var passedValue = getQueryParam('option'); 
-    if (passedValue !== null) {
-        $('#qroption').val(passedValue);
-    }
-    $.validator.addMethod("greaterThan", function (value, element, param) {
-        var startDate = $(param).val();
-        return this.optional(element) || new Date(value) > new Date(startDate);
-    }, "End date must be greater than start date");
-    $.validator.addMethod("imageType", function (value, element) {
-        return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
-    }, "Only JPG, JPEG, or PNG files are allowed.");
-    $("#imageqr_form").validate({   
+  $(document).ready(function () {
+      $.validator.addMethod("greaterThan", function (value, element, param) {
+          var startDate = $(param).val();
+          return this.optional(element) || new Date(value) > new Date(startDate);
+      }, "End date must be greater than start date");
+      $("#editurlqr_form").validate({   
         rules: {  
-            imagepath:{
-                    required: true,
-                    imageType: true
-                },
-            projectname:"required",
-            folderinput:"required",
-            startdate: {
+          qrurl: {
+            required:true,
+            url:true
+          },
+          projectname:"required",
+          folderinput:"required",
+          startdate: {
                 required: true,
                 date: true
             },
@@ -422,15 +392,15 @@
                 date: true,
                 greaterThan: "#startDate" // Custom validation rule
             }
-          },  
-          messages: {  
-            imagepath:{
-                    required: "Please select an image",
-                    imageType: "Only JPG, JPEG, PNG, or GIF files are allowed."
-                },
-            projectname:"Enter Project Name",
-            folderinput:"Choose the Folder Name",
-            startdate: {
+        },  
+        messages: {  
+          qrurl: {
+            required:"Enter QR Code URL",
+            url:"Enter a valid URL"
+          },
+          projectname:"Enter Project Name",
+          folderinput:"Choose the Folder Name",
+          startdate: {
                 required: "Please enter a start date",
                 date: "Enter a valid date"
             },
@@ -442,39 +412,13 @@
         },  
         errorElement: "small",
         errorClass: "text-red-500",
-        errorPlacement: function (error, element) {
-        if (element.attr("type") == "file") error.appendTo("#imagefile");
-          else error.insertAfter(element);
-        }
-    });
-      $("#image-upload").change(function(e) {
-        e.preventDefault();
-        const fileInput = $("#image-upload")[0]; // Or .get(0)
-        if (fileInput.files && fileInput.files[0]) {
-          const fileName = fileInput.files[0].name;
-          $("#fileName").text(fileName);
-
-          $(".imagetext").text($("#text").val());
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            $("#preimage")
-              .attr("src", e.target.result)
-              .show(); // Display the image
-          };
-          reader.readAsDataURL(fileInput.files[0]);
-
-        } else {
-          console.log("No file selected");
-        }
       });
-
-});  
-function getQueryParam(param) {
-        var params = new URLSearchParams(window.location.search);
-        return params.get(param);
-    }
- 
-  </script>
-@endsection 
-                          
-           
+    });
+    $("#qrurl").on('change', function(e) {
+        var url = $("#qrurl").val();
+        $(".url1").text($(this).val());
+         
+      });
+   
+</script>
+@endsection

@@ -52,7 +52,7 @@
             @if(session('success'))
               <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">{{ session('success') }}</div>
             @endif
-            <form action="{{ route('myqrcode') }}" id="smsqr_form" style="margin-bottom: 1rem;" id="saveForm" method="POST">
+            <form action="{{ route('update-smsqr',$sms->code) }}" id="editsmsqr_form" style="margin-bottom: 1rem;" method="POST">
               @csrf
               <div class="flex justify-start">
                 <h2
@@ -69,19 +69,19 @@
                         <label class="text-base text-gray-600">Phone Number</label>
                         <div class="flex gap-x-2 items-center mt-2">
                           <select class="w-full text-xs md:text-sm rounded-md text-black border p-1 h-10 md:h-auto py-2 md:p-2 lg:pr-10 w-1/3" name="countrycode" id="countrycode" readonly>
-                            <option value="+1" {{ old('countrycode') == '+1' ? 'selected' : '' }}>🇺🇸 USA (+1)</option>
-                            <option value="+91" {{ old('countrycode') == '+91' ? 'selected' : '' }}>🇮🇳 India (+91)</option>
-                            <option value="+44" {{ old('countrycode') == '+44' ? 'selected' : '' }}>🇬🇧 UK (+44)</option>
-                            <option value="+1" {{ old('countrycode') == '+1' ? 'selected' : '' }}>🇨🇦 Canada (+1)</option>
-                            <option value="+61" {{ old('countrycode') == '+61' ? 'selected' : '' }}>🇦🇺 Australia (+61)</option>
-                            <option value="+49" {{ old('countrycode') == '+49' ? 'selected' : '' }}>🇩🇪 Germany (+49)</option>
-                            <option value="+33" {{ old('countrycode') == '+33' ? 'selected' : '' }}>🇫🇷 France (+33)</option>
-                            <option value="+81" {{ old('countrycode') == '+81' ? 'selected' : '' }}>🇯🇵 Japan (+81)</option>
-                            <option value="+55" {{ old('countrycode') == '+55' ? 'selected' : '' }}>🇧🇷 Brazil (+55)</option>
-                            <option value="+971" {{ old('countrycode') == '+971' ? 'selected' : '' }}>🇦🇪 UAE (+971)</option>
-                            <option value="+966" {{ old('countrycode') == '+966' ? 'selected' : '' }}>🇸🇦 SA (+966)</option>
+                            <option value="+1" {{ $sms->countrycode == '+1' ? 'selected' : '' }}>🇺🇸 USA (+1)</option>
+                            <option value="+91" {{ $sms->countrycode  == '+91' ? 'selected' : '' }}>🇮🇳 India (+91)</option>
+                            <option value="+44" {{ $sms->countrycode  == '+44' ? 'selected' : '' }}>🇬🇧 UK (+44)</option>
+                            <option value="+1" {{ $sms->countrycode  == '+1' ? 'selected' : '' }}>🇨🇦 Canada (+1)</option>
+                            <option value="+61" {{ $sms->countrycode  == '+61' ? 'selected' : '' }}>🇦🇺 Australia (+61)</option>
+                            <option value="+49" {{ $sms->countrycode  == '+49' ? 'selected' : '' }}>🇩🇪 Germany (+49)</option>
+                            <option value="+33" {{ $sms->countrycode  == '+33' ? 'selected' : '' }}>🇫🇷 France (+33)</option>
+                            <option value="+81" {{ $sms->countrycode  == '+81' ? 'selected' : '' }}>🇯🇵 Japan (+81)</option>
+                            <option value="+55" {{ $sms->countrycode  == '+55' ? 'selected' : '' }}>🇧🇷 Brazil (+55)</option>
+                            <option value="+971" {{ $sms->countrycode  == '+971' ? 'selected' : '' }}>🇦🇪 UAE (+971)</option>
+                            <option value="+966" {{ $sms->countrycode  == '+966' ? 'selected' : '' }}>🇸🇦 SA (+966)</option>
                           </select>
-                          <input type="tel" max="999999999999" name="phone" id="phone" value="{{old('phone')}}" placeholder="Phone" class="w-full w-full rounded-md text-black border text-xs md:text-sm p-2 h-10 md:h-auto pr-10">
+                          <input type="tel" max="999999999999" name="phone" id="phone" value="{{$sms->phonenumber}}" placeholder="Phone" class="w-full w-full rounded-md text-black border text-xs md:text-sm p-2 h-10 md:h-auto pr-10">
 
                         </div>
                         <small id="phoneError"></small>
@@ -101,12 +101,12 @@
                           id="sms"
                           name="sms" class="text-gray-900" rows="5"
                           placeholder="Enter SMS text for QR Code"
-                          style="width: 100%; border: 1px solid #ccc; padding: 0.75rem 1.5rem 0.75rem 1rem; border-radius: 4px; box-sizing: border-box; font-size: 1rem;">{{old('sms')}}</textarea>
+                          style="width: 100%; border: 1px solid #ccc; padding: 0.75rem 1.5rem 0.75rem 1rem; border-radius: 4px; box-sizing: border-box; font-size: 1rem;">{{$sms->qrsms}}</textarea>
 
                         @error('sms')
                               <small class="text-red-700 sms">{{ $message }}</small>
                         @enderror
-                        <input type="hidden" name="qroption" id="qroption" class="text-gray-600">
+                        <input type="hidden" name="qroption" id="qroption" value="{{$sms->qrtype}}">
 
 
                         <div class="char-counter" style="margin-top: 5px;font-size: 14px;color: #555;">
@@ -137,7 +137,7 @@
                             <label for="projectName"
                               class="block font-medium text-gray-800">QR Project Name</label>
                             <div>
-                              <input id="projectName" placeholder="Enter project name" name="projectname" value="{{old('projectname')}}"
+                              <input id="projectName" placeholder="Enter project name" name="projectname" value="{{ $sms->project_name}}"
                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                               @error('projectname')
                               <small class="text-red-700 projectName">{{ $message }}</small>
@@ -185,7 +185,7 @@
                                 <ul id="folderList" class="divide-y divide-gray-200">
                                   @foreach ($folders as $folder)
                                     @php
-                                      $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                      $isSelected = $sms->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                     @endphp
                                     <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                         <span>{{ $folder->name }}</span>
@@ -230,7 +230,7 @@
                             <div class="flex-1">
                               <label for="startDate"
                                 class="block font-medium text-gray-800">Start Date</label>
-                              <input id="startDate" min="<?php echo date('Y-m-d'); ?>" type="date" value="{{old('startdate')}}"
+                              <input id="startDate" min="<?php echo date('Y-m-d'); ?>" type="date" value="{{$sms->start_date}}"
                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="startdate">
                                 @error('startdate')
                                 <small class="text-red-700 start_date">{{ $message }}</small>
@@ -240,7 +240,7 @@
                               <label for="endDate"
                                 class="block font-medium text-gray-800">End Date</label>
                               <div>
-                                <input id="endDate" type="date" value="{{old('enddate')}}"
+                                <input id="endDate" type="date" value="{{$sms->end_date}}"
                                   class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" name="enddate">
                                 @error('enddate')
                                 <small class="text-red-700 enddate">{{ $message }}</small>
@@ -255,9 +255,9 @@
                               class="block font-medium text-gray-800">Usage</label>
                             <select id="usage" name="usage"
                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                              <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                              <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                              <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                              <option value="personal" {{ $sms->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                              <option value="business" {{ $sms->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                              <option value="event" {{ $sms->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                             </select>
                             @error('usage')
                             <small class="text-red-700 usage">{{ $message }}</small>
@@ -270,7 +270,7 @@
                               class="block font-medium text-gray-800">Remarks</label>
                             <textarea id="remarks" name="remarks"
                               placeholder="Enter any additional remarks"
-                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                              class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$sms->remarks}}</textarea>
                           </div>
                           <div class="flex justify-between mt-8">
                             <button type="button" onclick="location.href='QrOption.php'"
@@ -421,15 +421,11 @@
   <script src="{{asset('js/create-folder.js')}}"></script>
   <script>
     $(document).ready(function () {
-      var passedValue = getQueryParam('option'); 
-      if (passedValue !== null) {
-          $('#qroption').val(passedValue);
-      }
       $.validator.addMethod("greaterThan", function (value, element, param) {
           var startDate = $(param).val();
           return this.optional(element) || new Date(value) > new Date(startDate);
       }, "End date must be greater than start date");
-      $("#smsqr_form").validate({   
+      $("#editsmsqr_form").validate({   
         rules: {   
           phone: "required",
           sms: "required",  
@@ -470,7 +466,8 @@
       $("#sms").on('change', function(e) {
         e.preventDefault();
         const phone = $("#phone").val();
-        const message = $("#sms").val(); const countrycode = $("#countrycode").val();
+        const message = $("#sms").val(); 
+        const countrycode = $("#countrycode").val();
         $(".mobile1").text(countrycode+'-'+phone);
        
         $(".smsarea").text(message);
@@ -496,11 +493,7 @@
         }
       });
     });
-    function getQueryParam(param) {
-      var params = new URLSearchParams(window.location.search);
-      return params.get(param);
-
-    }
+ 
   </script>
 @endsection
 

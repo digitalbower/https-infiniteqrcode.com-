@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'Create Image QrCode')
+@section('title', 'Create Bitcoin QRCodes')
 @section('content')
       <!-- Main Content Area -->
       <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
@@ -53,49 +53,57 @@
                 <h2
                   class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
               </div>
-              <form style="margin-bottom: 1rem;" action="{{route('create-imageqr')}}" method="POST" enctype="multipart/form-data" id="imageqr_form">
-                @csrf
-                <input type="hidden" name="qroption" id="qroption">
+                <form  id="editbitcoinqr_form" style="margin-bottom: 1rem;" action="{{ route('update-bitcoinqr',$bitcoin->code) }}" method="POST">
+                  @csrf
+                  <input type="hidden" name="qroption" id="qroption" value="{{$bitcoin->qrtype}}">
                 <div
                   class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                   <div class="space-y-4">
-                    <div class="mx-auto  lg:p-6 bg-white text-black">
+                    <div class="mx-auto p-6 bg-white text-black">
+                    <div>
+                  <label style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Currency</label>
+                  <input type="text" id="Currency" name="currency" placeholder="Currency" value="{{$bitcoin->currency}}" style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;">
+                  @error('currency')
+                    <small class="text-red-700 currency">{{ $message }}</small>
+                  @enderror
+              </div>
   
-                      <!-- QR Code Text Input -->
-                      
-  
-                      <!-- Enhanced Image Upload Input -->
-                      <div
-                        style="margin-bottom: 1rem; position: relative;">
-                        <label for="image-upload"
-                          style="font-weight: medium; margin-bottom: 0.5rem; display: block;">Upload
-                          Image:</label>
-                        <div class="lg:inline-block"
-                          style="position: relative; width: auto;  overflow: hidden; cursor: pointer;">
-  
+              <div class="qr-container mt-3">
+                  <label style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Quantity</label>
+                  <input type="number" id="qty" name="quantity"  placeholder="Quantity"  value="{{$bitcoin->quantity}}" style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;">
+                  @error('quantity')
+                      <small class="text-red-700 quantity">{{ $message }}</small>
+                      @enderror
+                </div>
+                      <div class="qr-container mt-3">
+                        <label for="bitcoinAddress" style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Receivers bitcoin address:*</label>
+                        <div>
                           <input
-                            type="file"
-                            id="image-upload"
-                            name="imagepath"
-                            accept=".jpg, .jpeg, .png, .gif"
-                            style="opacity: 0; width: 100%; height: 100%; position: absolute; left: 0; top: 0; cursor: pointer;" />
-                          <div
-                            style=" padding: 0.75rem 1rem; pointer-events: none;">
-  
-                            <div class=" space-y-4">
-                            <img src="{{asset('images/upload_4302134.png')}}" alt="Upload " class="w-16 h-16" />
-                            <p class="text-gray-500 text-sm">Upload your Image file</p>
-                          </div>
-                           
-                            <p id="fileName"></p>
-                            <small id="imagefile"></small>
-                            @error('imagepath')
-                            <small class="text-red-700 imgupload">{{ $message }}</small>
-                            @enderror
-                          </div>
-  
+                            type="text"
+                            id="bitcoinAddress"
+                            name="btcaddr"
+                            placeholder="Enter Address" value="{{$bitcoin->btcaddr}}"
+                            style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;" /> <!-- Example Bitcoin address -->
+                          @error('btcaddr')
+                          <small class="text-red-700 btcaddress">{{ $message }}</small>
+                          @enderror
                         </div>
                       </div>
+                      <div class="qr-container mt-3">
+                        <label for="btcnetwrk" style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Network:*</label>
+                        <div>
+                          <input
+                            type="text"
+                            id="btcnetwrk"
+                            name="btcnetwrk"
+                            placeholder="Enter Network" value="{{$bitcoin->btcnetwrk}}"
+                            style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;" /> <!-- Example Bitcoin address -->
+                          @error('btcnetwrk')
+                          <small class="text-red-700 btcnetwrk">{{ $message }}</small>
+                          @enderror
+                        </div>
+                      </div>
+  
                     </div>
                   </div>
                 </div>
@@ -119,7 +127,7 @@
                                   <div>
                                       <input id="projectName" placeholder="Enter project name"
                                           name="projectname"
-                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$bitcoin->project_name}}">
                                           @error('projectname')
                                           <small class="text-red-700 project">{{ $message }}</small>
                                           @enderror
@@ -157,7 +165,7 @@
                                           <ul id="folderList" class="divide-y divide-gray-200">
                                             @foreach ($folders as $folder)
                                                @php
-                                                  $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                  $isSelected = $bitcoin->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                               @endphp
                                               <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                                   <span>{{ $folder->name }}</span>
@@ -197,7 +205,7 @@
                                           <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                               type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="startdate" value="{{old('startdate')}}">
+                                              name="startdate" value="{{$bitcoin->start_date}}">
                                               @error('startdate')
                                               <small class="text-red-700 start">{{ $message }}</small>
                                               @enderror
@@ -206,14 +214,14 @@
                                   <div class="flex-1">
                                       <label for="endDate" class="block font-medium text-gray-800">End
                                           Date</label>
-                                      
+                                      <div>
                                           <input id="endDate" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="enddate"  value="{{old('enddate')}}">
+                                              name="enddate"  value="{{$bitcoin->end_date}}">
                                               @error('enddate')
                                               <small class="text-red-700 end">{{ $message }}</small>
                                               @enderror
-                                      
+                                      </div>
                                   </div>
                               </div>
 
@@ -224,9 +232,9 @@
                                   <select id="usage" name="usage"
                                       class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                       <option value="">Select Usage</option>
-                                      <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                      <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                      <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                      <option value="personal" {{ $bitcoin->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                      <option value="business" {{$bitcoin->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                      <option value="event" {{$bitcoin->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                                   </select>
                               </div>
 
@@ -235,9 +243,8 @@
                                   <label for="remarks"
                                       class="block font-medium text-gray-800">Remarks</label>
                                   <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                      class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$bitcoin->remarks}}</textarea>
                               </div>
-                          </div>
                               <div class="flex justify-between mt-8">
                                   <button type="button" onclick="location.href='QrOption.php'"
                                       class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
@@ -256,15 +263,17 @@
                                   <button type="submit" id="nextBtn"
                                       class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate
                                       Qr Code</button>
-                              </div>
+          </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </form>
             </div>
             <div class="col-span-4">
+              
               <style>
-                  canvas{
+                 canvas{
                   width: 100% !important;
                 }
                 .tab-button.active {
@@ -293,32 +302,25 @@
   
                   <!-- Preview Tab Content -->
                   <div id="detail-content" class="tab-content mt-10 w-full hidden">
-                    <div
-                      class="bg-gray-800 w-full max-w-sm mx-auto mt-10 rounded-3xl shadow-lg border-4 min-h-[550px] border-gray-900 relative overflow-hidden">
+                    <div class="bg-gray-800 w-full max-w-sm mx-auto mt-10 rounded-3xl shadow-lg border-4 min-h-[550px] border-gray-900 relative overflow-hidden">
                       <!-- Top Indicator -->
-                      <div
-                        class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-700 rounded"></div>
+                      <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-700 rounded"></div>
   
                       <!-- Content -->
                       <div class="p-6 mt-5">
                         <!-- Header -->
-                        <h2
-                          class="text-center text-lg font-semibold text-white mb-4">
+                        <h2 class="text-center text-lg font-semibold text-white mb-4">
                           Scan QR Code for Contact
                         </h2>
   
                         <!-- QR Code Preview -->
                         <div id="qr-preview"
                           class="bg-white w-full border-3 rounded-lg shadow-sm overflow-hidden">
-  
                         </div>
-  
-  
+                        <!-- Action Buttons -->
                       </div>
-  
                       <!-- Bottom Indicator -->
-                      <div
-                        class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-700 rounded-full"></div>
+                      <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-700 rounded-full"></div>
                     </div>
                   </div>
   
@@ -326,48 +328,64 @@
                   <div id="preview-content"
                     class="tab-content  mt-10 w-full">
                     <div
-                      class="bg-white relative w-full max-w-sm mx-auto rounded-3xl shadow-lg border-4 max-h-[500px] border-gray-900 relative overflow-hidden">
+                      class="bg-gray-800 relative w-full max-w-sm mx-auto rounded-3xl shadow-lg border-4 min-h-[500px] border-gray-900 relative overflow-hidden">
                       <!-- Top Indicator -->
-                      <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 z-40 bg-gray-700 rounded"></div>
+                      <div
+                        class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-700 rounded"></div>
                       <!-- Content -->
-                      <div class="bg-white flex items-center justify-center p-w">
-       
-      
+                      <div class="bg-white w-full p-6 rounded-xl shadow-lg border border-gray-300">
+          <h1 class="text-center text-xl font-semibold text-gray-800 mb-4">CRYPTO</h1>
   
-       
-        <div class="relative max-w-sm w-full pb-14 mx-auto">
-          <div class="  min-h-[400px] h-full ">
-           
+          <div class="space-y-4">
+              <div>
+                  <label class="block text-sm font-medium text-gray-700">Currency</label>
+                  <input type="text" value="" readonly
+                      class="mt-1 block w-full rounded-md border p-1 border-gray-300 bg-gray-50 text-gray-800 focus:ring focus:ring-gray-300 focus:border-gray-500 text-center currency1">
+              </div>
   
-           <div class="w-full pt-10 px-4  ">
-           <img src="./demoimg/images.png" class="w-full   h-full object-cover rounded-lg " id="preimage"/>
-           </div>
+              <div>
+                  <label class="block text-sm font-medium text-gray-700">Quantity</label>
+                  <input type="text" value="" readonly
+                      class="mt-1 p-1 block w-full rounded-md border border-gray-300 bg-gray-50 text-gray-800 focus:ring focus:ring-gray-300 focus:border-gray-500 text-center quantity1">
+              </div>
   
-          
+              <div>
+                  <label class="block text-sm font-medium text-gray-700">Receiver Bitcoin Address</label>
+                  <div class="relative">
+                      <input type="text" value="" 
+                          class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 text-gray-800 pr-10 text-center p-1 address">
+                      <button class="absolute inset-y-0 right-0 flex items-center pr-3">
+                          
+                          </svg>
+                      </button>
+                  </div>
+              </div>
+  
+              <div>
+                  <label class="block text-sm font-medium text-gray-700">Network</label>
+                  <input type="text" value="" readonly
+                      class="mt-1 p-1 block w-full rounded-md border border-gray-300 bg-gray-50 text-gray-800 focus:ring focus:ring-gray-300 focus:border-gray-500 text-center network">
+              </div>
           </div>
-        </div>
-      </div>
   
+          <button class="mt-6 w-full bg-gray-800 text-white text-sm font-medium py-2 rounded-md shadow hover:bg-gray-700">
+              DOWNLOAD
+          </button>
+      </div>
                       <!-- Bottom Indicator -->
                       <div
-                        class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-600 rounded-full"></div>
+                        class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-900 rounded-full"></div>
                     </div>
                   </div>
                 </div>
-  
                 <!-- Tab Buttons -->
-  
                 <!-- Content Area -->
-  
               </div>
-  
-  
             </div>
           </div>
-        
+         
         </div>
       </main>
-
       <script src="{{asset('js/create-folder.js')}}"></script>
 
 <script>
@@ -393,27 +411,20 @@
   });
 </script>
 <script>
-   $(document).ready(function() {
-    var passedValue = getQueryParam('option'); 
-    if (passedValue !== null) {
-        $('#qroption').val(passedValue);
-    }
-    $.validator.addMethod("greaterThan", function (value, element, param) {
-        var startDate = $(param).val();
-        return this.optional(element) || new Date(value) > new Date(startDate);
-    }, "End date must be greater than start date");
-    $.validator.addMethod("imageType", function (value, element) {
-        return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
-    }, "Only JPG, JPEG, or PNG files are allowed.");
-    $("#imageqr_form").validate({   
+    $(document).ready(function () {
+      $.validator.addMethod("greaterThan", function (value, element, param) {
+          var startDate = $(param).val();
+          return this.optional(element) || new Date(value) > new Date(startDate);
+      }, "End date must be greater than start date");
+      $("#editbitcoinqr_form").validate({   
         rules: {  
-            imagepath:{
-                    required: true,
-                    imageType: true
-                },
-            projectname:"required",
-            folderinput:"required",
-            startdate: {
+          currency: "required",
+          quantity: "required",  
+          btcaddr:"required",
+          btcnetwrk:"required",
+          projectname:"required",
+          folderinput:"required",
+          startdate: {
                 required: true,
                 date: true
             },
@@ -422,15 +433,15 @@
                 date: true,
                 greaterThan: "#startDate" // Custom validation rule
             }
-          },  
-          messages: {  
-            imagepath:{
-                    required: "Please select an image",
-                    imageType: "Only JPG, JPEG, PNG, or GIF files are allowed."
-                },
-            projectname:"Enter Project Name",
-            folderinput:"Choose the Folder Name",
-            startdate: {
+        },  
+        messages: {  
+          currency: "Enter Currency",
+          quantity: "Enter Quantity",  
+          btcaddr:"Receivers bitcoin address",
+          btcnetwrk:"Enter Network",
+          projectname:"Enter Project Name",
+          folderinput:"Choose the Folder Name",
+          startdate: {
                 required: "Please enter a start date",
                 date: "Enter a valid date"
             },
@@ -442,39 +453,24 @@
         },  
         errorElement: "small",
         errorClass: "text-red-500",
-        errorPlacement: function (error, element) {
-        if (element.attr("type") == "file") error.appendTo("#imagefile");
-          else error.insertAfter(element);
-        }
-    });
-      $("#image-upload").change(function(e) {
-        e.preventDefault();
-        const fileInput = $("#image-upload")[0]; // Or .get(0)
-        if (fileInput.files && fileInput.files[0]) {
-          const fileName = fileInput.files[0].name;
-          $("#fileName").text(fileName);
-
-          $(".imagetext").text($("#text").val());
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            $("#preimage")
-              .attr("src", e.target.result)
-              .show(); // Display the image
-          };
-          reader.readAsDataURL(fileInput.files[0]);
-
-        } else {
-          console.log("No file selected");
-        }
       });
+      $("#bitcoinAddress").on('change', async function(e) {
+          $(".address").val($(this).val());
+      })
+      $("#Currency").on('change', async function(e) {
+          $(".currency1").val($(this).val()); 
+      })
+      $("#btcnetwrk").on('change', async function(e) {
+          $(".network").val($(this).val());
+      })
+      $("#qty").on('change', async function(e) {
+            $(".quantity1").val($(this).val());
+      })
 
-});  
-function getQueryParam(param) {
-        var params = new URLSearchParams(window.location.search);
-        return params.get(param);
-    }
- 
+    });
   </script>
-@endsection 
+@endsection
                           
-           
+                     
+                           
+                      

@@ -46,9 +46,9 @@
                             <div class="flex justify-start">
                                 <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
                             </div>
-                            <form style="margin-bottom: 1rem;" action="{{route('create-mp3qr')}}" id="mp3qr_form" method="POST" enctype="multipart/form-data" id="saveForm">
+                            <form style="margin-bottom: 1rem;" action="{{route('update-mp3qr',$mp3->code)}}" id="editmp3qr_form" method="POST" enctype="multipart/form-data" id="saveForm">
                                 @csrf
-                                <input type="hidden" name="qroption" id="qroption">
+                                <input type="hidden" name="qroption" id="qroption" value="{{$mp3->qrtype}}">
                                 <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                                     <div class="space-y-4">
 
@@ -61,7 +61,7 @@
                                                     Mp3 Name:</label>
                                                 <div>
                                                     <input type="text" id="qrtext" class="p-2"
-                                                        name="qrtext" placeholder="Enter text Mp3 Name" value="{{old('qrtext')}}"
+                                                        name="qrtext" placeholder="Enter text Mp3 Name" value="{{ $mp3->qrtext}}"
                                                         style="width: 100%; border: 1px solid #ccc;  border-radius: 4px; box-sizing: border-box; font-size: 1rem;" />
                                                     @error('qrtext')
                                                     <small class="text-red-700 qrtext">{{ $message }}</small>
@@ -115,7 +115,7 @@
                                                     <div>
                                                         <input id="projectName" placeholder="Enter project name"
                                                             name="projectname"
-                                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$mp3->project_name}}">
                                                             @error('projectname')
                                                             <small class="text-red-700 project">{{ $message }}</small>
                                                             @enderror
@@ -153,7 +153,7 @@
                                                             <ul id="folderList" class="divide-y divide-gray-200">
                                                               @foreach ($folders as $folder)
                                                                  @php
-                                                                    $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                                    $isSelected = $mp3->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                                                 @endphp
                                                                 <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                                                     <span>{{ $folder->name }}</span>
@@ -193,7 +193,7 @@
                                                             <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                                                 type="date"
                                                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                                name="startdate" value="{{old('startdate')}}">
+                                                                name="startdate" value="{{$mp3->start_date}}">
                                                                 @error('startdate')
                                                                 <small class="text-red-700 start">{{ $message }}</small>
                                                                 @enderror
@@ -205,7 +205,7 @@
                                                         
                                                             <input id="endDate" type="date"
                                                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                                name="enddate"  value="{{old('enddate')}}">
+                                                                name="enddate"  value="{{$mp3->end_date}}">
                                                                 @error('enddate')
                                                                 <small class="text-red-700 end">{{ $message }}</small>
                                                                 @enderror
@@ -220,9 +220,9 @@
                                                     <select id="usage" name="usage"
                                                         class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                                         <option value="">Select Usage</option>
-                                                        <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                                        <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                                        <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                                        <option value="personal" {{ $mp3->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                                        <option value="business" {{ $mp3->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                                        <option value="event" {{ $mp3->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                                                     </select>
                                                 </div>
     
@@ -231,7 +231,7 @@
                                                     <label for="remarks"
                                                         class="block font-medium text-gray-800">Remarks</label>
                                                     <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$mp3->remarks}}</textarea>
                                                 </div>
                                             </div>
                                                 <div class="flex justify-between mt-8">
@@ -418,15 +418,11 @@
 </script>
 <script>
   $(document).ready(function () {
-    var passedValue = getQueryParam('option'); 
-    if (passedValue !== null) {
-        $('#qroption').val(passedValue);
-    }
     $.validator.addMethod("greaterThan", function (value, element, param) {
         var startDate = $(param).val();
         return this.optional(element) || new Date(value) > new Date(startDate);
     }, "End date must be greater than start date");
-    $("#mp3qr_form").validate({   
+    $("#editmp3qr_form").validate({   
         rules: {  
             qrtext: "required",
             mp3path:"required",
@@ -465,11 +461,6 @@
         }
     });
     });
-    function getQueryParam(param) {
-      var params = new URLSearchParams(window.location.search);
-      return params.get(param);
-
-    }
   </script>
   <script>
     $(document).ready(function() {

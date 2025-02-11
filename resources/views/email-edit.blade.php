@@ -1,7 +1,5 @@
-         
-
 @extends('layouts.layout')
-@section('title', 'Create PDF QrCode')
+@section('title', 'Create Email QR')
 @section('content')
     <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
       <div class="container mx-auto pb-12 md:px-6 sm:px-8 lg:px-12">
@@ -12,29 +10,27 @@
               Create Your URL QR Code
             </h1>
           </div>
-
           <!-- Step Container -->
           <div class="flex items-center justify-center mb-5 space-x-0">
             <!-- Step 1 -->
             <div
               class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
-              <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
-                stroke-linejoin="round" class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg">
+              <svg stroke="currentColor" fill="none" stroke-width="2"
+                viewBox="0 0 24 24" stroke-linecap="round"
+                stroke-linejoin="round" class="h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
             </div>
-
             <!-- Line Gap -->
             <div class="w-10 h-1 bg-gray-300"></div>
-
             <!-- Step 2 -->
             <div
               class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
               2
             </div>
             <div class="w-10 h-1 bg-gray-300"></div>
-
             <!-- Step 2 -->
             <div
               class="flex items-center justify-center w-10 h-10 rounded-full text-white bg-[#F5A623] bg-opacity-90 shadow-md transition duration-300">
@@ -42,58 +38,76 @@
             </div>
           </div>
         </div>
-        <div
-          class="lg:lg:lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
+        <div class="lg:lg:lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
           <div class="col-span-8">
-            <div class="flex justify-start">
-              <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
-            </div>
-            <form  id="pdfqr_form" style="margin-bottom: 1rem;" action="{{ route('create-pdfqr') }}" method="POST" enctype="multipart/form-data">
+            <form  id="editemailqr_form" style="margin-bottom: 1rem;" action="{{ route('update-emailqr',$email->code) }}" method="POST">
               @csrf
-              <input type="hidden" name="qroption" id="qroption">
+              <input type="hidden" name="qroption" id="qroption" value="{{$email->qrtype}}">
+              <div class="flex justify-start">
+                <h2
+                  class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
+              </div>
               <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
-                
-                  <div class="space-y-4">
-                    
 
-                    <div class="mx-auto  lg:p-6 bg-white text-black">
+                <div class="space-y-4">
+                  <div class="mx-auto p-6 bg-white text-black">
 
-                      <!-- QR Code Text Input -->
-                    
-
-                      <!-- Enhanced Image Upload Input -->
-                      <div style="margin-bottom: 1rem; position: relative;">
-                        <label for="pdf-upload" style="font-weight: medium; margin-bottom: 0.5rem; display: block;">Upload
-                          Pdf:</label>
-
-                        <div class="lg:inline-block"
-                          style="position: relative; width: auto;   overflow: hidden; cursor: pointer;">
-                          
-                          <input type="file" id="pdf-upload" name="pdfpath" accept="application/pdf"
-                            style="opacity: 0; width: 100%; height: 100%; position: absolute; left: 0; top: 0; cursor: pointer;" />
-                          <div style="">
-
-                          <div class=" space-y-4">
-                            <img src="{{asset('images/upload_4302134.png')}}" alt="Upload PDF" class="w-16 h-16" />
-                            <p class="text-gray-500 text-sm">Upload your PDF file</p>
-                          </div>
-
-                            
-                          </div>
-                          <small id="pdffile"></small>
-                          @error('pdfpath')
-                          <small class="text-red-700 pdfupload">{{ $message }}</small>
+                    <div style="margin-bottom: 1rem;">
+                      <label for="email"
+                        style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Email:</label>
+                      <div>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          placeholder="your@email.com" value="{{ $email->email}}"
+                          style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;"  />
+                          @error('email')
+                            <small class="error-message text-red-500 email">{{ $message }}</small>
                           @enderror
-                        </div>
                       </div>
+                    </div>
 
+                    <div style="margin-bottom: 1rem;">
+                      <label for="subject"
+                        style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Subject:</label>
+                      <div>
+                        <input
+                          type="text"
+                          id="subject"
+                          name="subject"
+                          placeholder="Email Subject" value="{{ $email->subject}}"
+                          style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;"  />
+                        @error('subject')
+                        <small class="text-red-700 subject">{{ $message }}</small>
+                        @enderror
+                      </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                      <label for="message"
+                        style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Message:</label>
+                      <div>
+                        <textarea
+                          id="emessage"
+                          name="message"
+                          placeholder="Your Message"
+                          rows="4" 
+                          style="width: 100%; border: 1px solid #ccc; padding: 0.5rem; border-radius: 4px; box-sizing: border-box;" >{{ $email->message }}</textarea>
+                        @error('message')
+                        <small class="text-red-700 emessage">{{ $message }}</small>
+                        @enderror
+                      </div>
                     </div>
                   </div>
+                </div>
               </div>
               <div class="flex mt-10 justify-start">
                 <h2 class="text-2xl font-medium mb-3 text-center text-white">Enter Basic Information
-              </h2>
+                </h2>
             </div>
+
+
             <div class="lg:p-4 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
 
                 <div class="space-y-4">
@@ -108,7 +122,7 @@
                                 <div>
                                     <input id="projectName" placeholder="Enter project name"
                                         name="projectname"
-                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$email->project_name}}">
                                         @error('projectname')
                                         <small class="text-red-700 project">{{ $message }}</small>
                                         @enderror
@@ -146,7 +160,7 @@
                                         <ul id="folderList" class="divide-y divide-gray-200">
                                           @foreach ($folders as $folder)
                                              @php
-                                                $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                $isSelected = $email->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
                                             @endphp
                                             <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
                                                 <span>{{ $folder->name }}</span>
@@ -186,7 +200,7 @@
                                         <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
                                             type="date"
                                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            name="startdate" value="{{old('startdate')}}">
+                                            name="startdate" value="{{ $email->start_date }}">
                                             @error('startdate')
                                             <small class="text-red-700 start">{{ $message }}</small>
                                             @enderror
@@ -195,14 +209,14 @@
                                 <div class="flex-1">
                                     <label for="endDate" class="block font-medium text-gray-800">End
                                         Date</label>
-                                  
+                                    <div>
                                         <input id="endDate" type="date"
                                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                            name="enddate"  value="{{old('enddate')}}">
+                                            name="enddate"  value="{{ $email->end_date }}">
                                             @error('enddate')
                                             <small class="text-red-700 end">{{ $message }}</small>
                                             @enderror
-                                    
+                                    </div>
                                 </div>
                             </div>
 
@@ -213,9 +227,9 @@
                                 <select id="usage" name="usage"
                                     class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">Select Usage</option>
-                                    <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                    <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                    <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                    <option value="personal" {{ $email->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                    <option value="business" {{ $email->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                    <option value="event" {{ $email->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                                 </select>
                             </div>
 
@@ -224,9 +238,8 @@
                                 <label for="remarks"
                                     class="block font-medium text-gray-800">Remarks</label>
                                 <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ $email->remarks}}</textarea>
                             </div>
-                          </div>
                             <div class="flex justify-between mt-8">
                                 <button type="button" onclick="location.href='QrOption.php'"
                                     class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
@@ -245,17 +258,22 @@
                                 <button type="submit" id="nextBtn"
                                     class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate
                                     Qr Code</button>
+                      </div>
                     </div>
+
                   </div>
                 </div>
               </div>
             </form>
           </div>
+
           <div class="col-span-4">
+
             <style>
-                canvas{
+              canvas {
                 width: 100% !important;
               }
+
               .tab-button.active {
                 background-color: #00aaff;
                 color: white;
@@ -266,12 +284,15 @@
               <!-- Header -->
               <div class="p-1 w-full mt-10">
                 <!-- Tab Navigation -->
-                <div class="flex bg-gray-200 rounded-full justify-around shadow-md">
-                  <button id="preview-btn"
+                <div
+                  class="flex bg-gray-200 rounded-full justify-around shadow-md">
+                  <button
+                    id="preview-btn"
                     class="tab-button text-sm text-gray-500 px-0 w-full py-3 rounded-full transition duration-300 focus:outline-none active">
                     Preview
                   </button>
-                  <button id="detail-btn"
+                  <button
+                    id="detail-btn"
                     class="tab-button text-sm text-gray-500 px-0 w-full py-3 rounded-full transition duration-300 focus:outline-none ">
                     QRCode
                   </button>
@@ -280,59 +301,64 @@
                 <!-- Preview Tab Content -->
                 <div id="detail-content" class="tab-content mt-10 w-full hidden">
                   <div
-                    class="bg-gray-800 w-full max-w-sm mx-auto mt-10 rounded-3xl shadow-lg border-4 min-h-[550px] border-gray-900 relative overflow-hidden" >
+                    class="bg-gray-800 w-full max-w-sm mx-auto mt-10 rounded-3xl shadow-lg border-4 min-h-[550px] border-gray-900 relative overflow-hidden">
                     <!-- Top Indicator -->
-                    <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-700 rounded"></div>
+                    <div
+                      class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-400 z-40 rounded"></div>
 
                     <!-- Content -->
                     <div class="p-6 mt-5">
                       <!-- Header -->
-                      <h2 class="text-center text-lg font-semibold text-white mb-4">
+                      <h2
+                        class="text-center text-lg font-semibold text-white mb-4">
                         Scan QR Code for Contact
                       </h2>
+
                       <!-- QR Code Preview -->
                       <div id="qr-preview" class="bg-white w-full border-3 rounded-lg shadow-sm overflow-hidden">
+
                       </div>
+
+                      <!-- Action Buttons -->
+
                     </div>
+
                     <!-- Bottom Indicator -->
-                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-700 rounded-full"></div>
+                    <div
+                      class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-700 rounded-full"></div>
                   </div>
                 </div>
-                <style>
-                  /* Hide scrollbar */
-                  .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                  }
-                  .scrollbar-hide {
-                    -ms-overflow-style: none; /* IE and Edge */
-                    scrollbar-width: none; /* Firefox */
-                  }
-                </style>
-                <!-- Details Tab Content -->
-                <div id="preview-content" class="tab-content  mt-10 w-full">
-                  <div
-                    class="relative w-full max-w-sm mx-auto rounded-3xl shadow-lg border-4 min-h-[500px] border-gray-900 relative overflow-hidden bg-gray-800" >
-                    <!-- Top Indicator -->
-                    <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gray-700 rounded"></div>
-                    <!-- Content -->
-                    <div class="rounded-lg border max-h-[500px] rounded-lg overflow-hidden overflow-y-scroll scrollbar-hide shadow-sm w-full max-w-4xl border-none text-zinc-300"
-                      data-v0-t="card">
-                      <div class="space-y-3 p-6 ">
-                        <div class="w-full gap-4 ">
-                          <div id="pdf-preview">
-                            <img src="{{asset('demoimg/pdf.png')}}" class="w-full xl:h-[350px] object-cover"/>
-                          </div>
 
+                <!-- Details Tab Content -->
+                <div id="preview-content" class="tab-content mt-10 w-full">
+                  <div style="background-image: url(./images/ai-generated-nature-landscapes-background-free-photo.jpg)" class="relative w-full px-2 max-w-sm mx-auto rounded-3xl shadow-lg border-4 min-h-[500px] border-gray-900 relative overflow-hidden">
+                    <!-- Top Indicator -->
+                    <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 z-40 bg-gray-500 rounded"></div>
+
+                    <!-- Content -->
+                    <div class="rounded-lg border text-card-foreground text-black mt-10 w-full max-w-md bg-white shadow-lg relative overflow-hidden" data-v0-t="card">
+                      <div class="p-6 space-y-4">
+                        <div class="space-y-2">
+                          <div class="flex items-center gap-2">
+                            <span class="text-sm text-muted-foreground">To:</span>
+                            <span class="text-sm bg-neutral-100 px-2 py-1 rounded-md " id="pemail">Recipient Name</span>
+                          </div>
+                          <div class="flex items-center gap-2 border-y-2 border-orange-200 py-2 mt-4">
+                            <span class="text-sm text-muted-foreground">Subject:</span>
+                            <span class="text-sm font-medium" id="psubject">Congratulations!!</span>
                           </div>
                         </div>
-                     
-                        <button class="inline-flex mt-2 items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-11 rounded-md px-8 w-full bg-zinc-700 hover:bg-zinc-600 text-white text-base ">DOWNLOAD NOW</button>
+
+
+                        <div class="space-y-2 pt-0">
+                          <p class="text-sm" id="pmessage">Congratulations, you've won the $500 gift card in our Summer Giveaway Contest. Please DM us to claim your prize.</p>
+                        </div>
                       </div>
-                      <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-900 rounded-full"></div>
                     </div>
 
+                    <button class="inline-flex mt-2 items-center justify-center gap-2 whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 h-11 rounded-md px-8 w-full bg-zinc-700 hover:bg-zinc-600 text-white text-base">SEND </button>
                     <!-- Bottom Indicator -->
-                  
+                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-900 rounded-full"></div>
                   </div>
                 </div>
               </div>
@@ -342,69 +368,70 @@
               <!-- Content Area -->
 
             </div>
-
-
           </div>
         </div>
-      
+
       </div>
-  </div>
-  </main>
-      
-<script src="{{asset('js/create-folder.js')}}"></script>
 
-<script>
-  const previewBtn = document.getElementById("preview-btn");
-  const detailBtn = document.getElementById("detail-btn");
-  const previewContent = document.getElementById("preview-content");
-  const detailContent = document.getElementById("detail-content");
-  const urlInput = document.getElementById("url-input");
-  const qrPreview = document.getElementById("qr-preview");
+    </main>
 
-  previewBtn.addEventListener("click", () => {
-    previewBtn.classList.add("active");
-    detailBtn.classList.remove("active");
-    previewContent.classList.remove("hidden");
-    detailContent.classList.add("hidden");
-  });
-
-  detailBtn.addEventListener("click", () => {
-    detailBtn.classList.add("active");
-    previewBtn.classList.remove("active");
-    detailContent.classList.remove("hidden");
-    previewContent.classList.add("hidden");
-  });
-</script>
-<script>
-  $(document).ready(function () {
-    var passedValue = getQueryParam('option'); 
-    if (passedValue !== null) {
-        $('#qroption').val(passedValue);
-    }
-    $.validator.addMethod("greaterThan", function (value, element, param) {
-        var startDate = $(param).val();
-        return this.optional(element) || new Date(value) > new Date(startDate);
-    }, "End date must be greater than start date");
-    $("#pdfqr_form").validate({   
+   
+    <script src="{{asset('js/create-folder.js')}}"></script>
+    <script>
+      const previewBtn = document.getElementById("preview-btn");
+      const detailBtn = document.getElementById("detail-btn");
+      const previewContent = document.getElementById("preview-content");
+      const detailContent = document.getElementById("detail-content");
+      const urlInput = document.getElementById("url-input");
+      const qrPreview = document.getElementById("qr-preview");
+  
+      previewBtn.addEventListener("click", () => {
+        previewBtn.classList.add("active");
+        detailBtn.classList.remove("active");
+        previewContent.classList.remove("hidden");
+        detailContent.classList.add("hidden");
+      });
+  
+      detailBtn.addEventListener("click", () => {
+        detailBtn.classList.add("active");
+        previewBtn.classList.remove("active");
+        detailContent.classList.remove("hidden");
+        previewContent.classList.add("hidden");
+      });
+    </script>
+  <script>
+    $(document).ready(function () {
+      $.validator.addMethod("greaterThan", function (value, element, param) {
+          var startDate = $(param).val();
+          return this.optional(element) || new Date(value) > new Date(startDate);
+      }, "End date must be greater than start date");
+      $("#editemailqr_form").validate({   
         rules: {  
-          pdfpath: "required",
+          email: {  
+            required: true,  
+            email: true,  
+          },  
+          subject: "required",
+          message: "required",  
           projectname:"required",
           folderinput:"required",
           startdate: {
-              required: true,
-              date: true
-          },
-          enddate: {
-              required: true,
-              date: true,
-              greaterThan: "#startDate" // Custom validation rule
-          }
-          },  
-          messages: {  
-            pdfpath: "Please upload a PDF file",
-            projectname:"Enter Project Name",
-            folderinput:"Choose the Folder Name",
-            startdate: {
+                required: true,
+                date: true
+            },
+            enddate: {
+                required: true,
+                date: true,
+                greaterThan: "#startDate" // Custom validation rule
+            }
+        },  
+        messages: {  
+          email: "Enter valid Email Id", 
+          subject: "Enter Subject",
+          message: "Enter Message",  
+          projectname:"Enter Project Name",
+          folderinput:"Choose the Folder Name",
+          startdate: {
                 required: "Please enter a start date",
                 date: "Enter a valid date"
             },
@@ -415,54 +442,29 @@
             }
         },  
         errorElement: "small",
-        errorClass: "text-red-500",
-        errorPlacement: function (error, element) {
-        if (element.attr("type") == "file") error.appendTo("#pdffile");
-          else error.insertAfter(element);
-        }
+        errorClass: "text-red-500"
+      });
     });
-
-    });
-    $("#pdf-upload").change(function (e) {
+    $("#emessage").on('change', function(e) {
         e.preventDefault();
-        const fileInput = $("#pdf-upload")[0]; // Or .get(0)
-        const file = fileInput.files[0];
-        if (file) {
-            const fileName = file.name;
-            const fileSize = file.size / 1024 / 1024; // Convert to MB
-            console.log(fileName);
+        const email = document.getElementById("email").value;
+        const subject = document.getElementById("subject").value;
+        const message = document.getElementById("emessage").value;
+        $("#pemail").text(email);
+        $("#psubject").text(subject);
+        $("#pmessage").text(message);
+        if (email) {
+          // Construct mailto link
+          const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
 
-            // Check if the file is a PDF and within the 2MB size limit
-            if (file.type === "application/pdf") {
-                if (fileSize > 2) {
-                    alert("File size exceeds 2MB. Please select a smaller PDF.");
-                    return; // Stop the process if the file is too large
-                }
-
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    // Create an iframe to display the PDF preview
-                    var iframe = $('<iframe>', {
-                        src: e.target.result,
-                        width: '100%',
-                        height: '300px'
-                    });
-                    $('#pdf-preview').html(iframe); // Add the iframe to the preview container
-                };
-                reader.readAsDataURL(file); // Read the PDF as a data URL
-            } else {
-                alert("Please select a valid PDF file.");
-            }
-        } else {
-            console.log("No file selected");
         }
-    });
-    function getQueryParam(param) {
-      var params = new URLSearchParams(window.location.search);
-      return params.get(param);
-
-    }
-</script>
-@endsection    
-                          
-           
+      });
+      $("#email").on('change', function(e) {
+        $("#emessage").on('change', function(e) {});
+      })
+      $("#subject").on('change', function(e) {
+        $("#emessage").on('change', function(e) {});
+      })
+    </script>
+   
+@endsection

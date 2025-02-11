@@ -73,16 +73,16 @@ class HomeController extends Controller
     public function analytics()
     {
 
-       
+        // $userId = auth()->id();
         $userId = auth()->id(); // Get the authenticated user's ID
       
-        $projects = QrBasicInfo::where('userid', $userId)
-                    ->orderBy('created_at', 'DESC')
-                    ->get(); 
-
-     return view('analytics',compact('projects'));
-}
-        
+        $projects = DB::select("SELECT * FROM qr_basic_info WHERE userid = ? ORDER BY created_at DESC", [$userId]);
+         
+        return view('analytics',compact('projects'));
+    }
+    public function create() {
+        return view('qrcode.create');
+    }
 
     // Generate QR Code and Save to DB
     public function myqrcode(Request $request) {
@@ -103,27 +103,31 @@ class HomeController extends Controller
     
         
         // Generate QR Code and save to storage
-    //    $data = 'https://infiniteqrcode.com/sms';
-       
-     $projectCode = 'P' . time() . rand(100, 999);
+       $data = 'https://infiniteqrcode.com/';
+        
+
+        
     
+   
+    $projectCode = 'P' . time() . rand(100, 999);
     $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
-    // Generate QR Code with Logo (Merge Logo)
+        // Generate QR Code with Logo (Merge Logo)
 
+        $qrCode = QrCode::format('svg')
+            //  Merge logo
+            ->size(300)
+            ->errorCorrection('H')
+            ->generate($data);
 
-        
- 
-        $projectCode = 'P' . time() . rand(100, 999);
-        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
-
-        
-        
-        
+        // Save QR Code to Storage
+        Storage::disk('public')->put($qrCodePath, $qrCode);
 
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
-    
+
+        $url = $data."redirects/sms?id=". $projectCode; 
+
         // Save in DB
         $sms = Sms::create([
             'code' => $projectCode,
@@ -131,7 +135,7 @@ class HomeController extends Controller
             'qrsms' => $request->sms,
             'countrycode' => $request->countrycode,
             'phonenumber' => $request->phone,
-            'url'=>$qrCodeUrl ,
+            'url'=>$url ,
             'qrimage'=>$qrCodePath,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
              
@@ -145,16 +149,14 @@ class HomeController extends Controller
             'end_date' => $request->enddate,
             'usage_type' => $request->usage,
             'remarks' => $request->remarks,
-            'url'=>$qrCodeUrl ,
+            'url'=>$url ,
             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
             'qrtable' => 'smsqr', // Store QR content
             'total_scans' => 0,
             'unique_scans' => 0,
             
         ]);
-       
-      
-        $data = route('mysms', ['id' => $qrBasicInfo->id]);
+
         $qrCode = QrCode::format('svg')
         // Merge logo
         ->size(300)
@@ -308,39 +310,6 @@ class HomeController extends Controller
     return view('dashboard', compact('userId','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'isPast', 'diffTotal'));
 }
 
-
-public function stripePost(Request $request)
-
-{
-
-    Stripe\Stripe::setApiKey(
-        
-        
-    );
-
-
-
-    Stripe\Charge::create ([
-
-            "amount" => 100 * 100,
-
-            "currency" => "usd",
-
-            "source" => $request->stripeToken,
-
-            "description" => "Test payment from itsolutionstuff.com." 
-
-    ]);
-
-  
-
-    Session::flash('success', 'Payment successful!');
-
-          
-
-    return back();
-
-}
 
 
 

@@ -368,35 +368,30 @@
   
   
       function forward(url, id) {
-        if (url.includes('durl')) {
-          location.href = "dynamic-url-edit.php?id=" + id;
-        } else if (url.includes('mypdf')) {
-          location.href = "pdf-edit.php?id=" + id;
-        } else if (url.includes('email')) {
-          location.href = "email-edit.php?id=" + id;
-  
-        } else if (url.includes('mysms')) {
-          location.href = "sms-edit.php?id=" + id;
-        } else if (url.includes('mywifi')) {
-          location.href = "wifi-edit.php?id=" + id;
-        } else if (url.includes('mywifi')) {
-          location.href = "wifi-edit.php?id=" + id;
-        } else if (url.includes('btc')) {
-          location.href = "btc-edit.php?id=" + id;
+        if (url.includes('email')) {
+          location.href = "edit-emailqr/"+ id;
+        } else if (url.includes('sms')) {
+          location.href = "edit-smsqr/" + id;
+        } else if (url.includes('wifi')) {
+          location.href = "edit-wifiqr/" + id;
+        } else if (url.includes('bitcoin')) {
+          location.href = "edit-bitcoinqr/" + id;
         } else if (url.includes('pdf')) {
-          location.href = "pdf-edit.php?id=" + id;
-        } else if (url.includes('music')) {
-          location.href = "mp3-edit.php?id=" + id;
-        } else if (url.includes('myimages')) {
-          location.href = "myimages-edit.php?id=" + id;
-        } else if (url.includes('appstore')) {
-          location.href = "appstore-edit.php?id=" + id;
-        } else if (url.includes('durl')) {
-          location.href = "durl-edit.php?id=" + id;
+          location.href = "edit-pdfqr/" + id;
+        } else if (url.includes('mp3')) {
+          location.href = "edit-mp3qr/" + id;
+        } else if (url.includes('image')) {
+          location.href = "edit-imageqr/" + id;
+        } else if (url.includes('app')) {
+          location.href = "edit-appqr/" + id;
+        } else if (url.includes('video')) {
+          location.href = "edit-videoqr/" + id;
         } else if (url.includes('vcard')) {
-          location.href = "vcard-edit.php?id=" + id;
-        } else if (url.includes('sm-marketing')) {
-          location.href = "sm-marketing-edit.php?id=" + id;
+          location.href = "edit-vcardqr/" + id;
+        } else if (url.includes('url')) {
+          location.href = "edit-urlqr/" + id;
+        }else if (url.includes('social')) {
+          location.href = "edit-socialqr/" + id;
         }
       }
     </script>
