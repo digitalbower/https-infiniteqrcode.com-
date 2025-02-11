@@ -482,10 +482,6 @@ class MyQRCodeController extends Controller
     }
     public function createAppstoreQrcode(Request $request){
         $request->validate([
-            'appurl' => 'required',
-            'playstoreurl' => 'required',
-            'windowsurl' => 'required',
-            'Huawei'=>'required',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -692,16 +688,16 @@ class MyQRCodeController extends Controller
     public function createSocialQrcode(Request $request){
         $request->validate([
            'whtext'=> 'required',
-           'whurl'=> 'required',
+           'whturl'=> 'required',
            'fbtext'=> 'required',
            'fburl'=> 'required',
-           'ybtext'=> 'required',
+           'yutext'=> 'required',
            'yturl'=> 'required',
            'insurl'=> 'required',
             'instext'=> 'required',
             'wchurl'=> 'required',
             'wchtext'=> 'required',
-            'tikurl'=> 'required',
+            'tikturl'=> 'required',
             'tiktext'=> 'required',
             'dyurl'=> 'required',
             'dytext'=> 'required',
@@ -741,16 +737,16 @@ class MyQRCodeController extends Controller
             'code' => $projectCode,
             'qrtype' => $request->qroption,
             'whtext'=> $request->whtext,
-            'whurl'=> $request->whurl,
+            'whurl'=> $request->whturl,
             'fbtext'=> $request->fbtext,
             'fburl'=> $request->fburl,
-            'ybtext'=> $request->ybtext,
+            'ybtext'=> $request->yutext,
             'yturl'=> $request->yturl,
             'insurl'=> $request->insurl,
             'instext'=> $request->instext,
             'wchurl'=> $request->wchurl,
             'wchtext'=> $request->wchtext,
-            'tikurl'=> $request->tikurl,
+            'tikurl'=> $request->tikturl,
             'tiktext'=> $request->tiktext,
             'dyurl'=> $request->dyurl,
             'dytext'=> $request->dytext,
@@ -1379,10 +1375,6 @@ class MyQRCodeController extends Controller
     }
     public function updateAppstoreQrcode(Request $request,$code){
         $request->validate([
-            'appurl' => 'required',
-            'playstoreurl' => 'required',
-            'windowsurl' => 'required',
-            'Huawei'=>'required',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -1605,35 +1597,35 @@ class MyQRCodeController extends Controller
     public function editSocialQrcode($code){
 
         $social = SocialMediaqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','socmedqr.code')
-        ->where('socmedqr.code',$code)->first(); 
-        return view('social-edit')->with(['social'=>$social]);
+        ->where('socmedqr.code',$code)->first();  
+        return view('socialmedia-edit')->with(['social'=>$social]);
     }
     public function updateSocialQrcode(Request $request,$code){
         $request->validate([
-           'whtext'=> 'required',
-           'whurl'=> 'required',
-           'fbtext'=> 'required',
-           'fburl'=> 'required',
-           'ybtext'=> 'required',
-           'yturl'=> 'required',
-           'insurl'=> 'required',
-            'instext'=> 'required',
-            'wchurl'=> 'required',
-            'wchtext'=> 'required',
-            'tikurl'=> 'required',
-            'tiktext'=> 'required',
-            'dyurl'=> 'required',
-            'dytext'=> 'required',
-            'telurl'=> 'required',
-            'teltext'=> 'required',
-            'snpurl'=> 'required',
-            'snptext'=> 'required',
-            'projectname' => 'required',
-            'startdate' => 'required|date',
-            'enddate' => 'required|date',
-            'usage' => 'required',
-            'folderinput'=>'required'
-        ]);
+            'whtext'=> 'required',
+            'whturl'=> 'required',
+            'fbtext'=> 'required',
+            'fburl'=> 'required',
+            'yutext'=> 'required',
+            'yturl'=> 'required',
+            'insurl'=> 'required',
+             'instext'=> 'required',
+             'wchurl'=> 'required',
+             'wchtext'=> 'required',
+             'tikturl'=> 'required',
+             'tiktext'=> 'required',
+             'dyurl'=> 'required',
+             'dytext'=> 'required',
+             'telurl'=> 'required',
+             'teltext'=> 'required',
+             'snpurl'=> 'required',
+             'snptext'=> 'required',
+             'projectname' => 'required',
+             'startdate' => 'required|date',
+             'enddate' => 'required|date',
+             'usage' => 'required',
+             'folderinput'=>'required'
+         ]);
 
          // Generate QR Code and save to storage
          $data = 'https://infiniteqrcode.com/';
@@ -1660,16 +1652,16 @@ class MyQRCodeController extends Controller
          $social->code= $projectCode;
          $social->qrtype= $request->qroption;
          $social->whtext = $request->whtext;
-         $social->whurl= $request->whurl;
+         $social->whurl= $request->whturl;
          $social->fbtext= $request->fbtext;
          $social->fburl= $request->fburl;
-         $social->ybtext= $request->ybtext;
+         $social->ybtext= $request->yutext;
          $social->yturl= $request->yturl;
          $social->insurl= $request->insurl;
          $social->instext= $request->instext;
          $social->wchurl= $request->wchurl;
          $social->wchtext= $request->wchtext;
-         $social->tikurl= $request->tikurl;
+         $social->tikurl= $request->tikturl;
          $social->tiktext= $request->tiktext;
          $social->tiktext= $request->tiktext;
          $social->dyurl=  $request->dyurl;

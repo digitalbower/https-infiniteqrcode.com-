@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'Social Media')
+@section('title', 'Edit Social Media')
 @section('content')
         <!-- Main Content Area -->
         <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
@@ -49,9 +49,9 @@
                         <div class="flex justify-start">
                             <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
                         </div>
-                        <form  id="socialqr_form" style="margin-bottom: 1rem;" action="{{ route('create-socialqr') }}" method="POST">
+                        <form  id="editsocialqr_form" style="margin-bottom: 1rem;" action="{{ route('update-socialqr',$social->code) }}" method="POST">
                             @csrf
-                            <input type="hidden" name="qroption" id="qroption">
+                            <input type="hidden" name="qroption" id="qroption" value="{{$social->qrtype}}">
                             <div class="w-full mx-auto p-6 bg-gray-50 rounded-lg shadow">
                                 <h5 class="text-gray-700 text-sm mb-4">
                                   Add your username or links to social media pages below.</h5>
@@ -66,7 +66,8 @@
                                 <small id="allErrors" class="text-red-500"></small>
                                 <!-- Social Media Input Groups -->
                                 <div class="space-y-4">
-                                  <!-- Facebook -->                                      
+                                  <!-- Facebook -->
+                                      
                                   <div class="flex items-center space-x-4">
                                     <div class="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-full">
                                       <span class="text-white text-lg"><i class="fab fa-facebook-f w-5 h-5"></i></span>
@@ -76,7 +77,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="fburl" name="fburl" value="{{old('fburl')}}"
+                                        <input type="text" id="fburl" name="fburl" value="{{$social->fburl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="https://www.facebook.com/page" />
                 
@@ -85,9 +86,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="fbtext" name="fbtext" 
+                                        <input type="text" id="fbtext" name="fbtext" value="{{$social->fbtext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                           value="{{ old('fbtext') == 'Follow us on Facebook' ? 'Follow us on Facebook' : old('fbtext') }}" />
+                                          placeholder="Follow us on Facebook" value="Follow us on Facebook" />
                                       </div>
                                     </div>
                                   </div>
@@ -101,7 +102,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="yturl" name="yturl" value="{{old('yturl')}}"
+                                        <input type="text" id="yturl" name="yturl" value="{{$social->yturl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="https://www.youtube.com/@YouTube" />
                 
@@ -110,9 +111,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="yutext" name="yutext" value="{{ old('yutext') == 'Watch my Videos' ? 'Watch my Videos' : old('yutext') }}"
+                                        <input type="text" id="yutext" name="yutext" value="{{$social->ybtext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder=""/>
+                                          placeholder="" value="Watch my Videos" />
                                       </div>
                                     </div>
                                   </div>
@@ -126,7 +127,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="whturl" name="whturl" value="{{old('whturl')}}"
+                                        <input type="text" id="whturl" name="whturl" value="{{$social->whurl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="https://wa.me/9XXXXXXXXX" />
                 
@@ -135,9 +136,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="whtext" name="whtext"
+                                        <input type="text" id="whtext" name="whtext" value="{{$social->whtext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder=""  value="{{ old('whtext') == 'Whatsapp Me' ? 'Whatsapp Me' : old('whtext') }}"/>
+                                          placeholder="" value="Whatsapp Me" />
                                       </div>
                                     </div>
                                   </div>
@@ -151,7 +152,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="insurl" name="insurl"  value="{{old('insurl')}}"
+                                        <input type="text" id="insurl" name="insurl" value="{{$social->insurl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="instagram.com/yourusername" />
                 
@@ -160,9 +161,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="instext" name="instext" value="{{ old('instext') == 'See My Insta' ? 'See My Insta' : old('instext') }}"
+                                        <input type="text" id="instext" name="instext"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder=""  />
+                                          placeholder="" value="See My Insta" />
                                       </div>
                                     </div>
                                   </div>        
@@ -176,7 +177,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="wchurl" name="wchurl"  value="{{old('wchurl')}}"
+                                        <input type="text" id="wchurl" name="wchurl" value="{{$social->wchurl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="weixin://" />
                 
@@ -185,9 +186,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="wchtext" name="wchtext" value="{{ old('wchtext') == 'we Start Chat' ? 'we Start Chat' : old('wchtext') }}"
+                                        <input type="text" id="wchtext" name="wchtext" value="{{$social->wchtext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder=""  />
+                                          placeholder="" value="we Start Chat" />
                                       </div>
                                     </div>
                                   </div>            
@@ -201,7 +202,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="tikurl" name="tikturl" value="{{old('tikturl')}}"
+                                        <input type="text" id="tikurl" name="tikturl" value="{{$social->tikurl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="https://www.tiktok.com/@username" />
                 
@@ -210,9 +211,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="tiktext" name="tiktext"  value="{{ old('tiktext') == 'Watch my Reels' ? 'Watch my Reels' : old('tiktext') }}"
+                                        <input type="text" id="tiktext" name="tiktext"  value="{{$social->tiktext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder="" />
+                                          placeholder="" value="Watch my Reels" />
                                       </div>
                                     </div>
                                   </div>    
@@ -226,7 +227,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="dyurl" name="dyurl" value="{{old('dyurl')}}"
+                                        <input type="text" id="dyurl" name="dyurl" value="{{$social->dyurl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="https://www.douyin.com/follow" />
                 
@@ -235,9 +236,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="dytext" name="dytext"  value="{{ old('dytext') == 'Watch my Videos' ? 'Watch my Videos' : old('dytext') }}"
+                                        <input type="text" id="dytext" name="dytext" value="{{$social->dytext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder="" />
+                                          placeholder="" value="Watch my Videos" />
                                       </div>
                                     </div>
                                   </div>
@@ -251,7 +252,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="telurl" name="telurl"  value="{{old('telurl')}}"
+                                        <input type="text" id="telurl" name="telurl"  value="{{$social->telurl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="https://t.me/username" />
                 
@@ -260,9 +261,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="teltext" name="teltext" value="{{ old('teltext') == 'Connect With me' ? 'Connect With me' : old('teltext') }}"
+                                        <input type="text" id="teltext" name="teltext"  value="{{$social->teltext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder="" />
+                                          placeholder="" value="Connect With me" />
                                       </div>
                                     </div>
                                   </div>
@@ -276,7 +277,7 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
-                                        <input type="text" id="snpurl" name="snpurl" value="{{old('snpurl')}}"
+                                        <input type="text" id="snpurl" name="snpurl" value="{{$social->snpurl}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="snapchat.com/add/[USERNAME]" />
                 
@@ -285,9 +286,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="snptext" name="snptext"  value="{{ old('snptext') == 'Share your Active Moments' ? 'Share your Active Moments' : old('snptext') }}"
+                                        <input type="text" id="snptext" name="snptext" value="{{$social->snptext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder="" />
+                                          placeholder="" value="Share your Active Moments" />
                                       </div>
                                     </div>
                                   </div>
@@ -310,71 +311,68 @@
                                         <label for="projectName" class="block font-medium text-gray-800">QR Project Name * </label>
                                         <div>
                                           <input id="projectName" placeholder="Enter project name" name="projectname"
-                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('project_name')}}">
+                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$social->project_name}}">
                                           <label class="projectName text-red-700"></label>
                                         </div>
                                       </div>
                 
-                                      <!-- Select Folder -->
-                        <div
-                        class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <!-- Folder Dropdown -->
-                        <div class="relative">
-                            <button type="button" id="folderDropdownButton"
-                                class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
-                                <span id="selectedFolder">Select a folder</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <!-- Dropdown List -->
-                            <div id="folderDropdown"
-                                class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
-                                @php
-                                $userId = auth()->user()->id; 
-    
-                                $folders = DB::table('qr_basic_info')
-                                ->selectRaw('folder_name as name')
-                                ->where('userid', $userId)
-                                ->groupBy('folder_name')
-                                ->get();
-    
-                                @endphp
-                                <ul id="folderList" class="divide-y divide-gray-200">
-                                  @foreach ($folders as $folder)
-                                     @php
-                                        $isSelected = old('foldername') == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                    <!-- Select Folder -->
+                           <div class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">                           
+                            <!-- Folder Dropdown -->
+                            <div class="relative">
+                                <button type="button" id="folderDropdownButton"
+                                    class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
+                                    <span id="selectedFolder">{{ $social->folder_name ?? 'Select a folder' }}</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                        
+                                <!-- Dropdown List -->
+                                <div id="folderDropdown" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
+                                    @php
+                                        $userId = auth()->user()->id; 
+                                        $folders = DB::table('qr_basic_info')
+                                            ->selectRaw('folder_name as name')
+                                            ->where('userid', $userId)
+                                            ->groupBy('folder_name')
+                                            ->get();
                                     @endphp
-                                    <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
-                                        <span>{{ $folder->name }}</span>
-                                    </li>
-                                  @endforeach
-                                </ul>   
-                                <div class="flex justify-center"> <button id="addFolderButton"
-                                        type="button"
-                                        class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="h-5 w-5 mr-1" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor"
-                                            stroke-width="2">
-                                            <path stroke-linecap="round"
-                                                stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                        Add New Folder
-                                    </button>
+                        
+                                    <ul id="folderList" class="divide-y divide-gray-200">
+                                        @foreach ($folders as $folder)
+                                            @php
+                                                $isSelected = isset($social->folder_name) && $social->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                            @endphp
+                                            <li class="folder-item p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}"
+                                                data-folder="{{ $folder->name }}">
+                                                <span>{{ $folder->name }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <div class="flex justify-center"> <button id="addFolderButton"
+                                              type="button"
+                                              class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
+                                              <svg xmlns="http://www.w3.org/2000/svg"
+                                                  class="h-5 w-5 mr-1" fill="none"
+                                                  viewBox="0 0 24 24" stroke="currentColor"
+                                                  stroke-width="2">
+                                                  <path stroke-linecap="round"
+                                                      stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                              </svg>
+                                              Add New Folder
+                                          </button>
+                                      </div>
                                 </div>
                             </div>
-                        </div>
-                        <input id="folderinput" placeholder="Folder Name" type="hidden"
-                            name="folderinput" readonly value=""
-                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                            @error('folderinput')
-                            <small class="text-red-700 folderinput">{{ $message }}</small>
-                            @enderror
-                    </div>
+                            <input id="folderinput" type="hidden" name="folderinput" value="{{ $social->folder_name ?? '' }}" />
+                          </div>                            
+                          <small id="folder"></small>
+                          @error('folderinput')
+                          <small class="text-red-700 folderinput">{{ $message }}</small>
+                          @enderror
+
                                       <!-- Date Range -->
                                       <div class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
                                         <div class="flex-1">
@@ -382,7 +380,7 @@
                                           <div>
                                             <input id="startDate" min="2025-02-09" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="startdate" value="{{old('startdate')}}">
+                                              name="startdate" value="{{$social->start_date}}">
                                             <label class="start text-red-700"></label>
                                           </div>
                                         </div>
@@ -391,7 +389,7 @@
                                           <div>
                                             <input id="endDate" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                              name="enddate" value="{{old('enddate')}}">
+                                              name="enddate" value="{{$social->end_date}}">
                                             <label class="end text-red-700"></label>
                                           </div>
                                         </div>
@@ -401,16 +399,17 @@
                                         <label for="usage" class="block font-medium text-gray-800">Usage</label>
                                         <select id="usage" name="usage"
                                           class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                          <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
-                                          <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
-                                          <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
+                                          <option value="">Select Usage</option>
+                                          <option value="personal" {{$social->usage_type == 'personal' ? 'selected' : '' }}>Personal</option>
+                                          <option value="business" {{$social->usage_type == 'business' ? 'selected' : '' }}>Business</option>
+                                          <option value="event" {{$social->usage_type == 'event' ? 'selected' : '' }}>Event</option>
                                         </select>
                                       </div>
                                       <!-- Remarks -->
                                       <div>
                                         <label for="remarks" class="block font-medium text-gray-800">Remarks</label>
                                         <textarea id="remarks" name="remarks" placeholder="Enter any additional remarks"
-                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
+                                          class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$social->remarks}}</textarea>
                                       </div>
                                       <div class="flex justify-between mt-8">
                   <button type="button" onclick="location.href='QrOption.php'"
@@ -643,10 +642,6 @@
 <script src="{{asset('js/create-folder.js')}}"></script>
 <script>
 $(document).ready(function () {
-    var passedValue = getQueryParam('option'); 
-    if (passedValue !== null) {
-        $('#qroption').val(passedValue);
-    }
     $('.facebook').text($('#fbtext').val());
                      $('.youtube').text($('#yutext').val());
                       $('.whatsapp').text($('#whtext').val());
@@ -690,7 +685,7 @@ $(document).ready(function () {
         var startDate = $(param).val();
         return this.optional(element) || new Date(value) > new Date(startDate);
     }, "End date must be greater than start date");
-    $("#socialqr_form").validate({   
+    $("#editsocialqr_form").validate({   
         rules: {  
             whtext:"required",
             whturl:{
@@ -823,10 +818,6 @@ $(document).ready(function () {
         } 
     });
     });
-    function getQueryParam(param) {
-    var params = new URLSearchParams(window.location.search);
-    return params.get(param);
 
-    }
 </script>
 @endsection
