@@ -17,6 +17,19 @@
                 </div>
                 <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300" onclick="location.href='upgrade';">Upgrade</button>
               </div>
+              @if ($plans->plan == 'free')
+                <div class="flex gap-6 mb-6">
+                  <div class="flex items-center gap-2">
+                    <i class="fas fa-calendar-days text-gray-400"></i>
+                    <span class="text-sm">Start Date: {{ date('F j, Y', strtotime($plans->created_at )) }}</span>
+                    <input type="hidden" id="payment_method_id" value="{{ $plans->payment_intent_id }}">
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i class="fas fa-calendar-days text-gray-400"></i>
+                    <span class="text-sm">Next Billing: {{ date('F j, Y', strtotime($plans->created_at . ' +7 days')) }}</span>
+                  </div>
+                </div>
+              @else
               <div class="flex gap-6 mb-6">
                 <div class="flex items-center gap-2">
                   <i class="fas fa-calendar-days text-gray-400"></i>
@@ -28,6 +41,7 @@
                   <span class="text-sm">Next Billing: {{date('F j, Y', strtotime($plans->subscription_end))}}</span>
                 </div>
               </div>
+              @endif
               <div class="bg-blue-900 border border-blue-700 rounded-lg p-4 mb-6">
                 <div class="flex items-start">
                   <i class="fas fa-exclamation-circle text-blue-400 mt-1 mr-3"></i>
@@ -141,7 +155,7 @@
                             <tr class="border-b border-gray-700">
                               <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($plans->subscription_start)) }}</td>
                               <td class="py-3 px-4 text-gray-300"><?php echo date('F j, Y', strtotime($plans->subscription_end)); ?></td>
-                              <td class="py-3 px-4 text-gray-300">{{$plans->paid_amount}}</td>
+                              <td class="py-3 px-4 text-gray-300">{{$plans->price}}</td>
                               <td class="py-3 px-4">
                                 <a href="{{$plans->ReceiptURL}}" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-300">
                                   <i class="fas fa-download mr-2"></i>
