@@ -345,57 +345,26 @@
                                 </div>
                             </div>
 
-                            <!-- User Information Section -->
-                            <div class="mt-3 space-y-3">
-                                <div id="error-message" class="text-red-800 font-semibold"></div>
-                                <form action="" method="post" id="multiStepForm" onsubmit="return false;">
-                                    <!-- Credit Card Info Section -->
-                                    <div class="mt-3">
-                                        <label for="creditCard" class="text-lg font-semibold text-gray-800">Card
-                                            Information</label>
-                                            <div id="card-element" class="w-full mt-1 p-2 border rounded">
-                                                <!-- A Stripe Element will be inserted here. -->
-                                              </div>
-                                            <form action="{{ route('process.payment') }}" method="POST">
+                            <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Payment Checkout</h2>
+
+    <form action="{{ route('process.payment') }}" method="POST" id="payment-form">
         @csrf
-        <label for="cardholderName" class="text-black">Cardholder's Name</label>
-        <input type="text" id="cardholderName" class="text-black" name="cardholderName" required><br>
+        <input type="hidden" name="plan" id="plan" value="Yearly Subscription">
+        <input type="hidden" name="bprice" id="bprice" value="100">
+        <input type="hidden" name="duration" id="duration" value="365">
 
-        <label for="cardNumber" class="text-black">Card Number</label>
-        <input type="text" id="cardNumber" class="text-black" name="cardNumber" required><br>
+        <!-- Stripe Card Element -->
+        <label for="card-element" class="block text-lg font-semibold text-gray-800">Enter Card Details</label>
+        <div id="card-element" class="p-3 border border-gray-300 rounded-lg mt-2"></div>
+        <div id="card-errors" class="text-red-600 mt-2"></div>
 
-        <label for="expMonth" class="text-black">Expiration Month</label>
-        <input type="text" id="expMonth" class="text-black" name="expMonth" required><br>
-
-        <label for="expYear" class="text-black">Expiration Year</label>
-        <input type="text" id="expYear" class="text-black" name="expYear" required><br>
-
-        <label for="cvc" class="text-black">CVC</label>
-        <input type="text" id="cvc" class="text-black" name="cvc" required><br>
-
-        <button type="submit" class="text-black">Submit Payment</button>
+        <button id="submit-button" type="submit"
+            class="mt-4 w-full rounded-lg bg-[#6c8ef6] bg-opacity-80 hover:bg-opacity-100 py-3 text-white text-lg font-semibold transition duration-300">
+            Pay & Subscribe
+        </button>
     </form>
-                                        <div id="card-errors" role="alert"></div>
-                                        <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-3">
-
-                                                <input type="hidden" id="billingprice" name="bprice" class="p-2 text-blue-500 focus:ring-2 focus:ring-blue-500 border" placeholder="Billing Price">
-                                                <input type="hidden" id="duration" name="duration" class="p-2 text-blue-500 focus:ring-2 focus:ring-blue-500 border" placeholder="Plan Duration">
-                                                <input type="hidden" id="plan" name="plan" class="p-2 text-blue-500 focus:ring-2 focus:ring-blue-500 border" placeholder="Billing plan">
-                                                <input type="hidden" id="token" name="token" class="p-2 text-blue-500 focus:ring-2 focus:ring-blue-500 border" placeholder="token">
-                                                <input type="hidden" id="name" name="name" class="p-2 text-blue-500 focus:ring-2 focus:ring-blue-500 border" value="{{auth()->user()->firstname}}. '' . {{auth()->user()->lastname}}">
-                                            </div>
-                                            <label class="card text-red-900"></label>
-                                        </div>
-                        <button type="submit" id="submit" class="mt-3 w-full rounded-lg bg-[#6c8ef6]  bg-opacity-80 hover:bg-opacity-100 py-3 text-white text-lg font-semibold transition duration-300">
-                        Pay & Subscribe
-                        </button>
-                    
-                    </form>
-                    </div>
-                </div>
-                </div>
-
-            </div>
+</div>
             <div id="loadingIndicator"
                 class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
                 <div class="flex flex-col items-center">
@@ -769,4 +738,18 @@
                  
                 }
                   </script>
+                  <script src="https://js.stripe.com/v3/"></script>
+
+                  <script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe("{{ env('STRIPE_KEY') }}"); // Load Stripe
+    var elements = stripe.elements();
+    var card = elements.create('card'); // Create card element
+    card.mount('#card-element');
+
+    var form = document.getElementById('payment-form');
+    var submitButton = document.getElementById('submit-button');
+
+   
+</script>
 @endsection
