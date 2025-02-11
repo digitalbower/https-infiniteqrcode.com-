@@ -74,7 +74,7 @@
               </div>
               <div class="flex items-center justify-end space-x-2">
                 <input id="id" class="id" value="{{$qrCode['code']}}" type="hidden">
-                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded {{$qrCode['qrtype'] === 'Static' ? 'hidden' : ''}}" onclick="forward('{{$qrCode['url']}}', '{{$qrCode['code']}}')">
+                <button id="edit_qrcode" table="{{$qrCode['qrtable']}}" code="{{$qrCode['code']}}" class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded {{$qrCode['qrtype'] === 'Static' ? 'hidden' : ''}}" >
                   <i class="fas fa-edit text-gray-400"></i>
                 </button>
 
@@ -154,6 +154,36 @@
   
   
   
+        });
+        $(document).on('click', "#edit_qrcode", function(e) {
+          e.preventDefault();
+          var tableValue = $(this).attr("table"); 
+          var id = $(this).attr("code");
+            if (tableValue === "emailqr") {
+              location.href = "edit-emailqr/"+ id;
+            } else if (tableValue === "smsqr") {
+              location.href = "edit-smsqr/" + id;
+            } else if (tableValue === "wifiqr") {
+              location.href = "edit-wifiqr/" + id;
+            } else if (tableValue === "btcqr") {
+              location.href = "edit-bitcoinqr/" + id;
+            } else if (tableValue === "pdfqr") {
+              location.href = "edit-pdfqr/" + id;
+            } else if (tableValue === "mp3qr") {
+              location.href = "edit-mp3qr/" + id;
+            } else if (tableValue === "imageqr") {
+              location.href = "edit-imageqr/" + id;
+            } else if (tableValue === "apkqr") {
+              location.href = "edit-appqr/" + id;
+            } else if (tableValue === "videoqr") {
+              location.href = "edit-videoqr/" + id;
+            } else if (tableValue === "vcard") {
+              location.href = "edit-vcardqr/" + id;
+            } else if (tableValue === "urlcode") {
+              location.href = "edit-urlqr/" + id;
+            }else if (tableValue === "socmedqr") {
+              location.href = "edit-socialqr/" + id;
+            }
         });
       });
   
@@ -248,7 +278,7 @@
                 </div>
                 <div class="flex items-center justify-end space-x-2">
                   <input id="id" class="id" value="${qr.code}" type="hidden">
-                  <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded ${qr.qrtype === 'Static' ? 'hidden' : ''}" onclick="forward('${qr.url}', '${qr.code}')">
+                  <button <button id="edit_qrcode"table="${qr.qrtable}" code="${qr.code}"  class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded ${qr.qrtype === 'Static' ? 'hidden' : ''}">
                     <i class="fas fa-edit text-gray-400"></i>
                   </button>
   
@@ -366,33 +396,7 @@
       } //renderQrCodes();
   
   
-      function forward(url, id) {
-        if (url.includes('email')) {
-          location.href = "edit-emailqr/"+ id;
-        } else if (url.includes('sms')) {
-          location.href = "edit-smsqr/" + id;
-        } else if (url.includes('wifi')) {
-          location.href = "edit-wifiqr/" + id;
-        } else if (url.includes('bitcoin')) {
-          location.href = "edit-bitcoinqr/" + id;
-        } else if (url.includes('pdf')) {
-          location.href = "edit-pdfqr/" + id;
-        } else if (url.includes('mp3')) {
-          location.href = "edit-mp3qr/" + id;
-        } else if (url.includes('image')) {
-          location.href = "edit-imageqr/" + id;
-        } else if (url.includes('app')) {
-          location.href = "edit-appqr/" + id;
-        } else if (url.includes('video')) {
-          location.href = "edit-videoqr/" + id;
-        } else if (url.includes('vcard')) {
-          location.href = "edit-vcardqr/" + id;
-        } else if (url.includes('url')) {
-          location.href = "edit-urlqr/" + id;
-        }else if (url.includes('social')) {
-          location.href = "edit-socialqr/" + id;
-        }
-      }
+  
     </script>
   
 @endsection

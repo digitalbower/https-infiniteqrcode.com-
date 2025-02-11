@@ -1683,10 +1683,12 @@ class MyQRCodeController extends Controller
     {
         $userId = Auth::user()->id; 
 
-        $folders = DB::table('qr_basic_info')
-        ->selectRaw('folder_name as name, COUNT(*) AS count, DATE(created_At) AS date')
+        $folders = QrBasicInfo::select(
+            'folder_name as name',
+            DB::raw('COUNT(*) AS count'),
+        )
         ->where('userid', $userId)
-        ->groupBy('folder_name', 'date')
+        ->groupBy('folder_name')
         ->orderBy('created_At', 'asc')
         ->get();
 
@@ -1727,14 +1729,17 @@ class MyQRCodeController extends Controller
                 ->where('userid', $userId)
                 ->where('project_code',$row->code)
                 ->orderBy('id', 'ASC')
-                ->value('project_name');
+                ->select('project_name','qrtable')
+                ->first(); 
 
             unset($row->qrimage);
             
-            $row->projectname = $projectName ?? '';
+            $row->projectname = $projectName->project_name ?? '';
+
+            $row->qrtable = $projectName->qrtable;
 
             $qrCodes[] = (array) $row;
-        } 
+        }  
        return view('my-qr-code',compact('folders','qrCodes'));
     }
     public function folder_details(Request $request){
@@ -1746,7 +1751,7 @@ class MyQRCodeController extends Controller
         $projectCodes = DB::table('qr_basic_info')
         ->where('folder_name', $folder_name)
         ->where('userid', $userid)
-        ->pluck('project_code') // Get only project_code column as an array
+        ->pluck('project_code') 
         ->toArray();
         if (empty($projectCodes)) {
             return response()->json([]);
@@ -1774,9 +1779,13 @@ class MyQRCodeController extends Controller
             $projectName = DB::table('qr_basic_info')
                 ->where('project_code', $item->code)
                 ->orderBy('created_at', 'asc')
-                ->value('project_name');
+                ->select('project_name','qrtable')
+                ->first(); 
     
-            $item->projectname = $projectName ?? '';
+            $item->projectname =  $projectName->project_name ?? '';
+
+            $item->qrtable = $projectName->qrtable;
+
             $qrCodes[] = $item;
         }
 
