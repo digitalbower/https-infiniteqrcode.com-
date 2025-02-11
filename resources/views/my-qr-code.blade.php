@@ -65,9 +65,9 @@
               </div>
             </div>
             <div class="ml-auto">
-              <div class="flex justify-end">
+              <div class="flex justify-end"> 
                 <button class="p-2 w-auto ml-auto text-xs md:text-base hover:bg-gray-600 bg-gray-400 mb-2 rounded">
-                  <a href="qrbackend/qrcodes/{{$qrCode['code']}}.png" class="flex gap-x-2 items-center" download>
+                  <a href="{{$qrCode['url']}}" class="flex gap-x-2 items-center" download>
                     <i class="fas fa-download text-white"></i> Download
                   </a>
                 </button>

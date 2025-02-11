@@ -29,10 +29,18 @@
               </h3>
               <select
     class="flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 bg-gray-900 border border-blue-500 hover:border-blue-400 transition duration-200"
-    onchange="location.href='?id=' + this.value">
-    <option value="no">Project Name</option>
+    onchange="updateProjectDetails()">
+    <option value="no">Project Name</option> 
     @foreach($projects as $project)
-        <option value="{{ $project->project_code }}">{{ $project->project_name }}</option>
+        <option 
+            value="{{ $project->project_code }}" 
+            data-qrtype="{{ $project->qrtype }}"
+            data-startdate="{{ $project->start_date }}"
+            data-email="{{ $project->user->email }}"
+            data-enddate="{{ $project->end_date }}"
+            data-image ="{{ $project->url }}">
+            {{ $project->project_name }}
+        </option>
     @endforeach
 </select>
             </div>
@@ -51,15 +59,12 @@
                   </div>
                 </div>
                 <div>
-                  <div class="  gap-x-6 mt-0 text-xs sm:text-sm text-gray-400">
-                    <p class="px-3 mb-2 py-1 rounded-full bg-gray-900">Static</p>
-                    <p class="px-3 mb-2 py-1 rounded-full bg-gray-900">23 jan 2025</p>
-                    <p class="px-3 mb-2 py-1 rounded-full bg-gray-900">Email</p>
-                    <p
-                      class=" px-3 mb-2 py-1 rounded-full">
-                      Expired - Please Upgrade
-                    </p>
-                  </div>
+                <div class="gap-x-6 mt-0 text-xs sm:text-sm text-gray-400">
+    <p id="qrtype" class="px-3 mb-2 py-1 rounded-full bg-gray-900">QR Type</p>
+    <p id="startdate" class="px-3 mb-2 py-1 rounded-full bg-gray-900">Date</p>
+    <p id="email" class="px-3 mb-2 py-1 rounded-full bg-gray-900">Email</p>
+    <p id="expiryMessage" class="px-3 mb-2 py-1 rounded-full">Your Subscription Status</p>
+</div>
                 </div>
               </div>
               <div class=" gap-6  flex-row items-center mb-3 flex md:block justify-between">
@@ -81,7 +86,7 @@
             <div class="grid gap-4 grid-cols-2 lg:grid-cols-4 mb-3">
               <div class="rounded-lg bg-gray-900 p-2 lg:p-6 shadow-lg">
                 <div class="text-sm font-medium text-gray-400">CAMPAIGN START</div>
-                <div class="mt-2 text-lg sm:text-2xl font-semibold text-gray-200"></div>
+                <div class="mt-2 text-lg sm:text-2xl font-semibold text-gray-200">45</div>
               </div>
               <div class="rounded-lg bg-gray-900 p-2 lg:p-6 shadow-lg">
                 <div class="text-sm font-medium text-gray-400">CAMPAIGN END</div>
@@ -309,6 +314,41 @@
     });
   </script>
 
+<script>
+  function updateProjectDetails() {
+    // Get selected option
+    let select = document.querySelector("select");
+    let selectedOption = select.options[select.selectedIndex];
+
+    // Get values from data attributes
+    let qrtype = selectedOption.getAttribute("data-qrtype");
+    let startDate = selectedOption.getAttribute("data-startdate");
+    let email = selectedOption.getAttribute("data-email");
+    let endDate = selectedOption.getAttribute("data-enddate");
+    let image = selectedOption.getAttribute("data-image");
+
+    // Update HTML elements
+    document.getElementById("qrtype").innerText = qrtype || "N/A";
+    document.getElementById("startdate").innerText = startDate || "N/A";
+    document.getElementById("email").innerText = email || "N/A";
+    document.getElementById("image").innerText = image || "N/A";
+
+    // Check expiry logic
+    let currentDate = new Date();
+    let endDateObj = new Date(endDate);
+
+    if (endDateObj > currentDate) {
+        document.getElementById("expiryMessage").innerText = "Active";
+        document.getElementById("expiryMessage").classList.remove("bg-red-500");
+        document.getElementById("expiryMessage").classList.add("bg-green-500", "text-white");
+    } else {
+        document.getElementById("expiryMessage").innerText = "Expired - Please Upgrade";
+        document.getElementById("expiryMessage").classList.remove("bg-green-500");
+        document.getElementById("expiryMessage").classList.add("bg-red-500", "text-white");
+    }
+}
+
+</script>
 
 
 @endsection

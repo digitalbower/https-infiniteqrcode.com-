@@ -64,7 +64,7 @@ class MyQRCodeController extends Controller
             $row->projectname = $projectName ?? '';
 
             $qrCodes[] = (array) $row;
-        }
+        } 
        return view('my-qr-code',compact('folders','qrCodes'));
     }
     public function folder_details(Request $request){

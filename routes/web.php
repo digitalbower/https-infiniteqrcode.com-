@@ -84,3 +84,28 @@ Route::get('/payment/failure', function () {
     return view('payment-failure');
 })->name('payment.failure');
 
+
+Route::get('/stripe', [HomeController::class, 'stripe'])->name('stripe');
+Route::get('/stripe', [HomeController::class, 'stripePost'])->name('stripe.post');
+
+// Route::get('/payment', 'PaymentController@showPaymentForm')->name('payment.form');
+// Route::post('/process-payment', 'PaymentController@processPayment')->name('process.payment');
+Route::get('/payment/success', function () {
+    return 'Payment Successful!';
+})->name('payment.success');
+Route::get('/payment/failure', function () {
+    return 'Payment Failed!';
+})->name('payment.failure');
+
+Route::get('/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
+Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
+
+
+Route::get('/checkout', function () {
+    return view('checkout');
+})->name('checkout');
+
+Route::post('/stripe/payment', [StripeController::class, 'processPayment'])->name('stripe.payment');
+
+
+
