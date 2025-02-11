@@ -316,7 +316,13 @@
                       <div class="space-y-3 p-6 ">
                         <div class="w-full gap-4 ">
                           <div id="pdf-preview">
+                            @if(Storage::disk('public')->exists($pdf->pdfpath)) 
+                            
+                            <iframe src="{{asset('storage/'.$pdf->pdfpath)}}" width="100%" height="300px"></iframe>
+
+                            @else
                             <img src="{{asset('demoimg/pdf.png')}}" class="w-full xl:h-[350px] object-cover"/>
+                            @endif
                           </div>
 
                           </div>
