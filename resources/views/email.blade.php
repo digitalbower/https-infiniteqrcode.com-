@@ -331,7 +331,7 @@
 
                 <!-- Details Tab Content -->
                 <div id="preview-content" class="tab-content mt-10 w-full">
-                  <div style="background-image: url(./images/ai-generated-nature-landscapes-background-free-photo.jpg)" class="relative w-full px-2 max-w-sm mx-auto rounded-3xl shadow-lg border-4 min-h-[500px] border-gray-900 relative overflow-hidden">
+                  <div style="background-image: url('{{ asset('images/ai-generated-nature-landscapes-background-free-photo.jpg') }}')" class="relative w-full px-2 max-w-sm mx-auto rounded-3xl shadow-lg border-4 min-h-[500px] border-gray-900 relative overflow-hidden">
                     <!-- Top Indicator -->
                     <div class="absolute top-2 left-1/2 -translate-x-1/2 w-20 h-1.5 z-40 bg-gray-500 rounded"></div>
 

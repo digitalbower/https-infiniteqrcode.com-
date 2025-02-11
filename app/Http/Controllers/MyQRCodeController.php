@@ -349,7 +349,7 @@ class MyQRCodeController extends Controller
     public function createImageQrcode(Request $request){
     
         $request->validate([
-            'imagepath' => 'required|file|mimes:jpeg,png,jpg',
+            'imagepath' => 'required|image|mimes:jpeg,png,jpg',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -1066,7 +1066,7 @@ class MyQRCodeController extends Controller
     public function updatePdfQrcode(Request $request,$code){
     
         $request->validate([
-            'pdfpath' => 'required|mimes:pdf',
+            'pdfpath' => 'nullable|mimes:pdf',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -1095,17 +1095,26 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
+        // Save in DB
+        $pdf = Pdfqr::where('code',$code)->first();
+
 
         if ($request->file('pdfpath')) {
+            // Delete old file
+            if ($pdf->pdfpath && Storage::disk('public')->exists($pdf->pdfpath)) {  
+                Storage::disk('public')->delete($pdf->pdfpath);
+            }
+
+            // Upload new file
             $file = $request->file('pdfpath');
             $fileName = time() . '.' . $file->getClientOriginalExtension(); 
             $filePath = $file->storeAs('pdfs', $fileName, 'public');
+
+            // Update DB
+            $pdf->pdfpath=$filePath;
         }
-          // Save in DB
-          $pdf = Pdfqr::where('code',$code)->first();
           $pdf->code= $projectCode;
           $pdf->qrtype= $request->qroption;
-          $pdf->pdfpath=$filePath;
           $pdf->url=$qrCodeUrl;
           $pdf->qrimage=$qrCodePath;
           $pdf->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
@@ -1139,7 +1148,7 @@ class MyQRCodeController extends Controller
     
         $request->validate([
             'qrtext' => 'required',
-            'mp3path' => 'required|file|mimes:mp3',
+            'mp3path' => 'nullable|file|mimes:mp3',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -1168,20 +1177,24 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
-        // Store the file
-        if ($request->hasFile('mp3path')) {
+        $mp3 = MP3qr::where('code',$code)->first();
+
+        if ($request->hasFile('mp3path')) { 
+            if ($mp3->mp3path && Storage::disk('public')->exists($mp3->mp3path)) {  
+                Storage::disk('public')->delete($mp3->mp3path);
+            }
+
             $file = $request->file('mp3path');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $filePath = $file->storeAs('mp3s', $fileName, 'public');
 
+            $mp3->mp3path=$filePath;
         }
        
         // Save in DB
-        $mp3 = MP3qr::where('code',$code)->first();
         $mp3->code= $projectCode;
         $mp3->qrtype= $request->qroption;
         $mp3->qrtext = $request->qrtext;
-        $mp3->mp3path=$filePath;
         $mp3->url=$qrCodeUrl;
         $mp3->qrimage=$qrCodePath;
         $mp3->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
@@ -1214,7 +1227,7 @@ class MyQRCodeController extends Controller
     public function updateImageQrcode(Request $request,$code){
     
         $request->validate([
-            'imagepath' => 'required|file|mimes:jpeg,png,jpg',
+            'imagepath' => 'nullable|image|mimes:jpeg,png,jpg',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -1243,18 +1256,20 @@ class MyQRCodeController extends Controller
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
 
+        $img = Imageqr::where('code',$code)->first();
         // Store the file
         if ($request->hasFile('imagepath')) {
+            if ($img->imagepath && Storage::disk('public')->exists($img->imagepath)) {  
+                Storage::disk('public')->delete($img->imagepath);
+            }
             $file = $request->file('imagepath');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             $filePath = $file->storeAs('images', $fileName, 'public');
 
+            $img->imagepath=$filePath;
         }
-        // Save in DB
-        $img = Imageqr::where('code',$code)->first();
         $img->code= $projectCode;
         $img->qrtype= $request->qroption;
-        $img->imagepath=$filePath;
         $img->url=$qrCodeUrl;
         $img->qrimage=$qrCodePath;
         $img->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
@@ -1288,7 +1303,7 @@ class MyQRCodeController extends Controller
     public function updateVideoQrcode(Request $request,$code){
     
         $request->validate([
-            'videopath' => 'required|file|mimes:mp4,mov',
+            'videopath' => 'nullable|file|mimes:mp4,mov',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -1316,19 +1331,23 @@ class MyQRCodeController extends Controller
 
         // Generate the full URL of the QR Code
         $qrCodeUrl = asset('storage/' . $qrCodePath);
+        $video = Videoqr::where('code',$code)->first();
 
         // Store the file
         if ($request->hasFile('videopath')) {
+            if ($video->videopath && Storage::disk('public')->exists($video->videopath)) {  
+                Storage::disk('public')->delete($video->videopath);
+            }
+            
             $file = $request->file('videopath');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
             $filePath = $file->storeAs('videos', $fileName, 'public');
 
+            $video->videopath=$filePath;
         }
         // Save in DB
-        $video = Videoqr::where('code',$code)->first();
         $video->code= $projectCode;
         $video->qrtype= $request->qroption;
-        $video->videopath=$filePath;
         $video->url=$qrCodeUrl;
         $video->qrimage=$qrCodePath;
         $video->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
@@ -1494,7 +1513,7 @@ class MyQRCodeController extends Controller
     }
     public function updateVcardQrcode(Request $request,$code){
         $request->validate([
-            'contactimg'=>'required|file|mimes:jpeg,png,jpg',
+            'contactimg'=>'nullable|file|mimes:jpeg,png,jpg',
             'first_name'=> 'required',
             'last_name'=> 'required',
             'mobile'=> 'required',
@@ -1533,18 +1552,21 @@ class MyQRCodeController extends Controller
          // Generate the full URL of the QR Code
          $qrCodeUrl = asset('storage/' . $qrCodePath);
 
+        $vcard = VCardqr::where('code',$code)->first();
          if ($request->hasFile('contactimg')) {
+            if ($vcard->contactimg && Storage::disk('public')->exists($vcard->contactimg)) {  
+                Storage::disk('public')->delete($vcard->contactimg);
+            }
             $file = $request->file('contactimg');
             $fileName = time() . '.' . $file->getClientOriginalExtension();
-            $filePath = $file->storeAs('contact_images', $fileName, 'public');
+            $filePath = $file->storeAs('images', $fileName, 'public');
+            $vcard->contactimg = $filePath;
 
         }
  
  
-        $vcard = VCardqr::where('code',$code)->first();
         $vcard->code= $projectCode;
         $vcard->qrtype= $request->qroption;
-        $vcard->contactimg = $filePath;
         $vcard->first_name= $request->first_name;
         $vcard->last_name= $request->last_name;
         $vcard->mobile= $request->mobile;
