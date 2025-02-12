@@ -83,94 +83,6 @@ class HomeController extends Controller
     public function create() {
         return view('qrcode.create');
     }
-
-    // Generate QR Code and Save to DB
-    public function myqrcode(Request $request) {
-        $request->validate([
-            'phone' => 'required',
-            'sms' => 'required',
-            'projectname' => 'required',
-            'startdate' => 'required|date',
-            'enddate' => 'required|date',
-            'usage' => 'required',
-            'folderinput'=>'required'
-        ]);
-
-        $message = [
-            'Phone' => $request->countrycode . $request->phone,
-            'Message' => $request->sms,
-        ];
-    
-        
-        // Generate QR Code and save to storage
-       $data = 'https://infiniteqrcode.com/';
-        
-
-        
-    
-   
-    $projectCode = 'P' . time() . rand(100, 999);
-    $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
-
-        // Generate QR Code with Logo (Merge Logo)
-
-        $qrCode = QrCode::format('svg')
-            //  Merge logo
-            ->size(300)
-            ->errorCorrection('H')
-            ->generate($data);
-
-        // Save QR Code to Storage
-        Storage::disk('public')->put($qrCodePath, $qrCode);
-
-        // Generate the full URL of the QR Code
-        $qrCodeUrl = asset('storage/' . $qrCodePath);
-
-        // Save in DB
-        $sms = Sms::create([
-            'code' => $projectCode,
-            'qrtype' => $request->qroption,
-            'qrsms' => $request->sms,
-            'countrycode' => $request->countrycode,
-            'phonenumber' => $request->phone,
-            'url'=>$qrCodeUrl  ,
-            'qrimage'=>$qrCodePath,
-            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
-             
-        ]);
-        $qrBasicInfo = QrBasicInfo::create([
-            'project_code' => $projectCode,
-            'project_name' => $request->projectname,
-            'folder_name' => $request->folderinput, // Storing in 'qrcodes' folder
-            'qrtype' => $request->qroption, // Assuming QR type is SMS
-            'start_date' => $request->startdate,
-            'end_date' => $request->enddate,
-            'usage_type' => $request->usage,
-            'remarks' => $request->remarks,
-            'url'=>$qrCodeUrl  ,
-            'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
-            'qrtable' => 'smsqr', // Store QR content
-            'total_scans' => 0,
-            'unique_scans' => 0,
-            
-        ]);
-
-        $qrCode = QrCode::format('svg')
-        // Merge logo
-        ->size(300)
-        ->errorCorrection('H')
-        ->generate($data);
-
-    // Save QR Code to Storage
-    Storage::disk('public')->put($qrCodePath, $qrCode);
-
-    // Generate the full URL of the QR Code
-    $qrCodeUrl = asset('storage/' . $qrCodePath);
-    
-
-        return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
-    }
-
     // Show QR Code List
     public function list() {
         $qrcodes = Sms::latest()->get();
@@ -196,118 +108,145 @@ class HomeController extends Controller
         return view('signin');
     }
 
-    public function mysms($id)
-    {
-        $qrCode = QrBasicInfo::findOrFail($id);
-        // $userId = Auth::user()->id;
-        
-
-        return view('mysms', compact('qrCode'));
-    }
-
-    
-   
-
     public function dashboard()
-{
-    // Get the authenticated user's ID
-    // $userId = Auth::user()->username;
+    {
+        // Get the authenticated user's ID
+        // $userId = Auth::user()->username;
 
-    $userId = Auth::user()->username;
+        $userId = Auth::user()->id;
 
+        // Fetch the latest 3 project codes from 'qr_basic_info'
+        $codes = DB::table('qr_basic_info')
+            ->where('userid', $userId)
+            ->orderByDesc('created_At')
+            ->limit(3)
+            ->pluck('project_code')
+            ->toArray();  
 
+        $qrCodes = [];
+        $combinedResults = [];
 
-    // Fetch the latest 3 project codes from 'qr_basic_info'
-    $codes = DB::table('qr_basic_info')
-        ->where('userid', $userId)
-        ->orderByDesc('created_At')
-        ->limit(3)
-        ->pluck('project_code')
-        ->toArray();
+        // Define all QR code tables
+        $tables = [
+            'urlcode', 'btcqr', 'apkqr','emailqr','imageqr', 'mp3qr', 'pdfqr', 'smsqr',
+            'vcard', 'videoqr', 'wifiqr', 'socmedqr'
+        ]; 
 
-    $qrCodes = [];
-    $combinedResults = [];
+        foreach ($codes as $code) {
+            foreach ($tables as $table) {
+                $results = DB::table($table)
+                    ->select('id', 'url', 'code', 'qrtype', 'created_at as date', 'userid')
+                    ->where('userid', $userId)
+                    ->where('code', $code)
+                    ->get();  
 
-    // Define all QR code tables
-    $tables = [
-        'urlcode', 'btcqr', 'apkqr', 'dynamicurlcode', 'emailqr', 'epcqr', 'eventqr',
-        'facebookqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr', 'textqr', 'twitterqr', 'vcard',
-        'vcardplus', 'videoqr', 'wifiqr', 'couponqr', 'businessqr', 'socmedqr'
-    ];
-
-    foreach ($codes as $code) {
-        foreach ($tables as $table) {
-            $results = DB::table($table)
-                ->select('id', 'url', 'code', 'qrtype', 'created_at as date', 'userid')
-                ->where('userid', $userId)
-                ->where('code', $code)
-                ->get();
-
-            foreach ($results as $row) {
-                $combinedResults[] = (array)$row;
+                foreach ($results as $row) {
+                    $combinedResults[] = (array)$row;
+                }
             }
         }
-    }
 
-    foreach ($combinedResults as $item) {
-        if (isset($item['code'])) {
-            $id = $item['code'];
-            $project = DB::table('qr_basic_info')
-                ->where('project_code', $id)
-                ->select('project_name', 'total_scans')
-                ->first();
+        foreach ($combinedResults as $item) {
+            if (isset($item['code'])) {
+                $id = $item['code'];
+                $project = DB::table('qr_basic_info')
+                    ->where('project_code', $id)
+                    ->select('project_name', 'total_scans')
+                    ->first();
 
-            $item['projectname'] = $project->project_name ?? '';
-            $item['totalscans'] = $project->total_scans ?? '0';
-            $qrCodes[] = $item;
+                $item['projectname'] = $project->project_name ?? '';
+                $item['totalscans'] = $project->total_scans ?? '0';
+                $qrCodes[] = $item;
+            }
         }
-    }
 
-    // Fetch user subscription details
-    $user = DB::table('users')
-        ->where('username', $userId)
-        ->orderBy('created_At', 'desc')
-        ->first();
+        // Fetch user subscription details
+        $user = DB::table('users')
+            ->where('id', $userId)
+            ->orderBy('created_At', 'desc')
+            ->first(); 
 
-    $subscriptionStart = Carbon::parse($user->subscription_start);
-    $subscriptionEnd = Carbon::parse($user->subscription_end);
-    $currentDate = Carbon::now();
+        $subscriptionStart = Carbon::parse($user->subscription_start);
+        $subscriptionEnd = Carbon::parse($user->subscription_end); 
+        $currentDate = Carbon::now();
 
-    $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd);
-    $remainingDays = $currentDate->diffInDays($subscriptionEnd, false);
-    $isPast = $currentDate->greaterThan($subscriptionEnd);
+        $timestamp = strtotime($subscriptionEnd);
+        $formattedDate = date('d M. Y', $timestamp); 
 
-    // Set validity based on plan type
-    $validity = 0;
-    $dynamic = 0;
-    $static = 0;
+        $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd); 
+        $remainingDays = $currentDate->diffInDays($subscriptionEnd, false);
+        $isPast = $currentDate->greaterThan($subscriptionEnd);
 
-    switch ($user->plan) {
-        case 'free':
-            $validity = 50;
-            $dynamic = 5;
-            $static = 5;
-            break;
-        case 'basic':
-            $validity = 5000;
-            $dynamic = 10;
-            $static = '∞';
-            break;
-        case 'pro':
-            $validity = 20000;
-            $dynamic = '∞';
-            $static = '∞';
-            break;
-        case 'expert':
-            $validity = '∞';
-            $dynamic = '∞';
-            $static = '∞';
-            break;
-    } 
+        // Set validity based on plan type
+        $validity = 0;
+        $dynamic = 0;
+        $static = 0;
 
-    return view('dashboard', compact('userId','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'isPast', 'diffTotal'));
+        switch ($user->plan) {
+            case 'free':
+                $validity = 50;
+                $dynamic = 5;
+                $static = 5;
+                break;
+            case 'basic':
+                $validity = 5000;
+                $dynamic = 10;
+                $static = '∞';
+                break;
+            case 'pro':
+                $validity = 20000;
+                $dynamic = '∞';
+                $static = '∞';
+                break;
+            case 'expert':
+                $validity = '∞';
+                $dynamic = '∞';
+                $static = '∞';
+                break;
+        } 
+
+
+        $staticCount = 0;
+        $dynamicCount = 0;
+
+        $infos = DB::table('qr_basic_info')
+            ->where('userid', $userId)
+            ->get(); 
+
+
+            foreach ($infos as $item) {
+                if ($item->qrtype === 'Static') {
+                    $staticCount++;
+                } elseif ($item->qrtype === 'Dynamic') {
+                    $dynamicCount++;
+                }
+            }
+            $totalCount = $staticCount + $dynamicCount;
+
+    return view('dashboard', compact('userId', 'user','formattedDate','totalCount','staticCount','dynamicCount','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'isPast', 'diffTotal'));
 }
+public function scanData(){
 
+
+    $userId = Auth::user()->id;
+
+    $response = QrBasicInfo::selectRaw('DATE(qr_basic_info.created_At) AS scan_date, qr_basic_info.qrtype, SUM(qr_basic_info.total_scans) AS total_scans')
+    ->leftJoin('users', 'qr_basic_info.userid', '=', 'users.id')
+    ->where('qr_basic_info.userid', $userId)
+    ->where(function ($query) {
+        $query->where('qr_basic_info.created_At', '>=', DB::raw('CURDATE() - INTERVAL 7 DAY'))
+              ->orWhereBetween('qr_basic_info.created_At', [DB::raw('users.subscription_start'), DB::raw('users.subscription_end')]);
+    })
+    ->where('renew_status', 'Enabled')
+    ->where('users.subscribe_status', 'Active')
+    ->groupBy('scan_date', 'qr_basic_info.qrtype')
+    ->orderBy('scan_date')
+    ->orderBy('qr_basic_info.qrtype')
+    ->get();
+
+    return response()->json($response);
+
+}
 
 
 

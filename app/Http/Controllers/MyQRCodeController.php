@@ -9,6 +9,8 @@ use App\Models\Imageqr;
 use App\Models\MP3qr;
 use App\Models\Pdfqr;
 use App\Models\QrBasicInfo;
+use App\Models\Scan;
+use App\Models\ScanStatistics;
 use App\Models\Sms;
 use App\Models\SocialMediaqr;
 use App\Models\Urlqr;
@@ -20,6 +22,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
+use Jenssegers\Agent\Agent;
 use Twilio\Rest\Video;
 
 class MyQRCodeController extends Controller
@@ -35,11 +38,11 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        $projectCode = 'P' . time() . rand(100, 999);
 
          // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
+         $data = route('preview-email', ['id' => $projectCode]); 
  
-         $projectCode = 'P' . time() . rand(100, 999);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -86,6 +89,88 @@ class MyQRCodeController extends Controller
  
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+      // Generate QR Code and Save to DB
+      public function createSmsQrcode(Request $request) {
+        $request->validate([
+             'phone' => 'required',
+             'sms' => 'required',
+             'projectname' => 'required',
+             'startdate' => 'required|date',
+             'enddate' => 'required|date',
+             'usage' => 'required',
+             'folderinput'=>'required'
+         ]);
+ 
+         $message = [
+             'Phone' => $request->countrycode . $request->phone,
+             'Message' => $request->sms,
+         ];
+         // Generate QR Code and save to storage
+    
+     $projectCode = 'P' . time() . rand(100, 999);
+ 
+     $data = route('preview-sms', ['id' => $projectCode]); 
+ 
+     $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
+ 
+         // Generate QR Code with Logo (Merge Logo)
+ 
+         $qrCode = QrCode::format('svg')
+             //  Merge logo
+             ->size(300)
+             ->errorCorrection('H')
+             ->generate($data);
+ 
+         // Save QR Code to Storage
+         Storage::disk('public')->put($qrCodePath, $qrCode);
+ 
+         // Generate the full URL of the QR Code
+         $qrCodeUrl = asset('storage/' . $qrCodePath);
+ 
+         // Save in DB
+         $sms = Sms::create([
+             'code' => $projectCode,
+             'qrtype' => $request->qroption,
+             'qrsms' => $request->sms,
+             'countrycode' => $request->countrycode,
+             'phonenumber' => $request->phone,
+             'url'=>$qrCodeUrl,
+             'qrimage'=>$qrCodePath,
+             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+              
+         ]);
+         $qrBasicInfo = QrBasicInfo::create([
+             'project_code' => $projectCode,
+             'project_name' => $request->projectname,
+             'folder_name' => $request->folderinput, // Storing in 'qrcodes' folder
+             'qrtype' => $request->qroption, // Assuming QR type is SMS
+             'start_date' => $request->startdate,
+             'end_date' => $request->enddate,
+             'usage_type' => $request->usage,
+             'remarks' => $request->remarks,
+             'url'=>$qrCodeUrl  ,
+             'userid' => Auth::user()->id ?? 'Guest', // Store user ID or 'Guest'
+             'qrtable' => 'smsqr', // Store QR content
+             'total_scans' => 0,
+             'unique_scans' => 0,
+             
+         ]);
+ 
+         $qrCode = QrCode::format('svg')
+         // Merge logo
+         ->size(300)
+         ->errorCorrection('H')
+         ->generate($data);
+ 
+     // Save QR Code to Storage
+     Storage::disk('public')->put($qrCodePath, $qrCode);
+ 
+     // Generate the full URL of the QR Code
+     $qrCodeUrl = asset('storage/' . $qrCodePath);
+     
+ 
+         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
+     }
     public function createWifiQrcode(Request $request){
         $request->validate([
             'ssid' => 'required',
@@ -98,10 +183,12 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = 'P' . time() . rand(100, 999);
+        $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-wifi', ['id' => $projectCode]); 
+
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -161,10 +248,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
          $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-bitcoin', ['id' => $projectCode]); 
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -223,10 +311,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
         
-        // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
         $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-pdf', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -289,10 +378,11 @@ class MyQRCodeController extends Controller
         ]);
         
        
-        // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
         $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-mp3', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -358,10 +448,11 @@ class MyQRCodeController extends Controller
         ]);
         
        
-        // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
         $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-image', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -425,10 +516,11 @@ class MyQRCodeController extends Controller
         ]);
         
        
-        // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
         $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-video', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -489,10 +581,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = 'P' . time() . rand(100, 999);
+        $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-app', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -550,10 +643,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = 'P' . time() . rand(100, 999);
+        $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-url', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -619,10 +713,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = 'P' . time() . rand(100, 999);
+        $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-vcard', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -712,10 +807,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = 'P' . time() . rand(100, 999);
+        $projectCode = 'P' . time() . rand(100, 999);
+
+        // Generate QR Code and save to storage
+
+        $data = route('preview-social', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -794,11 +890,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
-
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
          $projectCode = $code;
+
+          // Generate QR Code and save to storage
+
+         $data = route('preview-email', ['id' => $projectCode]);
+ 
+         
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -846,6 +944,12 @@ class MyQRCodeController extends Controller
           
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewEmail($code)
+    {
+        $qrCode = Emailqr::where('code',$code)->first();  
+
+        return view('email-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editSmsQrcode($code){
 
         $sms = Sms::leftJoin('qr_basic_info','qr_basic_info.project_code','=','smsqr.code')
@@ -862,10 +966,12 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = $code;
+
+        $projectCode = $code;
+         
+          // Generate QR Code and save to storage
+
+         $data = route('preview-sms', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -931,10 +1037,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = $code;
+        $projectCode = $code;
+         
+        // Generate QR Code and save to storage
+
+        $data = route('preview-wifi', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -982,6 +1089,12 @@ class MyQRCodeController extends Controller
           
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewWifi($code)
+    {
+        $qrCode = Wifiqr::where('code',$code)->first();  
+
+        return view('wifi-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editBitcoinQrcode($code){
 
         $bitcoin = Bitcoinqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','btcqr.code')
@@ -1000,11 +1113,12 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        
+        $projectCode = $code;
+         
+        // Generate QR Code and save to storage
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = $code;
+        $data = route('preview-bitcoin', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -1053,6 +1167,12 @@ class MyQRCodeController extends Controller
  
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewBitcoin($code)
+    {
+        $qrCode = Bitcoinqr::where('code',$code)->first();  
+
+        return view('bitcoin-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editPdfQrcode($code){
 
         $pdf = Pdfqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','pdfqr.code')
@@ -1071,10 +1191,11 @@ class MyQRCodeController extends Controller
         ]);
         
        
-        // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
         $projectCode = $code;
+         
+        // Generate QR Code and save to storage
+
+        $data = route('preview-pdf', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -1134,6 +1255,12 @@ class MyQRCodeController extends Controller
           $qrBasicInfo->save(); 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewPdf($code)
+    {
+        $qrCode = Pdfqr::where('code',$code)->first();  
+
+        return view('pdf-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editMp3Qrcode($code){
 
         $mp3 = MP3qr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','mp3qr.code')
@@ -1153,10 +1280,11 @@ class MyQRCodeController extends Controller
         ]);
         
        
-        // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
         $projectCode = $code;
+         
+        // Generate QR Code and save to storage
+
+        $data = route('preview-mp3', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -1214,6 +1342,12 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->save(); 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewMp3($code)
+    {
+        $qrCode = MP3qr::where('code',$code)->first();  
+
+        return view('mp3-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editImageQrcode($code){
 
         $image = Imageqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','imageqr.code')
@@ -1232,10 +1366,11 @@ class MyQRCodeController extends Controller
         ]);
         
        
+        $projectCode = $code;
+         
         // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
-        $projectCode =$code;
+
+        $data = route('preview-image', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -1290,6 +1425,12 @@ class MyQRCodeController extends Controller
 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewImage($code)
+    {
+        $qrCode = Imageqr::where('code',$code)->first();  
+
+        return view('image-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editVideoQrcode($code){
 
         $video = Videoqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','videoqr.code')
@@ -1308,10 +1449,11 @@ class MyQRCodeController extends Controller
         ]);
         
        
-        // Generate QR Code and save to storage
-        $data = 'https://infiniteqrcode.com/';
- 
         $projectCode = $code;
+         
+        // Generate QR Code and save to storage
+
+        $data = route('preview-video', ['id' => $projectCode]);
         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
 
         // Generate QR Code with Logo (Merge Logo)
@@ -1367,6 +1509,12 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->save(); 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewVideo($code)
+    {
+        $qrCode = Videoqr::where('code',$code)->first();  
+
+        return view('video-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editAppstoreQrcode($code){
 
         $app = Appstoreqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','apkqr.code')
@@ -1382,10 +1530,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = $code;
+        $projectCode = $code;
+         
+        // Generate QR Code and save to storage
+
+        $data = route('preview-app', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -1433,6 +1582,12 @@ class MyQRCodeController extends Controller
         $qrBasicInfo->save(); 
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewApp($code)
+    {
+        $qrCode = Appstoreqr::where('code',$code)->first();  
+
+        return view('app-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editUrlQrcode($code){
 
         $url = Urlqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','urlcode.code')
@@ -1449,10 +1604,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = $code;
+        $projectCode = $code;
+         
+        // Generate QR Code and save to storage
+
+        $data = route('preview-url', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -1497,6 +1653,12 @@ class MyQRCodeController extends Controller
          $qrBasicInfo->save(); 
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewUrl($code)
+    {
+        $qrCode = Urlqr::where('code',$code)->first();  
+
+        return view('url-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editVcardQrcode($code){
 
         $vcard = VCardqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','vcard.code')
@@ -1524,10 +1686,11 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
-         $projectCode = $code;
+        $projectCode = $code;
+         
+        // Generate QR Code and save to storage
+
+        $data = route('preview-vcard', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -1594,6 +1757,12 @@ class MyQRCodeController extends Controller
  
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
+    public function previewVcard($code)
+    {
+        $qrCode = VCardqr::where('code',$code)->first();  
+
+        return view('vcard-preview')->with(['qrCode'=>$qrCode]);
+    }
     public function editSocialQrcode($code){
 
         $social = SocialMediaqr::leftJoin('qr_basic_info','qr_basic_info.project_code','=','socmedqr.code')
@@ -1627,10 +1796,11 @@ class MyQRCodeController extends Controller
              'folderinput'=>'required'
          ]);
 
-         // Generate QR Code and save to storage
-         $data = 'https://infiniteqrcode.com/';
- 
          $projectCode = $code;
+         
+         // Generate QR Code and save to storage
+ 
+         $data = route('preview-social', ['id' => $projectCode]);
          $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
  
          // Generate QR Code with Logo (Merge Logo)
@@ -1692,6 +1862,12 @@ class MyQRCodeController extends Controller
           $qrBasicInfo->created_At= now();
           $qrBasicInfo->save(); 
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
+    }
+    public function previewSocial($code)
+    {
+        $qrCode = SocialMediaqr::where('code',$code)->first();  
+
+        return view('social-preview')->with(['qrCode'=>$qrCode]);
     }
     public function myqrcodelist(Request $request)
     {
@@ -1805,5 +1981,78 @@ class MyQRCodeController extends Controller
 
         return response()->json($qrCodes);
     }
+    
+    public function previewSms($code)
+    {
+        $qrCode = Sms::where('code',$code)->first();  
+
+        return view('sms-preview')->with(['qrCode'=>$qrCode]);
+    }
+    public function countryStatistics(Request $request){
+
+        $code = $request->code;
+
+        if (!$code) {
+            return response()->json(['error' => 'Invalid QR code.'], 400);
+        }
+
+        $agent = new Agent();
+        $ip_address = $request->ip(); // Get user IP
+        $device_type = $agent->isTablet() ? 'tablet' : ($agent->isMobile() ? 'mobile' : 'desktop');
+        $screen_width = $request->query('screen_width', ''); // Get from frontend
+        $screen_height = $request->query('screen_height', ''); 
+
+        // Unique device identifier (hash based on device details)
+        $device_identifier = hash('sha256', $ip_address . $device_type . $screen_width . $screen_height);
+
+        $qrCode = QrBasicInfo::where('project_code', $code)->first();
+        $scan_stati = ScanStatistics::where('code', $code)->first();
+
+        if (!$qrCode) {
+            return response()->json(['error' => 'QR code not found.'], 404);
+        }
+
+        // Check if this device has already scanned
+        $existingScan = Scan::where('qr_code_id', $code)
+                            ->where('device_identifier', $device_identifier)
+                            ->exists();
+
+
+        // If first-time scan from this device
+        if (!$existingScan) {  
+            // Increase total scans
+            $qrCode->total_scans += 1;
+            $qrCode->unique_scans += 1;
+            $qrCode->save();
+
+            // Log scan record
+            Scan::create([
+                'qr_code_id' => $code,
+                'user_agent' => $request->header('User-Agent'),
+                'device_identifier' => $device_identifier,
+            ]);
+   
+            ScanStatistics::create([
+                'code'=>$request->code,
+                'city'=>$request->city,
+                'country'=>$request->country,
+                'scan_count' =>  1
+            ]);
+           
+            return response()->json(['message' => 'New unique scan recorded.'], 200);
+        }
+        else {
+            // Just increment total scans if already scanned
+
+            $qrCode->increment('total_scans');
+
+            $scan_stati->increment('scan_count');
+
+            return response()->json(['message' => 'Scan count updated.'], 200);
+
+        }
+    
+   }
+   
 
 }

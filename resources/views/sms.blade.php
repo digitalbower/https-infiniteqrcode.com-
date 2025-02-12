@@ -52,7 +52,7 @@
             @if(session('success'))
               <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">{{ session('success') }}</div>
             @endif
-            <form action="{{ route('myqrcode') }}" id="smsqr_form" style="margin-bottom: 1rem;" id="saveForm" method="POST">
+            <form action="{{ route('create-smsqr') }}" id="smsqr_form" style="margin-bottom: 1rem;"  method="POST">
               @csrf
               <div class="flex justify-start">
                 <h2
@@ -420,6 +420,28 @@
   
   <script src="{{asset('js/create-folder.js')}}"></script>
   <script>
+    const previewBtn = document.getElementById("preview-btn");
+    const detailBtn = document.getElementById("detail-btn");
+    const previewContent = document.getElementById("preview-content");
+    const detailContent = document.getElementById("detail-content");
+    const urlInput = document.getElementById("url-input");
+    const qrPreview = document.getElementById("qr-preview");
+
+    previewBtn.addEventListener("click", () => {
+      previewBtn.classList.add("active");
+      detailBtn.classList.remove("active");
+      previewContent.classList.remove("hidden");
+      detailContent.classList.add("hidden");
+    });
+
+    detailBtn.addEventListener("click", () => {
+      detailBtn.classList.add("active");
+      previewBtn.classList.remove("active");
+      detailContent.classList.remove("hidden");
+      previewContent.classList.add("hidden");
+    });
+  </script>
+  <script>
     $(document).ready(function () {
       var passedValue = getQueryParam('option'); 
       if (passedValue !== null) {
@@ -501,6 +523,7 @@
       return params.get(param);
 
     }
+  
   </script>
 @endsection
 

@@ -50,6 +50,8 @@
                     <form class="mb-4"   id="editwifiqr_form" style="margin-bottom: 1rem;" action="{{ route('update-wifiqr',$wifi->code) }}" method="POST">
                       @csrf
                       <input type="hidden" name="qroption" id="qroption" value="{{$wifi->qrtype}}">
+                      <input type="hidden" name="url" id="url" value="{{route('preview-wifi',$wifi->code)}}">
+
                     <div class="flex justify-start">
                       <h2
                         class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
@@ -396,6 +398,7 @@
 </script>
 <script>
     $(document).ready(function () {
+      generateQRCodeWithLogo();
       const ssid = $("#ssid").val();
       $('.ssidqr').val(ssid);
       const password = $("#password").val();
@@ -471,5 +474,100 @@
     function escapeWiFiString(str) {
           return str.replace(/([\\;,:])/g, '\\$1');
         }
+        function generateQRCodeWithLogo() {
+        var canvas = document.getElementById("qr-preview");
+        var url = $("#url").val();
+        qrCode = new QRCodeStyling({
+          "type": "canvas",
+          "shape": "square",
+          "width": 280,
+          "height": 280,
+          "data": url,
+          "margin": 0,
+          "qrOptions": {
+            "typeNumber": "0",
+            "mode": "Byte",
+            "errorCorrectionLevel": "Q"
+          },
+          "imageOptions": {
+            "saveAsBlob": true,
+            "hideBackgroundDots": true,
+            "imageSize": 0.4,
+            "margin": 0
+          },
+          "dotsOptions": {
+            "type": "extra-rounded",
+            "color": "#6a1a4c",
+            "roundSize": true
+          },
+          "backgroundOptions": {
+            "round": 0,
+            "color": "#ffffff"
+          },
+          "dotsOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#6a1a4c",
+              "color2": "#6a1a4c",
+              "rotation": "0"
+            }
+          },
+          "cornersSquareOptions": {
+            "type": "extra-rounded",
+            "color": "#000000"
+          },
+          "cornersSquareOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+            }
+          },
+          "cornersDotOptions": {
+            "type": "",
+            "color": "#000000"
+          },
+          "cornersDotOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+            }
+          },
+          "backgroundOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#ffffff",
+              "color2": "#ffffff",
+              "rotation": "0"
+            }
+          }
+
+        });
+        qrCode.append(canvas);
+
+      }
   </script>
 @endsection

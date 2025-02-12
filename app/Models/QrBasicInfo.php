@@ -30,8 +30,9 @@ class QrBasicInfo extends Model
         'url',
     ];
 
-    public function user()
+    public function scans()
     {
-        return $this->belongsTo(User::class, 'userid');
+        return $this->hasMany(Scan::class, 'qr_code_id', 'project_code');
     }
+
 }
