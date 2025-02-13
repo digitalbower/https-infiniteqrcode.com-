@@ -20,7 +20,7 @@
       <p class="pt-4 text-lg font-semibold text-indigo-200">Loading...</p>
     </div>
   </div>
-  
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBX1r_54BQXiGiu-6YOITWJ4UR3NAqbUyM"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
