@@ -76,8 +76,7 @@ class HomeController extends Controller
         // $userId = auth()->id();
         $userId = auth()->id(); // Get the authenticated user's ID
       
-        // $projects = DB::select("SELECT * FROM qr_basic_info WHERE userid = ? ORDER BY created_at DESC", [$userId]);
-        $projects = QrBasicInfo::where('userid',$userId)->orderBy('created_at','desc')->get();
+        $projects = DB::select("SELECT * FROM qr_basic_info WHERE userid = ? ORDER BY created_at DESC", [$userId]);
         return view('analytics',compact('projects'));
     }
     public function create() {
