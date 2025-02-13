@@ -64,6 +64,7 @@ Route::post('create-pdfqr',[MyQRCodeController::class, 'createPdfQrcode'])->name
 Route::get('edit-pdfqr/{code}',[MyQRCodeController::class, 'editPdfQrcode'])->name('edit-pdfqr');  
 Route::post('update-pdfqr/{code}',[MyQRCodeController::class, 'updatePdfQrcode'])->name('update-pdfqr');  
 Route::get('/preview-pdf/{id}', [MyQRCodeController::class, 'previewPdf'])->name('preview-pdf');
+Route::get('/download-pdf/{code}',  [MyQRCodeController::class, 'downloadPdf'])->name('download-pdf');
 Route::post('create-mp3qr',[MyQRCodeController::class, 'createMp3Qrcode'])->name('create-mp3qr'); 
 Route::get('edit-mp3qr/{code}',[MyQRCodeController::class, 'editMp3Qrcode'])->name('edit-mp3qr');  
 Route::post('update-mp3qr/{code}',[MyQRCodeController::class, 'updateMp3Qrcode'])->name('update-mp3qr');  
@@ -88,6 +89,7 @@ Route::post('create-vcardqr',[MyQRCodeController::class, 'createVcardQrcode'])->
 Route::get('edit-vcardqr/{code}',[MyQRCodeController::class, 'editVcardQrcode'])->name('edit-vcardqr');  
 Route::post('update-vcardqr/{code}',[MyQRCodeController::class, 'updateVcardQrcode'])->name('update-vcardqr');  
 Route::get('/preview-vcard/{id}', [MyQRCodeController::class, 'previewVcard'])->name('preview-vcard');
+Route::get('/download-vcard/{code}',  [MyQRCodeController::class, 'downloadVcard'])->name('download-vcard');
 Route::post('create-socialqr',[MyQRCodeController::class, 'createSocialQrcode'])->name('create-socialqr');
 Route::get('edit-socialqr/{code}',[MyQRCodeController::class, 'editSocialQrcode'])->name('edit-socialqr');  
 Route::post('update-socialqr/{code}',[MyQRCodeController::class, 'updateSocialQrcode'])->name('update-socialqr');  

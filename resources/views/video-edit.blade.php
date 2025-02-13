@@ -52,7 +52,9 @@
                                  </div>
                                 <form style="margin-bottom: 1rem;" action="{{route('update-videoqr',$video->code)}}" method="POST" enctype="multipart/form-data" id="editvideoqr_form">
                                     @csrf
-                                    <input type="hidden" name="qroption" id="qroption" value="{{$video->qrtype}}"> 
+                                    <input type="hidden" name="qroption" id="qroption" value="{{$video->qrtype}}">
+                                    <input type="hidden" name="url" id="url" value="{{route('preview-video',$video->code)}}">
+ 
                                     <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                                          <div class="space-y-4">
                                              <div class="mx-auto  lg:p-6 bg-white text-black">
@@ -294,24 +296,10 @@
                                                          </h2>
 
                                                          <!-- QR Code Preview -->
-                                                         <div id="qr-preview"
-                                                             class="bg-white w-full border-3 rounded-lg shadow-sm overflow-hidden">
-
-                                                         </div>
-
+                                                         <div id="qr-preview" class="bg-white w-full border-3 rounded-lg shadow-sm overflow-hidden">
+                                                        </div>
                                                          <!-- Action Buttons -->
-                                                         <div class="mt-6 flex flex-col gap-4 items-center">
-                                                             <button id="downloadBtn"
-                                                                 class="px-4 py-2 bg-blue-500 text-white font-medium rounded-lg shadow hover:bg-blue-600 focus:ring focus:ring-blue-300">
-                                                                 Generate vCard
-                                                             </button>
-                                                             <a id="download-vcard" style="display: none;">Download
-                                                                 vCard</a>
-                                                             <!-- <button
-                          class="px-4 py-2 bg-gray-700 text-white font-medium rounded-lg shadow hover:bg-gray-800 focus:ring focus:ring-gray-500">
-                          Save Contact
-                        </button> -->
-                                                         </div>
+                                                         
                                                      </div>
                                                      <!-- Bottom Indicator -->
                                                  </div>
@@ -376,7 +364,28 @@
                  </main>
 
                  <script src="{{asset('js/create-folder.js')}}"></script>
-
+                 <script>
+                    const previewBtn = document.getElementById("preview-btn");
+                    const detailBtn = document.getElementById("detail-btn");
+                    const previewContent = document.getElementById("preview-content");
+                    const detailContent = document.getElementById("detail-content");
+                    const urlInput = document.getElementById("url-input");
+                    const qrPreview = document.getElementById("qr-preview");
+                  
+                    previewBtn.addEventListener("click", () => {
+                      previewBtn.classList.add("active");
+                      detailBtn.classList.remove("active");
+                      previewContent.classList.remove("hidden");
+                      detailContent.classList.add("hidden");
+                    });
+                  
+                    detailBtn.addEventListener("click", () => {
+                      detailBtn.classList.add("active");
+                      previewBtn.classList.remove("active");
+                      detailContent.classList.remove("hidden");
+                      previewContent.classList.add("hidden");
+                    });
+                  </script>
                  <script>
                 
                     $('#video-upload').on('change', function(event) {
@@ -394,6 +403,7 @@
 
                   
                     $(document).ready(function() {
+                        generateQRCodeWithLogo();
                         $.validator.addMethod("greaterThan", function (value, element, param) {
                             var startDate = $(param).val();
                             return this.optional(element) || new Date(value) > new Date(startDate);
@@ -429,5 +439,100 @@
                             errorClass: "text-red-500",
                         });
                     });
+                    function generateQRCodeWithLogo() {
+                        var canvas = document.getElementById("qr-preview");
+                        var url = $("#url").val();
+                        qrCode = new QRCodeStyling({
+                        "type": "canvas",
+                        "shape": "square",
+                        "width": 280,
+                        "height": 280,
+                        "data": url,
+                        "margin": 0,
+                        "qrOptions": {
+                            "typeNumber": "0",
+                            "mode": "Byte",
+                            "errorCorrectionLevel": "Q"
+                        },
+                        "imageOptions": {
+                            "saveAsBlob": true,
+                            "hideBackgroundDots": true,
+                            "imageSize": 0.4,
+                            "margin": 0
+                        },
+                        "dotsOptions": {
+                            "type": "extra-rounded",
+                            "color": "#6a1a4c",
+                            "roundSize": true
+                        },
+                        "backgroundOptions": {
+                            "round": 0,
+                            "color": "#ffffff"
+                        },
+                        "dotsOptionsHelper": {
+                            "colorType": {
+                            "single": true,
+                            "gradient": false
+                            },
+                            "gradient": {
+                            "linear": true,
+                            "radial": false,
+                            "color1": "#6a1a4c",
+                            "color2": "#6a1a4c",
+                            "rotation": "0"
+                            }
+                        },
+                        "cornersSquareOptions": {
+                            "type": "extra-rounded",
+                            "color": "#000000"
+                        },
+                        "cornersSquareOptionsHelper": {
+                            "colorType": {
+                            "single": true,
+                            "gradient": false
+                            },
+                            "gradient": {
+                            "linear": true,
+                            "radial": false,
+                            "color1": "#000000",
+                            "color2": "#000000",
+                            "rotation": "0"
+                            }
+                        },
+                        "cornersDotOptions": {
+                            "type": "",
+                            "color": "#000000"
+                        },
+                        "cornersDotOptionsHelper": {
+                            "colorType": {
+                            "single": true,
+                            "gradient": false
+                            },
+                            "gradient": {
+                            "linear": true,
+                            "radial": false,
+                            "color1": "#000000",
+                            "color2": "#000000",
+                            "rotation": "0"
+                            }
+                        },
+                        "backgroundOptionsHelper": {
+                            "colorType": {
+                            "single": true,
+                            "gradient": false
+                            },
+                            "gradient": {
+                            "linear": true,
+                            "radial": false,
+                            "color1": "#ffffff",
+                            "color2": "#ffffff",
+                            "rotation": "0"
+                            }
+                        }
+
+                        });
+                        qrCode.append(canvas);
+
+                    }
                   </script>
        @endsection

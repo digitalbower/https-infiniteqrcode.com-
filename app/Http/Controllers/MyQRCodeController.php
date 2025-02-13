@@ -782,24 +782,6 @@ class MyQRCodeController extends Controller
     }
     public function createSocialQrcode(Request $request){
         $request->validate([
-           'whtext'=> 'required',
-           'whturl'=> 'required',
-           'fbtext'=> 'required',
-           'fburl'=> 'required',
-           'yutext'=> 'required',
-           'yturl'=> 'required',
-           'insurl'=> 'required',
-            'instext'=> 'required',
-            'wchurl'=> 'required',
-            'wchtext'=> 'required',
-            'tikturl'=> 'required',
-            'tiktext'=> 'required',
-            'dyurl'=> 'required',
-            'dytext'=> 'required',
-            'telurl'=> 'required',
-            'teltext'=> 'required',
-            'snpurl'=> 'required',
-            'snptext'=> 'required',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -926,20 +908,12 @@ class MyQRCodeController extends Controller
         $email->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-        $qrBasicInfo->project_code= $projectCode;
         $qrBasicInfo->project_name= $request->projectname;
         $qrBasicInfo->folder_name=$request->folderinput; 
-        $qrBasicInfo->qrtype=$request->qroption;
         $qrBasicInfo->start_date= $request->startdate;
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$qrCodeUrl;
-        $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-        $qrBasicInfo->qrtable= 'emailqr'; 
-        $qrBasicInfo->total_scans= 0;
-        $qrBasicInfo->unique_scans= 0;
-        $qrBasicInfo->created_At= now();
         $qrBasicInfo->save(); 
           
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
@@ -1001,20 +975,12 @@ class MyQRCodeController extends Controller
         $sms->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-        $qrBasicInfo->project_code= $projectCode;
         $qrBasicInfo->project_name= $request->projectname;
         $qrBasicInfo->folder_name=$request->folderinput; 
-        $qrBasicInfo->qrtype=$request->qroption;
         $qrBasicInfo->start_date= $request->startdate;
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$qrCodeUrl;
-        $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-        $qrBasicInfo->qrtable= 'smsqr'; 
-        $qrBasicInfo->total_scans= 0;
-        $qrBasicInfo->unique_scans= 0;
-        $qrBasicInfo->created_At= now();
         $qrBasicInfo->save(); 
           
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
@@ -1071,20 +1037,12 @@ class MyQRCodeController extends Controller
         $wifi->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-        $qrBasicInfo->project_code= $projectCode;
         $qrBasicInfo->project_name= $request->projectname;
         $qrBasicInfo->folder_name=$request->folderinput; 
-        $qrBasicInfo->qrtype=$request->qroption;
         $qrBasicInfo->start_date= $request->startdate;
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$qrCodeUrl;
-        $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-        $qrBasicInfo->qrtable= 'wifiqr'; 
-        $qrBasicInfo->total_scans= 0;
-        $qrBasicInfo->unique_scans= 0;
-        $qrBasicInfo->created_At= now();
         $qrBasicInfo->save(); 
           
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
@@ -1149,20 +1107,12 @@ class MyQRCodeController extends Controller
           $bitcoin->save();
   
           $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-          $qrBasicInfo->project_code= $projectCode;
           $qrBasicInfo->project_name= $request->projectname;
           $qrBasicInfo->folder_name=$request->folderinput; 
-          $qrBasicInfo->qrtype=$request->qroption;
           $qrBasicInfo->start_date= $request->startdate;
           $qrBasicInfo->end_date= $request->enddate;
           $qrBasicInfo->usage_type= $request->usage;
           $qrBasicInfo->remarks= $request->remarks;
-          $qrBasicInfo->url=$qrCodeUrl;
-          $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-          $qrBasicInfo->qrtable= 'btcqr'; 
-          $qrBasicInfo->total_scans= 0;
-          $qrBasicInfo->unique_scans= 0;
-          $qrBasicInfo->created_At= now();
           $qrBasicInfo->save(); 
  
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
@@ -1238,20 +1188,12 @@ class MyQRCodeController extends Controller
           $pdf->save();
   
           $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-          $qrBasicInfo->project_code= $projectCode;
           $qrBasicInfo->project_name= $request->projectname;
           $qrBasicInfo->folder_name=$request->folderinput; 
-          $qrBasicInfo->qrtype=$request->qroption;
           $qrBasicInfo->start_date= $request->startdate;
           $qrBasicInfo->end_date= $request->enddate;
           $qrBasicInfo->usage_type= $request->usage;
           $qrBasicInfo->remarks= $request->remarks;
-          $qrBasicInfo->url=$qrCodeUrl;
-          $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-          $qrBasicInfo->qrtable= 'pdfqr'; 
-          $qrBasicInfo->total_scans= 0;
-          $qrBasicInfo->unique_scans= 0;
-          $qrBasicInfo->created_At= now();
           $qrBasicInfo->save(); 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
@@ -1260,6 +1202,11 @@ class MyQRCodeController extends Controller
         $qrCode = Pdfqr::where('code',$code)->first();  
 
         return view('pdf-preview')->with(['qrCode'=>$qrCode]);
+    }
+    public function downloadPdf($code){
+        $qrCode = Pdfqr::where('code',$code)->first();  
+        $filePath = storage_path('app/public/'.$qrCode->pdfpath); 
+        return response()->download($filePath);
     }
     public function editMp3Qrcode($code){
 
@@ -1325,20 +1272,12 @@ class MyQRCodeController extends Controller
         $mp3->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-        $qrBasicInfo->project_code= $projectCode;
         $qrBasicInfo->project_name= $request->projectname;
         $qrBasicInfo->folder_name=$request->folderinput; 
-        $qrBasicInfo->qrtype=$request->qroption;
         $qrBasicInfo->start_date= $request->startdate;
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$qrCodeUrl;
-        $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-        $qrBasicInfo->qrtable= 'mp3qr'; 
-        $qrBasicInfo->total_scans= 0;
-        $qrBasicInfo->unique_scans= 0;
-        $qrBasicInfo->created_At= now();
         $qrBasicInfo->save(); 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
@@ -1407,20 +1346,12 @@ class MyQRCodeController extends Controller
         $img->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-        $qrBasicInfo->project_code= $projectCode;
         $qrBasicInfo->project_name= $request->projectname;
         $qrBasicInfo->folder_name=$request->folderinput; 
-        $qrBasicInfo->qrtype=$request->qroption;
         $qrBasicInfo->start_date= $request->startdate;
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$qrCodeUrl;
-        $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-        $qrBasicInfo->qrtable= 'imageqr'; 
-        $qrBasicInfo->total_scans= 0;
-        $qrBasicInfo->unique_scans= 0;
-        $qrBasicInfo->created_At= now();
         $qrBasicInfo->save(); 
 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
@@ -1492,20 +1423,12 @@ class MyQRCodeController extends Controller
         $video->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-        $qrBasicInfo->project_code= $projectCode;
         $qrBasicInfo->project_name= $request->projectname;
         $qrBasicInfo->folder_name=$request->folderinput; 
-        $qrBasicInfo->qrtype=$request->qroption;
         $qrBasicInfo->start_date= $request->startdate;
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$qrCodeUrl;
-        $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-        $qrBasicInfo->qrtable= 'videoqr'; 
-        $qrBasicInfo->total_scans= 0;
-        $qrBasicInfo->unique_scans= 0;
-        $qrBasicInfo->created_At= now();
         $qrBasicInfo->save(); 
         return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
@@ -1565,20 +1488,12 @@ class MyQRCodeController extends Controller
         $app->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-        $qrBasicInfo->project_code= $projectCode;
         $qrBasicInfo->project_name= $request->projectname;
         $qrBasicInfo->folder_name=$request->folderinput; 
-        $qrBasicInfo->qrtype=$request->qroption;
         $qrBasicInfo->start_date= $request->startdate;
         $qrBasicInfo->end_date= $request->enddate;
         $qrBasicInfo->usage_type= $request->usage;
         $qrBasicInfo->remarks= $request->remarks;
-        $qrBasicInfo->url=$qrCodeUrl;
-        $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-        $qrBasicInfo->qrtable= 'apkqr'; 
-        $qrBasicInfo->total_scans= 0;
-        $qrBasicInfo->unique_scans= 0;
-        $qrBasicInfo->created_At= now();
         $qrBasicInfo->save(); 
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
@@ -1636,20 +1551,12 @@ class MyQRCodeController extends Controller
          $app->save();
  
          $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-         $qrBasicInfo->project_code= $projectCode;
          $qrBasicInfo->project_name= $request->projectname;
          $qrBasicInfo->folder_name=$request->folderinput; 
-         $qrBasicInfo->qrtype=$request->qroption;
          $qrBasicInfo->start_date= $request->startdate;
          $qrBasicInfo->end_date= $request->enddate;
          $qrBasicInfo->usage_type= $request->usage;
          $qrBasicInfo->remarks= $request->remarks;
-         $qrBasicInfo->url=$qrCodeUrl;
-         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-         $qrBasicInfo->qrtable= 'urlcode'; 
-         $qrBasicInfo->total_scans= 0;
-         $qrBasicInfo->unique_scans= 0;
-         $qrBasicInfo->created_At= now();
          $qrBasicInfo->save(); 
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
@@ -1738,23 +1645,14 @@ class MyQRCodeController extends Controller
         $vcard->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $vcard->save();
  
-         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-         $qrBasicInfo->project_code= $projectCode;
-         $qrBasicInfo->project_name= $request->projectname;
-         $qrBasicInfo->folder_name=$request->folderinput; 
-         $qrBasicInfo->qrtype=$request->qroption;
-         $qrBasicInfo->start_date= $request->startdate;
-         $qrBasicInfo->end_date= $request->enddate;
-         $qrBasicInfo->usage_type= $request->usage;
-         $qrBasicInfo->remarks= $request->remarks;
-         $qrBasicInfo->url=$qrCodeUrl;
-         $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-         $qrBasicInfo->qrtable= 'vcard'; 
-         $qrBasicInfo->total_scans= 0;
-         $qrBasicInfo->unique_scans= 0;
-         $qrBasicInfo->created_At= now();
-         $qrBasicInfo->save(); 
- 
+        $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
+        $qrBasicInfo->project_name= $request->projectname;
+        $qrBasicInfo->folder_name=$request->folderinput; 
+        $qrBasicInfo->start_date= $request->startdate;
+        $qrBasicInfo->end_date= $request->enddate;
+        $qrBasicInfo->usage_type= $request->usage;
+        $qrBasicInfo->remarks= $request->remarks;
+        $qrBasicInfo->save(); 
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }
     public function previewVcard($code)
@@ -1762,6 +1660,24 @@ class MyQRCodeController extends Controller
         $qrCode = VCardqr::where('code',$code)->first();  
 
         return view('vcard-preview')->with(['qrCode'=>$qrCode]);
+    }
+    public function downloadVcard($code){
+
+        $qrCode = VCardqr::where('code',$code)->first(); 
+
+        $vcard = "BEGIN:VCARD\n";
+        $vcard .= "VERSION:3.0\n";
+        $vcard .= "FN:$qrCode->first_name\n";
+        $vcard .= "ORG:$qrCode->company\n";
+        $vcard .= "TEL:$qrCode->mobile\n";
+        $vcard .= "EMAIL:$qrCode->email\n";
+        $vcard .= "URL:$qrCode->website\n";
+        $vcard .= "PHOTO;TYPE=JPEG;VALUE=URL:storage('app/public/'.$qrCode->contactimg)\n"; // Profile Picture
+        $vcard .= "END:VCARD";
+    
+        return response($vcard)
+            ->header('Content-Type', 'text/vcard')
+            ->header('Content-Disposition', 'attachment; filename="contact.vcf"');
     }
     public function editSocialQrcode($code){
 
@@ -1771,24 +1687,6 @@ class MyQRCodeController extends Controller
     }
     public function updateSocialQrcode(Request $request,$code){
         $request->validate([
-            'whtext'=> 'required',
-            'whturl'=> 'required',
-            'fbtext'=> 'required',
-            'fburl'=> 'required',
-            'yutext'=> 'required',
-            'yturl'=> 'required',
-            'insurl'=> 'required',
-             'instext'=> 'required',
-             'wchurl'=> 'required',
-             'wchtext'=> 'required',
-             'tikturl'=> 'required',
-             'tiktext'=> 'required',
-             'dyurl'=> 'required',
-             'dytext'=> 'required',
-             'telurl'=> 'required',
-             'teltext'=> 'required',
-             'snpurl'=> 'required',
-             'snptext'=> 'required',
              'projectname' => 'required',
              'startdate' => 'required|date',
              'enddate' => 'required|date',
@@ -1846,20 +1744,12 @@ class MyQRCodeController extends Controller
          $social->save();
   
           $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
-          $qrBasicInfo->project_code= $projectCode;
           $qrBasicInfo->project_name= $request->projectname;
           $qrBasicInfo->folder_name=$request->folderinput; 
-          $qrBasicInfo->qrtype=$request->qroption;
           $qrBasicInfo->start_date= $request->startdate;
           $qrBasicInfo->end_date= $request->enddate;
           $qrBasicInfo->usage_type= $request->usage;
           $qrBasicInfo->remarks= $request->remarks;
-          $qrBasicInfo->url=$qrCodeUrl;
-          $qrBasicInfo->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
-          $qrBasicInfo->qrtable= 'socmedqr'; 
-          $qrBasicInfo->total_scans= 0;
-          $qrBasicInfo->unique_scans= 0;
-          $qrBasicInfo->created_At= now();
           $qrBasicInfo->save(); 
          return redirect()->route('myqrcodelist')->with('success', 'QR Code Generated Successfully');
     }

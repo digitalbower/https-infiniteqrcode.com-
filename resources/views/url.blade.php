@@ -371,34 +371,6 @@
 </script>
 <script>
   $(document).ready(function () {
-    $('#folderDropdownButton').on('click', function () {
-        $('#folderDropdown').toggleClass('hidden');
-    });
-
-    // Handle folder selection
-    $('.folder-item').on('click', function () {
-        var selectedFolder = $(this).data('folder');
-
-        // Update button text
-        $('#selectedFolder').text(selectedFolder);
-
-        // Update hidden input value
-        $('#folderinput').val(selectedFolder);
-
-        // Close dropdown
-        $('#folderDropdown').addClass('hidden');
-
-        // Highlight selected folder
-        $('.folder-item').removeClass('bg-gray-200 font-bold');
-        $(this).addClass('bg-gray-200 font-bold');
-    });
-
-    // Close dropdown if clicked outside
-    $(document).on('click', function (event) {
-        if (!$(event.target).closest('#folderDropdownButton, #folderDropdown').length) {
-            $('#folderDropdown').addClass('hidden');
-        }
-    });
       var passedValue = getQueryParam('option'); 
       if (passedValue !== null) {
           $('#qroption').val(passedValue);

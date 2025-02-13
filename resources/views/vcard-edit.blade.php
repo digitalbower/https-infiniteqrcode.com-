@@ -50,6 +50,8 @@
                         <form class="space-y-4 text-black"  id="editvcardqr_form" style="margin-bottom: 1rem;" enctype="multipart/form-data" action="{{ route('update-vcardqr',$vcard->code) }}" method="POST">
                             @csrf
                             <input type="hidden" name="qroption" id="qroption" value="{{$vcard->qrtype}}">
+                            <input type="hidden" name="url" id="url" value="{{route('preview-vcard',$vcard->code)}}">
+
                             <div class="lg:p-8 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                                 <div>
                                     <label class="block font-medium mb-1">Profile Picture:</label>
@@ -461,8 +463,7 @@
 
                                             <!-- Name and Title -->
                                             <div class="text-center space-y-1 mb-2 mt-1">
-                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name">MATT
-                                                    ZHANG</h1>
+                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name">{{ strtoupper($vcard->first_name . ' ' . $vcard->last_name) }}</h1>
                                                 <p class="text-white text-sm tracking-widest font-light company">
                                                     BUSINESS CONSULTANT</p>
                                             </div>
@@ -571,7 +572,30 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
         <script src="{{asset('js/create-folder.js')}}"></script>
         <script>
+            const previewBtn = document.getElementById("preview-btn");
+            const detailBtn = document.getElementById("detail-btn");
+            const previewContent = document.getElementById("preview-content");
+            const detailContent = document.getElementById("detail-content");
+            const urlInput = document.getElementById("url-input");
+            const qrPreview = document.getElementById("qr-preview");
+          
+            previewBtn.addEventListener("click", () => {
+              previewBtn.classList.add("active");
+              detailBtn.classList.remove("active");
+              previewContent.classList.remove("hidden");
+              detailContent.classList.add("hidden");
+            });
+          
+            detailBtn.addEventListener("click", () => {
+              detailBtn.classList.add("active");
+              previewBtn.classList.remove("active");
+              detailContent.classList.remove("hidden");
+              previewContent.classList.add("hidden");
+            });
+          </script>
+        <script>
         $(document).ready(function () {
+            generateQRCodeWithLogo();
             var firstname = $('#first_name').val(); 
             $('#firstName').val(firstname);
             var lastname = $('#lastname').val(); 
@@ -750,5 +774,100 @@
                 input.addEventListener('input', syncFields);
             });
         });
+        function generateQRCodeWithLogo() {
+        var canvas = document.getElementById("qr-preview");
+        var url = $("#url").val();
+        qrCode = new QRCodeStyling({
+        "type": "canvas",
+        "shape": "square",
+        "width": 280,
+        "height": 280,
+        "data": url,
+        "margin": 0,
+        "qrOptions": {
+            "typeNumber": "0",
+            "mode": "Byte",
+            "errorCorrectionLevel": "Q"
+        },
+        "imageOptions": {
+            "saveAsBlob": true,
+            "hideBackgroundDots": true,
+            "imageSize": 0.4,
+            "margin": 0
+        },
+        "dotsOptions": {
+            "type": "extra-rounded",
+            "color": "#6a1a4c",
+            "roundSize": true
+        },
+        "backgroundOptions": {
+            "round": 0,
+            "color": "#ffffff"
+        },
+        "dotsOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#6a1a4c",
+            "color2": "#6a1a4c",
+            "rotation": "0"
+            }
+        },
+        "cornersSquareOptions": {
+            "type": "extra-rounded",
+            "color": "#000000"
+        },
+        "cornersSquareOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#000000",
+            "color2": "#000000",
+            "rotation": "0"
+            }
+        },
+        "cornersDotOptions": {
+            "type": "",
+              "color": "#000000"
+          },
+          "cornersDotOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+              }
+          },
+          "backgroundOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#ffffff",
+              "color2": "#ffffff",
+              "rotation": "0"
+              }
+          }
+
+          });
+          qrCode.append(canvas);
+
+      }
         </script>
 @endsection

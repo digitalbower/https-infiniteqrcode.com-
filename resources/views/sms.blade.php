@@ -175,11 +175,10 @@
                                 $userId = auth()->user()->id; 
 
                                 $folders = DB::table('qr_basic_info')
-                                ->selectRaw('folder_name as name, COUNT(*) AS count, DATE(created_At) AS date')
-                                ->where('userid', $userId)
-                                ->groupBy('folder_name', 'date')
-                                ->orderBy('created_At', 'asc')
-                                ->get();
+                                        ->selectRaw('folder_name as name')
+                                        ->where('userid', $userId)
+                                        ->groupBy('folder_name')
+                                        ->get();
 
                                 @endphp
                                 <ul id="folderList" class="divide-y divide-gray-200">
@@ -255,6 +254,7 @@
                               class="block font-medium text-gray-800">Usage</label>
                             <select id="usage" name="usage"
                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                              <option value="">Select Usage</option>
                               <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
                               <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
                               <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>

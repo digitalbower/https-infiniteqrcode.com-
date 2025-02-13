@@ -58,6 +58,8 @@
         <form class="space-y-4 text-black"  id="editappqr_form" style="margin-bottom: 1rem;" action="{{ route('update-appqr',$app->code) }}" method="POST">
           @csrf
           <input type="hidden" name="qroption" id="qroption" value="{{$app->qrtype}}">
+          <input type="hidden" name="url" id="url" value="{{route('preview-app',$app->code)}}">
+
           <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
             <div class="space-y-4">
               <div class="mx-auto  lg:p-6 bg-white text-black">
@@ -443,6 +445,7 @@ detailBtn.addEventListener("click", () => {
 </script>
 <script>
   $(document).ready(function () {
+    generateQRCodeWithLogo();
       $.validator.addMethod("greaterThan", function (value, element, param) {
           var startDate = $(param).val();
           return this.optional(element) || new Date(value) > new Date(startDate);
@@ -478,5 +481,100 @@ detailBtn.addEventListener("click", () => {
         errorClass: "text-red-500",
       });
     });
+    function generateQRCodeWithLogo() {
+        var canvas = document.getElementById("qr-preview");
+        var url = $("#url").val();
+        qrCode = new QRCodeStyling({
+        "type": "canvas",
+        "shape": "square",
+        "width": 280,
+        "height": 280,
+        "data": url,
+        "margin": 0,
+        "qrOptions": {
+            "typeNumber": "0",
+            "mode": "Byte",
+            "errorCorrectionLevel": "Q"
+        },
+        "imageOptions": {
+            "saveAsBlob": true,
+            "hideBackgroundDots": true,
+            "imageSize": 0.4,
+            "margin": 0
+        },
+        "dotsOptions": {
+            "type": "extra-rounded",
+            "color": "#6a1a4c",
+            "roundSize": true
+        },
+        "backgroundOptions": {
+            "round": 0,
+            "color": "#ffffff"
+        },
+        "dotsOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#6a1a4c",
+            "color2": "#6a1a4c",
+            "rotation": "0"
+            }
+        },
+        "cornersSquareOptions": {
+            "type": "extra-rounded",
+            "color": "#000000"
+        },
+        "cornersSquareOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#000000",
+            "color2": "#000000",
+            "rotation": "0"
+            }
+        },
+        "cornersDotOptions": {
+            "type": "",
+              "color": "#000000"
+          },
+          "cornersDotOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+              }
+          },
+          "backgroundOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#ffffff",
+              "color2": "#ffffff",
+              "rotation": "0"
+              }
+          }
+
+          });
+          qrCode.append(canvas);
+
+      }
 </script>
 @endsection

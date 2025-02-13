@@ -29,6 +29,10 @@ class QrBasicInfo extends Model
         'created_At',
         'url',
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userid');
+    }
 
     public function scans()
     {

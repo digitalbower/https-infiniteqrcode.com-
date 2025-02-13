@@ -55,14 +55,7 @@
                             <div class="w-full mx-auto p-6 bg-gray-50 rounded-lg shadow">
                                 <h5 class="text-gray-700 text-sm mb-4">
                                   Add your username or links to social media pages below.</h5>
-                                <label class="urlerror"></label>
-                                @if ($errors->any())
-                                    <div class="text-red-500">
-                                        @foreach ($errors->all() as $error)
-                                            {{ $error }} <br>
-                                        @endforeach
-                                    </div>
-                                @endif
+                                <label class="urlerror"></label>                             
                                 <small id="allErrors" class="text-red-500"></small>
                                 <!-- Social Media Input Groups -->
                                 <div class="space-y-4">
@@ -310,8 +303,10 @@
                                         <label for="projectName" class="block font-medium text-gray-800">QR Project Name * </label>
                                         <div>
                                           <input id="projectName" placeholder="Enter project name" name="projectname"
-                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('project_name')}}">
-                                          <label class="projectName text-red-700"></label>
+                                            class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{old('projectname')}}">
+                                            @error('projectname')
+                                            <small class="text-red-700 project">{{ $message }}</small>
+                                            @enderror
                                         </div>
                                       </div>
                 
@@ -371,11 +366,10 @@
                         <input id="folderinput" placeholder="Folder Name" type="hidden"
                             name="folderinput" readonly value=""
                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                            @error('folderinput')
-                            <small class="text-red-700 folderinput">{{ $message }}</small>
-                            @enderror
                     </div>
-                                      <!-- Date Range -->
+                    @error('folderinput')
+                    <small class="text-red-700 folderinput">{{ $message }}</small>
+                    @enderror             <!-- Date Range -->
                                       <div class="flex flex-col md:flex-row md:space-x-8 space-y-6 md:space-y-0">
                                         <div class="flex-1">
                                           <label for="startDate" class="block font-medium text-gray-800">Start Date</label>
@@ -383,7 +377,9 @@
                                             <input id="startDate" min="2025-02-09" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                               name="startdate" value="{{old('startdate')}}">
-                                            <label class="start text-red-700"></label>
+                                              @error('startdate')
+                                              <small class="text-red-700 start">{{ $message }}</small>
+                                            @enderror
                                           </div>
                                         </div>
                                         <div class="flex-1">
@@ -392,7 +388,9 @@
                                             <input id="endDate" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                               name="enddate" value="{{old('enddate')}}">
-                                            <label class="end text-red-700"></label>
+                                            @error('enddate')
+                                            <small class="text-red-700 end">{{ $message }}</small>
+                                            @enderror
                                           </div>
                                         </div>
                                       </div>
@@ -401,6 +399,7 @@
                                         <label for="usage" class="block font-medium text-gray-800">Usage</label>
                                         <select id="usage" name="usage"
                                           class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                          <option value="">Select Usage</option>
                                           <option value="personal" {{ old('usage') == 'personal' ? 'selected' : '' }}>Personal</option>
                                           <option value="business" {{ old('usage') == 'business' ? 'selected' : '' }}>Business</option>
                                           <option value="event" {{ old('usage') == 'event' ? 'selected' : '' }}>Event</option>
@@ -692,51 +691,33 @@ $(document).ready(function () {
     }, "End date must be greater than start date");
     $("#socialqr_form").validate({   
         rules: {  
-            whtext:"required",
             whturl:{
-                    required: true,
                     url: true
                 },
-            fbtext:"required",
             fburl:{
-                    required: true,
                     url: true
                 },
-            yutext:"required",
             yturl:{
-                    required: true,
                     url: true
                 },
             insurl:{
-                    required: true,
                     url: true
                 },
-            instext:"required",
             wchurl:{
-                    required: true,
                     url: true
                 },
-            wchtext:"required",
             tikturl:{
-                    required: true,
                     url: true
                 },
-            tiktext:"required",
             dyurl:{
-                    required: true,
                     url: true
                 },
-            dytext:"required",
             telurl:{
-                    required: true,
                     url: true
                 },
-            teltext:"required",
             snpurl:{
-                    required: true,
                     url: true
                 },
-            snptext:"required",
             projectname:"required",
             folderinput:"required",
             startdate: {
@@ -750,51 +731,33 @@ $(document).ready(function () {
             }
         },  
         messages: {  
-            whtext:"whtext field is required",
             whturl:{
-                    required: "whturl field is required",
                     url: "Enter a valid URL"
             },
-            fbtext:"fbtext field is required",
             fburl:{
-                    required: "fburl field is required",
                     url: "Enter a valid URL"
             },
-            yutext:"yutext field is required",
             yturl:{
-                    required: "yturl field is required",
                     url: "Enter a valid URL"
             },
             insurl:{
-                    required: "insurl field is required",
                     url: "Enter a valid URL"
             },
-            instext:"instext field is required",
             wchurl:{
-                    required: "wchurl field is required",
                     url: "Enter a valid URL"
             },
-            wchtext:"wchtext field is required",
             tikturl:{
-                    required: "tikturl field is required",
                     url: "Enter a valid URL"
             },
-            tiktext:"tiktext field is required",
             dyurl:{
-                    required: "dyurl field is required",
                     url: "Enter a valid URL"
             },
-            dytext:"dytext field is required",
             telurl:{
-                    required: "telurl field is required",
                     url: "Enter a valid URL"
             },
-            teltext:"teltext field is required",
             snpurl:{
-                    required: "snpurl field is required",
                     url: "Enter a valid URL"
             },
-            snptext:"snptext field is required",
             projectname:"Enter Project Name",
             folderinput:"Choose the Folder Name",
             startdate: {
@@ -808,19 +771,7 @@ $(document).ready(function () {
             }
             },  
         errorElement: "small",
-        errorClass: "text-red-500",
-        errorPlacement: function (error, element) {
-            // Append each error message to the single error label
-            $("#allErrors").append(error);
-        },
-        showErrors: function (errorMap, errorList) {
-            let errorMessages = "";
-            $.each(errorList, function (index, error) {
-                errorMessages += error.message + "<br>";
-            });
-            $("#allErrors").html(errorMessages);
-        
-        } 
+        errorClass: "text-red-500"
     });
     });
     function getQueryParam(param) {

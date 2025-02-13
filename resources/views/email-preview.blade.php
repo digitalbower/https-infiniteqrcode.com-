@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Responsive Form with Animation</title>
+  <title>Email Preview</title>
+  <link rel="shortcut icon" href="{{asset('images/indexfav.png')}}" type="image/x-icon">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome CDN -->
@@ -80,14 +81,13 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
-          // Send Email on Button Click
           $('#sendEmail').click(function () {
-                const email = $("#pemail").text();
-                const subject = $("#psubject").text();
-                 const message = $("#pmessage").text(); 
-                let mailto = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-                console.log(mailto);
-                window.location.href = mailto;
+                let email = $("#pemail").text();
+                let subject = encodeURIComponent($("#psubject").text());
+                let message = encodeURIComponent($("#pmessage").text());
+
+                let mailtoLink = `mailto:${email}?subject=${subject}&body=${message}`;
+                window.location.href = mailtoLink; // Opens email app
             });
      });
     

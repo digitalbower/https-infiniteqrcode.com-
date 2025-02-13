@@ -52,17 +52,12 @@
                         <form  id="editsocialqr_form" style="margin-bottom: 1rem;" action="{{ route('update-socialqr',$social->code) }}" method="POST">
                             @csrf
                             <input type="hidden" name="qroption" id="qroption" value="{{$social->qrtype}}">
+                            <input type="hidden" name="url" id="url" value="{{route('preview-social',$social->code)}}">
+
                             <div class="w-full mx-auto p-6 bg-gray-50 rounded-lg shadow">
                                 <h5 class="text-gray-700 text-sm mb-4">
                                   Add your username or links to social media pages below.</h5>
                                 <label class="urlerror"></label>
-                                @if ($errors->any())
-                                    <div class="text-red-500">
-                                        @foreach ($errors->all() as $error)
-                                            {{ $error }} <br>
-                                        @endforeach
-                                    </div>
-                                @endif
                                 <small id="allErrors" class="text-red-500"></small>
                                 <!-- Social Media Input Groups -->
                                 <div class="space-y-4">
@@ -161,9 +156,9 @@
                                       <div class="flex items-center">
                                         <label
                                           class="block text-sm border mt-1 w-1/4 border-gray-300 p-2 bg-gray-300 font-medium text-gray-600 mt-2">Text</label>
-                                        <input type="text" id="instext" name="instext"
+                                        <input type="text" id="instext" name="instext" value="{{$social->instext}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                          placeholder="" value="See My Insta" />
+                                          placeholder="" />
                                       </div>
                                     </div>
                                   </div>        
@@ -312,7 +307,9 @@
                                         <div>
                                           <input id="projectName" placeholder="Enter project name" name="projectname"
                                             class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="{{$social->project_name}}">
-                                          <label class="projectName text-red-700"></label>
+                                          @error('projectname')
+                                          <small class="text-red-700 project">{{ $message }}</small>
+                                          @enderror
                                         </div>
                                       </div>
                 
@@ -368,9 +365,8 @@
                             </div>
                             <input id="folderinput" type="hidden" name="folderinput" value="{{ $social->folder_name ?? '' }}" />
                           </div>                            
-                          <small id="folder"></small>
                           @error('folderinput')
-                          <small class="text-red-700 folderinput">{{ $message }}</small>
+                          <small class="text-red-700 folder">{{ $message }}</small>
                           @enderror
 
                                       <!-- Date Range -->
@@ -381,7 +377,9 @@
                                             <input id="startDate" min="2025-02-09" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                               name="startdate" value="{{$social->start_date}}">
-                                            <label class="start text-red-700"></label>
+                                            @error('startdate')
+                                              <small class="text-red-700 start">{{ $message }}</small>
+                                            @enderror
                                           </div>
                                         </div>
                                         <div class="flex-1">
@@ -390,7 +388,9 @@
                                             <input id="endDate" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                               name="enddate" value="{{$social->end_date}}">
-                                            <label class="end text-red-700"></label>
+                                            @error('enddate')
+                                            <small class="text-red-700 end">{{ $message }}</small>
+                                            @enderror
                                           </div>
                                         </div>
                                       </div>
@@ -642,6 +642,7 @@
 <script src="{{asset('js/create-folder.js')}}"></script>
 <script>
 $(document).ready(function () {
+  generateQRCodeWithLogo();
     $('.facebook').text($('#fbtext').val());
                      $('.youtube').text($('#yutext').val());
                       $('.whatsapp').text($('#whtext').val());
@@ -687,51 +688,33 @@ $(document).ready(function () {
     }, "End date must be greater than start date");
     $("#editsocialqr_form").validate({   
         rules: {  
-            whtext:"required",
             whturl:{
-                    required: true,
                     url: true
                 },
-            fbtext:"required",
             fburl:{
-                    required: true,
                     url: true
                 },
-            yutext:"required",
             yturl:{
-                    required: true,
                     url: true
                 },
             insurl:{
-                    required: true,
                     url: true
                 },
-            instext:"required",
             wchurl:{
-                    required: true,
                     url: true
                 },
-            wchtext:"required",
             tikturl:{
-                    required: true,
                     url: true
                 },
-            tiktext:"required",
             dyurl:{
-                    required: true,
                     url: true
                 },
-            dytext:"required",
             telurl:{
-                    required: true,
                     url: true
                 },
-            teltext:"required",
             snpurl:{
-                    required: true,
                     url: true
                 },
-            snptext:"required",
             projectname:"required",
             folderinput:"required",
             startdate: {
@@ -745,51 +728,33 @@ $(document).ready(function () {
             }
         },  
         messages: {  
-            whtext:"whtext field is required",
             whturl:{
-                    required: "whturl field is required",
                     url: "Enter a valid URL"
             },
-            fbtext:"fbtext field is required",
             fburl:{
-                    required: "fburl field is required",
                     url: "Enter a valid URL"
             },
-            yutext:"yutext field is required",
             yturl:{
-                    required: "yturl field is required",
                     url: "Enter a valid URL"
             },
             insurl:{
-                    required: "insurl field is required",
                     url: "Enter a valid URL"
             },
-            instext:"instext field is required",
             wchurl:{
-                    required: "wchurl field is required",
                     url: "Enter a valid URL"
             },
-            wchtext:"wchtext field is required",
             tikturl:{
-                    required: "tikturl field is required",
                     url: "Enter a valid URL"
             },
-            tiktext:"tiktext field is required",
             dyurl:{
-                    required: "dyurl field is required",
                     url: "Enter a valid URL"
             },
-            dytext:"dytext field is required",
             telurl:{
-                    required: "telurl field is required",
                     url: "Enter a valid URL"
             },
-            teltext:"teltext field is required",
             snpurl:{
-                    required: "snpurl field is required",
                     url: "Enter a valid URL"
             },
-            snptext:"snptext field is required",
             projectname:"Enter Project Name",
             folderinput:"Choose the Folder Name",
             startdate: {
@@ -818,6 +783,101 @@ $(document).ready(function () {
         } 
     });
     });
+    function generateQRCodeWithLogo() {
+        var canvas = document.getElementById("qr-preview");
+        var url = $("#url").val();
+        qrCode = new QRCodeStyling({
+        "type": "canvas",
+        "shape": "square",
+        "width": 280,
+        "height": 280,
+        "data": url,
+        "margin": 0,
+        "qrOptions": {
+            "typeNumber": "0",
+            "mode": "Byte",
+            "errorCorrectionLevel": "Q"
+        },
+        "imageOptions": {
+            "saveAsBlob": true,
+            "hideBackgroundDots": true,
+            "imageSize": 0.4,
+            "margin": 0
+        },
+        "dotsOptions": {
+            "type": "extra-rounded",
+            "color": "#6a1a4c",
+            "roundSize": true
+        },
+        "backgroundOptions": {
+            "round": 0,
+            "color": "#ffffff"
+        },
+        "dotsOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#6a1a4c",
+            "color2": "#6a1a4c",
+            "rotation": "0"
+            }
+        },
+        "cornersSquareOptions": {
+            "type": "extra-rounded",
+            "color": "#000000"
+        },
+        "cornersSquareOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#000000",
+            "color2": "#000000",
+            "rotation": "0"
+            }
+        },
+        "cornersDotOptions": {
+            "type": "",
+              "color": "#000000"
+          },
+          "cornersDotOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+              }
+          },
+          "backgroundOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#ffffff",
+              "color2": "#ffffff",
+              "rotation": "0"
+              }
+          }
+
+          });
+          qrCode.append(canvas);
+
+      }
 
 </script>
 @endsection

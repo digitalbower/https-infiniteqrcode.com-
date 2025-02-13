@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wifi Preview</title>
+  <link rel="shortcut icon" href="{{asset('images/indexfav.png')}}" type="image/x-icon">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome CDN -->
@@ -103,42 +104,26 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
-     //$("#share").on('click',function(){
-        const ssid = $("#ssid").val();
-        const encryption = $("#password").val();
-        const password = $("#encryption").val(); 
-        
-        let wifiString = `WIFI:S:${ssid};T:${encryption};P:${password};;`;
+      $('#connect').click(function () {
+          const ssid = $("#ssid").val();
+          const encryption = $("#encryption").val();
+          const password = $("#password").val(); 
       
-            console.log(wifiString);
+          let wifiDetails = `SSID: ${ssid}\nPassword: ${password || "No Password"}\nSecurity: ${encryption}`;
+          let blob = new Blob([wifiDetails], { type: "text/plain" });
+          let link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "WiFi_Credentials.txt";
+          link.click();
 
-            $('#connect').data('wifiString', wifiString);
-        
-            $('#connect').click(function () {
-
-                let wifiString = $(this).data('wifiString');
-
-                if (!wifiString) {
-                    alert("Please generate the QR code first!");
-                     return;
-                }
-
-                // Try opening WiFi settings (doesn't work on most browsers)
-                window.location.href = wifiString;
-
-                // Alternative: Copy WiFi details to clipboard
-                navigator.clipboard.writeText(wifiString).then(() => {
-                    alert("WiFi details copied! Paste them in your WiFi settings.");
-                }).catch(err => {
-                    console.error("Failed to copy:", err);
-                });
-            });
+          // Alternative: Copy WiFi details to clipboard
+          navigator.clipboard.writeText(wifiDetails).then(() => {
+              alert("WiFi details copied! Paste them in your WiFi settings.");
+          }).catch(err => {
+              console.error("Failed to copy:", err);
+          });
         });
-    
-    function escapeWiFiString(str) {
-          return str.replace(/([\\;,:])/g, '\\$1');
-        }
-    
+    });
    </script> 
     <script>
         $(document).ready(function() {
