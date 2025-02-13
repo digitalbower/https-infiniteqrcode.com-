@@ -115,7 +115,7 @@
       </div>
     </div>
   </div>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARytyoQbwBHnpp0ybb97QGsdQ8ehALBxo"></script>
+  
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script>
     // Get references to the elements

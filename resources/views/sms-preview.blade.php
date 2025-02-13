@@ -13,7 +13,6 @@
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     rel="stylesheet">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARytyoQbwBHnpp0ybb97QGsdQ8ehALBxo"></script>
   <script>
     tailwind.config = {
       theme: {
