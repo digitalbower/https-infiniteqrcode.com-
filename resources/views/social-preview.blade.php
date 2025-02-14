@@ -97,14 +97,14 @@
             <button id="youtube"
                 class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
                 <i class="fab fa-youtube w-5 h-5"></i>
-                <p class="text-sm">{{$qrCode->fbtext}}</p>
+                <p class="text-sm">{{$qrCode->ybtext}}</p>
             </button>
             @elseif($qrCode->whurl)
             <!-- WhatsApp -->
             <button id="whatsapp"
                 class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
                 <i class="fab fa-whatsapp w-5 h-5"></i>
-                <p class="text-sm">{{$qrCode->ybtext}}</p>
+                <p class="text-sm">{{$qrCode->whtext}}</p>
             </button>
             @elseif($qrCode->insurl)
             <!-- Instagram -->
@@ -156,7 +156,7 @@
 
       
   </div>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARhjyvEiWO7IGFHvXP_0g7fQiyTEELJI0"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
      $(document).ready(function () {

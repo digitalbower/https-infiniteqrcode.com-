@@ -77,7 +77,7 @@
       SEND
     </button>
   </div>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARhjyvEiWO7IGFHvXP_0g7fQiyTEELJI0"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
