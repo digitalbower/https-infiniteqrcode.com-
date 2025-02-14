@@ -75,8 +75,13 @@
                                         <label
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
+<<<<<<< HEAD
+                                        <input type="text" id="fburl" name="fburl"
+                                          class="w-full mt-1 p-2 border text-black border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+=======
                                         <input type="text" id="fburl" name="fburl" value="{{old('fburl')}}"
                                           class="w-full mt-1 p-2 border border-gray-300 text-black rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+>>>>>>> d8090b78e8d7cbf706e6c770744cf14fcfa1c794
                                           placeholder="https://www.facebook.com/page" />
                 
                                       </div>

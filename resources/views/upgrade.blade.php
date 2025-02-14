@@ -752,4 +752,14 @@
 
    
 </script>
+<script>
+    stripe.confirmCardSetup(setupIntent.client_secret, {
+    payment_method: {
+        card: cardElement,
+        billing_details: {
+            name: 'Customer Name',
+        },
+    },
+});
+</script>
 @endsection

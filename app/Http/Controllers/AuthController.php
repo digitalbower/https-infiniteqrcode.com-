@@ -5,6 +5,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use App\Mail\WelcomeMail;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -30,7 +32,12 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard')->with('success', 'Account created successfully!');
+        Auth::login($user);
+
+        // Send Welcome Email asynchronously
+        Mail::to($user->email)->queue(new WelcomeMail($user));
+
+      return redirect()->route('dashboard')->with('success', 'Account created successfully!');
     }
 
     // Sign In
