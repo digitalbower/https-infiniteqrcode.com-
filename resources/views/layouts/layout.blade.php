@@ -70,7 +70,7 @@
 
 </head>
 
-<body class="bg-background container mx-auto text-white font-sans">
+<body class="bg-background text-white font-sans">
 
     <div class="lg:flex flex-col h-screen">
 

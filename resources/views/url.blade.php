@@ -328,7 +328,7 @@
   
                           <!-- Header Section -->
                        <div>
-                        <img src="./demoimg/dynamic-url.png" class="w-full"/>
+                        <img src="{{asset('demoimg/dynamic-url.png')}}" class="w-full"/>
                        </div>
                         </div>
                       </div>

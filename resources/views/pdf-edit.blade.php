@@ -1,7 +1,7 @@
          
 
 @extends('layouts.layout')
-@section('title', 'Create PDF QrCode')
+@section('title', 'Edit PDF QrCode')
 @section('content')
     <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
       <div class="container mx-auto pb-12 md:px-6 sm:px-8 lg:px-12">
@@ -51,6 +51,8 @@
             <form  id="editpdfqr_form" style="margin-bottom: 1rem;" action="{{ route('update-pdfqr',$pdf->code) }}" method="POST" enctype="multipart/form-data">
               @csrf
               <input type="hidden" name="qroption" id="qroption" value="{{$pdf->qrtype}}">
+              <input type="hidden" name="url" id="url" value="{{route('preview-pdf',$pdf->code)}}">
+
               <div class=" p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                 
                   <div class="space-y-4">
@@ -69,7 +71,7 @@
                         <div class="lg:inline-block"
                           style="position: relative; width: auto;   overflow: hidden; cursor: pointer;">
                           
-                          <input type="file" id="pdf-upload" name="pdfpath" accept="application/pdf"
+                          <input type="file" id="pdf-upload" name="pdfpath" accept="application/pdf" value="{{asset('storage/' . $pdf->pdfpath)}}"
                             style="opacity: 0; width: 100%; height: 100%; position: absolute; left: 0; top: 0; cursor: pointer;" />
                           <div style="">
 
@@ -115,66 +117,62 @@
                                 </div>
                             </div>
 
-                            <!-- Select Folder -->
-                            <div
-                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                <!-- Folder Dropdown -->
-                                <div class="relative">
-                                    <button type="button" id="folderDropdownButton"
-                                        class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
-                                        <span id="selectedFolder">Select a folder</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                            stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </button>
-                                    <!-- Dropdown List -->
-                                    <div id="folderDropdown"
-                                        class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
-                                        @php
-                                        $userId = auth()->user()->id; 
-            
-                                        $folders = DB::table('qr_basic_info')
-                                        ->selectRaw('folder_name as name')
-                                        ->where('userid', $userId)
-                                        ->groupBy('folder_name')
-                                        ->get();
-            
-                                        @endphp
-                                        <ul id="folderList" class="divide-y divide-gray-200">
-                                          @foreach ($folders as $folder)
-                                             @php
-                                                $isSelected = $pdf->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
-                                            @endphp
-                                            <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
-                                                <span>{{ $folder->name }}</span>
-                                            </li>
-                                          @endforeach
-                                        </ul>   
-                                        <div class="flex justify-center"> <button id="addFolderButton"
-                                                type="button"
-                                                class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                    class="h-5 w-5 mr-1" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor"
-                                                    stroke-width="2">
-                                                    <path stroke-linecap="round"
-                                                        stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                                </svg>
-                                                Add New Folder
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input id="folderinput" placeholder="Folder Name" type="hidden"
-                                    name="folderinput" readonly value=""
-                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                                    @error('folderinput')
-                                    <small class="text-red-700 folderinput">{{ $message }}</small>
-                                    @enderror
-                            </div>
+                                <!-- Select Folder -->
+                                <div class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">                           
+                                  <!-- Folder Dropdown -->
+                                  <div class="relative">
+                                      <button type="button" id="folderDropdownButton"
+                                          class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
+                                          <span id="selectedFolder">{{ $pdf->folder_name ?? 'Select a folder' }}</span>
+                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                              stroke="currentColor" stroke-width="2">
+                                              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                          </svg>
+                                      </button>
+                              
+                                      <!-- Dropdown List -->
+                                      <div id="folderDropdown" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
+                                          @php
+                                              $userId = auth()->user()->id; 
+                                              $folders = DB::table('qr_basic_info')
+                                                  ->selectRaw('folder_name as name')
+                                                  ->where('userid', $userId)
+                                                  ->groupBy('folder_name')
+                                                  ->get();
+                                          @endphp
+                              
+                                          <ul id="folderList" class="divide-y divide-gray-200">
+                                              @foreach ($folders as $folder)
+                                                  @php
+                                                      $isSelected = isset($pdf->folder_name) && $pdf->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                  @endphp
+                                                  <li class="folder-item p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}"
+                                                      data-folder="{{ $folder->name }}">
+                                                      <span>{{ $folder->name }}</span>
+                                                  </li>
+                                              @endforeach
+                                          </ul>
+                                          <div class="flex justify-center"> <button id="addFolderButton"
+                                                    type="button"
+                                                    class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-5 w-5 mr-1" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor"
+                                                        stroke-width="2">
+                                                        <path stroke-linecap="round"
+                                                            stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                                    </svg>
+                                                    Add New Folder
+                                                </button>
+                                            </div>
+                                      </div>
+                                  </div>
+                                  <input id="folderinput" type="hidden" name="folderinput" value="{{ $pdf->folder_name ?? '' }}" />
+                                </div>                            
+                                <small id="folder"></small>
+                                @error('folderinput')
+                                <small class="text-red-700 folderinput">{{ $message }}</small>
+                                @enderror
 
 
                             <!-- Date Range -->
@@ -320,7 +318,13 @@
                       <div class="space-y-3 p-6 ">
                         <div class="w-full gap-4 ">
                           <div id="pdf-preview">
+                            @if(Storage::disk('public')->exists($pdf->pdfpath)) 
+                            
+                            <iframe src="{{asset('storage/'.$pdf->pdfpath)}}" width="100%" height="300px"></iframe>
+
+                            @else
                             <img src="{{asset('demoimg/pdf.png')}}" class="w-full xl:h-[350px] object-cover"/>
+                            @endif
                           </div>
 
                           </div>
@@ -376,18 +380,14 @@
   });
 </script>
 <script>
-  $(document).ready(function () {
-    var passedValue = getQueryParam('option'); 
-    if (passedValue !== null) {
-        $('#qroption').val(passedValue);
-    }
+  $(document).ready(function () {  
+    generateQRCodeWithLogo();
     $.validator.addMethod("greaterThan", function (value, element, param) {
         var startDate = $(param).val();
         return this.optional(element) || new Date(value) > new Date(startDate);
     }, "End date must be greater than start date");
-    $("#pdfqr_form").validate({   
+    $("#editpdfqr_form").validate({   
         rules: {  
-          pdfpath: "required",
           projectname:"required",
           folderinput:"required",
           startdate: {
@@ -401,7 +401,6 @@
           }
           },  
           messages: {  
-            pdfpath: "Please upload a PDF file",
             projectname:"Enter Project Name",
             folderinput:"Choose the Folder Name",
             startdate: {
@@ -425,7 +424,7 @@
     });
     $("#pdf-upload").change(function (e) {
         e.preventDefault();
-        const fileInput = $("#pdf-upload")[0]; // Or .get(0)
+        const fileInput = $("#pdf-upload")[0]; // Or .get(0) 
         const file = fileInput.files[0];
         if (file) {
             const fileName = file.name;
@@ -457,11 +456,101 @@
             console.log("No file selected");
         }
     });
-    function getQueryParam(param) {
-      var params = new URLSearchParams(window.location.search);
-      return params.get(param);
+    function generateQRCodeWithLogo() {
+        var canvas = document.getElementById("qr-preview");
+        var url = $("#url").val();
+        qrCode = new QRCodeStyling({
+          "type": "canvas",
+          "shape": "square",
+          "width": 280,
+          "height": 280,
+          "data": url,
+          "margin": 0,
+          "qrOptions": {
+            "typeNumber": "0",
+            "mode": "Byte",
+            "errorCorrectionLevel": "Q"
+          },
+          "imageOptions": {
+            "saveAsBlob": true,
+            "hideBackgroundDots": true,
+            "imageSize": 0.4,
+            "margin": 0
+          },
+          "dotsOptions": {
+            "type": "extra-rounded",
+            "color": "#6a1a4c",
+            "roundSize": true
+          },
+          "backgroundOptions": {
+            "round": 0,
+            "color": "#ffffff"
+          },
+          "dotsOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#6a1a4c",
+              "color2": "#6a1a4c",
+              "rotation": "0"
+            }
+          },
+          "cornersSquareOptions": {
+            "type": "extra-rounded",
+            "color": "#000000"
+          },
+          "cornersSquareOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+            }
+          },
+          "cornersDotOptions": {
+            "type": "",
+            "color": "#000000"
+          },
+          "cornersDotOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+            }
+          },
+          "backgroundOptionsHelper": {
+            "colorType": {
+              "single": true,
+              "gradient": false
+            },
+            "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#ffffff",
+              "color2": "#ffffff",
+              "rotation": "0"
+            }
+          }
 
-    }
+        });
+        qrCode.append(canvas);
+
+      }
 </script>
 @endsection    
                           

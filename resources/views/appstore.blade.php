@@ -457,10 +457,6 @@ detailBtn.addEventListener("click", () => {
       }, "End date must be greater than start date");
       $("#appqr_form").validate({   
         rules: {  
-          appurl: "required",
-          playstoreurl: "required",  
-          windowsurl:"required",
-          Huawei:"required",
           projectname:"required",
           folderinput:"required",
           startdate: {
@@ -474,10 +470,6 @@ detailBtn.addEventListener("click", () => {
             }
         },  
         messages: {  
-          appurl: "Enter App Store URL",
-          playstoreurl: "Enter Play Store URL",  
-          windowsurl:"Enter Windows Web Store URL",
-          Huawei:"Enter Huawei AppGallery URL",
           projectname:"Enter Project Name",
           folderinput:"Choose the Folder Name",
           startdate: {

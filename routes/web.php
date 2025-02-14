@@ -27,6 +27,7 @@ Route::get('/social-media', [HomeController::class, 'socialmedia'])->name('socia
 Route::get('/analytics', [HomeController::class, 'analytics'])->name('analytics');
 Route::get('/plandetails', [HomeController::class, 'plandetails'])->name('plandetails');
 Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+Route::get('/scan_data',[HomeController::class,'scanData'])->name('scan_data');
 Route::get('/text', [HomeController::class, 'text'])->name('text');
 Route::get('/Pdf', [HomeController::class, 'Pdf'])->name('Pdf');
 Route::get('/facebook', [HomeController::class, 'facebook'])->name('facebook');
@@ -44,38 +45,55 @@ Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrad
 Route::post('create-emailqr',[MyQRCodeController::class, 'createEmailQrcode'])->name('create-emailqr');  
 Route::get('edit-emailqr/{id}',[MyQRCodeController::class, 'editEmailQrcode'])->name('edit-emailqr');  
 Route::post('update-emailqr/{id}',[MyQRCodeController::class, 'updateEmailQrcode'])->name('update-emailqr');  
+Route::get('/preview-email/{id}', [MyQRCodeController::class, 'previewEmail'])->name('preview-email');
+
+Route::post('create-smsqr', [MyQRCodeController::class, 'createSmsQrcode'])->name('create-smsqr');
+Route::get('/preview-sms/{id}', [MyQRCodeController::class, 'previewSms'])->name('preview-sms');
+Route::post('/country-statistics', [MyQRCodeController::class, 'countryStatistics'])->name('country-statistics');
 Route::get('edit-smsqr/{code}',[MyQRCodeController::class, 'editSmsQrcode'])->name('edit-smsqr');  
 Route::post('update-smsqr/{code}',[MyQRCodeController::class, 'updateSmsQrcode'])->name('update-smsqr'); 
 Route::post('create-wifiqr',[MyQRCodeController::class, 'createWifiQrcode'])->name('create-wifiqr');  
 Route::get('edit-wifiqr/{code}',[MyQRCodeController::class, 'editWifiQrcode'])->name('edit-wifiqr');  
 Route::post('update-wifiqr/{code}',[MyQRCodeController::class, 'updateWifiQrcode'])->name('update-wifiqr'); 
+Route::get('/preview-wifi/{id}', [MyQRCodeController::class, 'previewWifi'])->name('preview-wifi');
 Route::post('create-bitcoinqr',[MyQRCodeController::class, 'createBitcoinQrcode'])->name('create-bitcoinqr');  
 Route::get('edit-bitcoinqr/{code}',[MyQRCodeController::class, 'editBitcoinQrcode'])->name('edit-bitcoinqr');  
 Route::post('update-bitcoinqr/{code}',[MyQRCodeController::class, 'updateBitcoinQrcode'])->name('update-bitcoinqr');  
+Route::get('/preview-bitcoin/{id}', [MyQRCodeController::class, 'previewBitcoin'])->name('preview-bitcoin');
 Route::post('create-pdfqr',[MyQRCodeController::class, 'createPdfQrcode'])->name('create-pdfqr');  
 Route::get('edit-pdfqr/{code}',[MyQRCodeController::class, 'editPdfQrcode'])->name('edit-pdfqr');  
 Route::post('update-pdfqr/{code}',[MyQRCodeController::class, 'updatePdfQrcode'])->name('update-pdfqr');  
+Route::get('/preview-pdf/{id}', [MyQRCodeController::class, 'previewPdf'])->name('preview-pdf');
+Route::get('/download-pdf/{code}',  [MyQRCodeController::class, 'downloadPdf'])->name('download-pdf');
 Route::post('create-mp3qr',[MyQRCodeController::class, 'createMp3Qrcode'])->name('create-mp3qr'); 
 Route::get('edit-mp3qr/{code}',[MyQRCodeController::class, 'editMp3Qrcode'])->name('edit-mp3qr');  
 Route::post('update-mp3qr/{code}',[MyQRCodeController::class, 'updateMp3Qrcode'])->name('update-mp3qr');  
+Route::get('/preview-mp3/{id}', [MyQRCodeController::class, 'previewMp3'])->name('preview-mp3');
 Route::post('create-imageqr',[MyQRCodeController::class, 'createImageQrcode'])->name('create-imageqr'); 
 Route::get('edit-imageqr/{code}',[MyQRCodeController::class, 'editImageQrcode'])->name('edit-imageqr');  
-Route::post('update-imageqr/{code}',[MyQRCodeController::class, 'updateImageQrcode'])->name('update-imageqr');  
+Route::post('update-imageqr/{code}',[MyQRCodeController::class, 'updateImageQrcode'])->name('update-imageqr'); 
+Route::get('/preview-image/{id}', [MyQRCodeController::class, 'previewImage'])->name('preview-image');
 Route::post('create-videoqr',[MyQRCodeController::class, 'createVideoQrcode'])->name('create-videoqr'); 
 Route::get('edit-videoqr/{code}',[MyQRCodeController::class, 'editVideoQrcode'])->name('edit-videoqr');  
-Route::post('update-videoqr/{code}',[MyQRCodeController::class, 'updateVideoQrcode'])->name('update-videoqr');  
+Route::post('update-videoqr/{code}',[MyQRCodeController::class, 'updateVideoQrcode'])->name('update-videoqr'); 
+Route::get('/preview-video/{id}', [MyQRCodeController::class, 'previewVideo'])->name('preview-video');
 Route::post('create-appqr',[MyQRCodeController::class, 'createAppstoreQrcode'])->name('create-appqr'); 
 Route::get('edit-appqr/{code}',[MyQRCodeController::class, 'editAppstoreQrcode'])->name('edit-appqr');  
-Route::post('update-appqr/{code}',[MyQRCodeController::class, 'updateAppstoreQrcode'])->name('update-appqr');  
+Route::post('update-appqr/{code}',[MyQRCodeController::class, 'updateAppstoreQrcode'])->name('update-appqr'); 
+Route::get('/preview-app/{id}', [MyQRCodeController::class, 'previewApp'])->name('preview-app');
 Route::post('create-urlqr',[MyQRCodeController::class, 'createUrlQrcode'])->name('create-urlqr'); 
 Route::get('edit-urlqr/{code}',[MyQRCodeController::class, 'editUrlQrcode'])->name('edit-urlqr');  
 Route::post('update-urlqr/{code}',[MyQRCodeController::class, 'updateUrlQrcode'])->name('update-urlqr');  
+Route::get('/preview-url/{id}', [MyQRCodeController::class, 'previewUrl'])->name('preview-url');
 Route::post('create-vcardqr',[MyQRCodeController::class, 'createVcardQrcode'])->name('create-vcardqr'); 
 Route::get('edit-vcardqr/{code}',[MyQRCodeController::class, 'editVcardQrcode'])->name('edit-vcardqr');  
 Route::post('update-vcardqr/{code}',[MyQRCodeController::class, 'updateVcardQrcode'])->name('update-vcardqr');  
+Route::get('/preview-vcard/{id}', [MyQRCodeController::class, 'previewVcard'])->name('preview-vcard');
+Route::get('/download-vcard/{code}',  [MyQRCodeController::class, 'downloadVcard'])->name('download-vcard');
 Route::post('create-socialqr',[MyQRCodeController::class, 'createSocialQrcode'])->name('create-socialqr');
 Route::get('edit-socialqr/{code}',[MyQRCodeController::class, 'editSocialQrcode'])->name('edit-socialqr');  
-Route::post('update-socialqr/{code}',[MyQRCodeController::class, 'updateSocialQrcode'])->name('update-socialqr');   
+Route::post('update-socialqr/{code}',[MyQRCodeController::class, 'updateSocialQrcode'])->name('update-socialqr');  
+Route::get('/preview-social/{id}', [MyQRCodeController::class, 'previewSocial'])->name('preview-social');
 
 
 
@@ -92,8 +110,6 @@ Route::post('delete-account', [ProfileController::class, 'delete_account'])->nam
 Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
 
 
-Route::post('/myqrcode', [HomeController::class, 'myqrcode'])->name('myqrcode');
-Route::get('/mysms/{id}', [HomeController::class, 'mysms'])->name('mysms');
 
 
 

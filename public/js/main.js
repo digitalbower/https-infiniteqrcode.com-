@@ -25,8 +25,3 @@ const menuToggle = document.getElementById('menu-toggle');
 
   // Close Sidebar when the overlay is clicked
   overlay.addEventListener('click', hideSidebar);
-
-    // Toggle Sidebar on Mobile
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('-translate-x-full');
-    });

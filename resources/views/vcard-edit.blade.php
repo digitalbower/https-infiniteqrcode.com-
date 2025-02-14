@@ -1,5 +1,5 @@
 @extends('layouts.layout')
-@section('title', 'Create VCard Qrcode')
+@section('title', 'Edit VCard Qrcode')
 @section('content')
         <!-- Main Content Area -->
         <main class="lg:flex-1 overflow-y-auto p-4 lg:ml-64">
@@ -50,6 +50,8 @@
                         <form class="space-y-4 text-black"  id="editvcardqr_form" style="margin-bottom: 1rem;" enctype="multipart/form-data" action="{{ route('update-vcardqr',$vcard->code) }}" method="POST">
                             @csrf
                             <input type="hidden" name="qroption" id="qroption" value="{{$vcard->qrtype}}">
+                            <input type="hidden" name="url" id="url" value="{{route('preview-vcard',$vcard->code)}}">
+
                             <div class="lg:p-8 p-4 mb-6 bg-white rounded-lg border-gray-100 border shadow-sm">
                                 <div>
                                     <label class="block font-medium mb-1">Profile Picture:</label>
@@ -219,66 +221,62 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Select Folder -->
-                                            <div
-                                                class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                <!-- Folder Dropdown -->
-                                                <div class="relative">
-                                                    <button type="button" id="folderDropdownButton"
-                                                        class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
-                                                        <span id="selectedFolder">Select a folder</span>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                                            stroke-width="2">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                d="M19 9l-7 7-7-7" />
-                                                        </svg>
-                                                    </button>
-                                                    <!-- Dropdown List -->
-                                                    <div id="folderDropdown"
-                                                        class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
-                                                        @php
-                                                        $userId = auth()->user()->id; 
+                                               <!-- Select Folder -->
+                              <div class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">                           
+                                <!-- Folder Dropdown -->
+                                <div class="relative">
+                                    <button type="button" id="folderDropdownButton"
+                                        class="w-full bg-gray-100 border border-gray-300 text-gray-700 py-2 px-4 rounded flex justify-between items-center">
+                                        <span id="selectedFolder">{{ $vcard->folder_name ?? 'Select a folder' }}</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
                             
-                                                        $folders = DB::table('qr_basic_info')
-                                                        ->selectRaw('folder_name as name')
-                                                        ->where('userid', $userId)
-                                                        ->groupBy('folder_name')
-                                                        ->get();
+                                    <!-- Dropdown List -->
+                                    <div id="folderDropdown" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
+                                        @php
+                                            $userId = auth()->user()->id; 
+                                            $folders = DB::table('qr_basic_info')
+                                                ->selectRaw('folder_name as name')
+                                                ->where('userid', $userId)
+                                                ->groupBy('folder_name')
+                                                ->get();
+                                        @endphp
                             
-                                                        @endphp
-                                                        <ul id="folderList" class="divide-y divide-gray-200">
-                                                          @foreach ($folders as $folder)
-                                                             @php
-                                                                $isSelected = $vcard->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
-                                                            @endphp
-                                                            <li class="p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}">
-                                                                <span>{{ $folder->name }}</span>
-                                                            </li>
-                                                          @endforeach
-                                                        </ul>   
-                                                        <div class="flex justify-center"> <button id="addFolderButton"
-                                                                type="button"
-                                                                class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    class="h-5 w-5 mr-1" fill="none"
-                                                                    viewBox="0 0 24 24" stroke="currentColor"
-                                                                    stroke-width="2">
-                                                                    <path stroke-linecap="round"
-                                                                        stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                                                                </svg>
-                                                                Add New Folder
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <input id="folderinput" placeholder="Folder Name" type="hidden"
-                                                    name="folderinput" readonly value=""
-                                                    class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                                                    @error('folderinput')
-                                                    <small class="text-red-700 folderinput">{{ $message }}</small>
-                                                    @enderror
-                                            </div>
+                                        <ul id="folderList" class="divide-y divide-gray-200">
+                                            @foreach ($folders as $folder)
+                                                @php
+                                                    $isSelected = isset($vcard->folder_name) && $vcard->folder_name == $folder->name ? 'bg-gray-200 font-bold' : '';
+                                                @endphp
+                                                <li class="folder-item p-2 text-gray-600 flex items-center cursor-pointer hover:bg-gray-100 {{ $isSelected }}"
+                                                    data-folder="{{ $folder->name }}">
+                                                    <span>{{ $folder->name }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                        <div class="flex justify-center"> <button id="addFolderButton"
+                                                  type="button"
+                                                  class="w-full text-green-500 font-semibold py-2 hover:bg-green-100 flex items-center justify-center">
+                                                  <svg xmlns="http://www.w3.org/2000/svg"
+                                                      class="h-5 w-5 mr-1" fill="none"
+                                                      viewBox="0 0 24 24" stroke="currentColor"
+                                                      stroke-width="2">
+                                                      <path stroke-linecap="round"
+                                                          stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                                                  </svg>
+                                                  Add New Folder
+                                              </button>
+                                          </div>
+                                    </div>
+                                </div>
+                                <input id="folderinput" type="hidden" name="folderinput" value="{{ $vcard->folder_name ?? '' }}" />
+                              </div>                            
+                              <small id="folder"></small>
+                              @error('folderinput')
+                              <small class="text-red-700 folderinput">{{ $message }}</small>
+                              @enderror
 
 
                                             <!-- Date Range -->
@@ -456,7 +454,7 @@
                                                 <div class="relative flex justify-center py-8">
                                                     <div
                                                         class="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
-                                                        <img src="{{asset('images/download.jpeg')}}" alt="Profile"
+                                                        <img src="{{ Storage::disk('public')->exists($vcard->contactimg) ? asset('storage/'.$vcard->contactimg) : asset('images/default.jpeg') }}" alt="Profile"
                                                             class="w-full h-full object-cover" id="propreview"
                                                             name="propreview">
                                                     </div>
@@ -465,8 +463,7 @@
 
                                             <!-- Name and Title -->
                                             <div class="text-center space-y-1 mb-2 mt-1">
-                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name">MATT
-                                                    ZHANG</h1>
+                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name">{{ strtoupper($vcard->first_name . ' ' . $vcard->last_name) }}</h1>
                                                 <p class="text-white text-sm tracking-widest font-light company">
                                                     BUSINESS CONSULTANT</p>
                                             </div>
@@ -575,7 +572,54 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
         <script src="{{asset('js/create-folder.js')}}"></script>
         <script>
+            const previewBtn = document.getElementById("preview-btn");
+            const detailBtn = document.getElementById("detail-btn");
+            const previewContent = document.getElementById("preview-content");
+            const detailContent = document.getElementById("detail-content");
+            const urlInput = document.getElementById("url-input");
+            const qrPreview = document.getElementById("qr-preview");
+          
+            previewBtn.addEventListener("click", () => {
+              previewBtn.classList.add("active");
+              detailBtn.classList.remove("active");
+              previewContent.classList.remove("hidden");
+              detailContent.classList.add("hidden");
+            });
+          
+            detailBtn.addEventListener("click", () => {
+              detailBtn.classList.add("active");
+              previewBtn.classList.remove("active");
+              detailContent.classList.remove("hidden");
+              previewContent.classList.add("hidden");
+            });
+          </script>
+        <script>
         $(document).ready(function () {
+            generateQRCodeWithLogo();
+            var firstname = $('#first_name').val(); 
+            $('#firstName').val(firstname);
+            var lastname = $('#lastname').val(); 
+            $('#lastName').val(lastname);
+            var mobile = $('#mobile').val(); 
+            $('#phone').val(mobile);
+            var email = $('#email').val(); 
+            $('#pemail').val(email);
+            var company = $('#company').val(); 
+            $('#pcompany').val(company);
+            var street = $('#street').val(); 
+            $('#paddress').val(street);
+            var Website = $('#Website').val(); 
+            $('#pwebsite').val(Website);
+            var city = $('#city').val(); 
+            $('#pcity').val(city);
+            var state = $('#state').val(); 
+            $('#pstate').val(state);
+            var zip = $('#zip').val(); 
+            $('#pzip').val(zip);
+            var country = $('#country').val(); 
+            $('#pcountry').val(country);
+
+
             $.validator.addMethod("greaterThan", function (value, element, param) {
                 var startDate = $(param).val();
                 return this.optional(element) || new Date(value) > new Date(startDate);
@@ -586,7 +630,6 @@
             $("#editvcardqr_form").validate({   
                 rules: {  
                 contactimg:{
-                    required: true,
                     imageType: true
                 },
                 first_name:"required",
@@ -617,7 +660,6 @@
                 },  
                 messages: {  
                 contactimg: {
-                    required: "Please select an image",
                     imageType: "Only JPG, JPEG, PNG, or GIF files are allowed."
                 },
                 first_name:"Enter First Name",
@@ -727,10 +769,105 @@
                 document.getElementById('pcountry').value = document.getElementById('country').value;
             }
                     // Add event listeners to all inputs in the source form
-            const sourceInputs = document.querySelectorAll('#vcardqr_form input');
+            const sourceInputs = document.querySelectorAll('#editvcardqr_form input');
             sourceInputs.forEach(input => {
                 input.addEventListener('input', syncFields);
             });
         });
+        function generateQRCodeWithLogo() {
+        var canvas = document.getElementById("qr-preview");
+        var url = $("#url").val();
+        qrCode = new QRCodeStyling({
+        "type": "canvas",
+        "shape": "square",
+        "width": 280,
+        "height": 280,
+        "data": url,
+        "margin": 0,
+        "qrOptions": {
+            "typeNumber": "0",
+            "mode": "Byte",
+            "errorCorrectionLevel": "Q"
+        },
+        "imageOptions": {
+            "saveAsBlob": true,
+            "hideBackgroundDots": true,
+            "imageSize": 0.4,
+            "margin": 0
+        },
+        "dotsOptions": {
+            "type": "extra-rounded",
+            "color": "#6a1a4c",
+            "roundSize": true
+        },
+        "backgroundOptions": {
+            "round": 0,
+            "color": "#ffffff"
+        },
+        "dotsOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#6a1a4c",
+            "color2": "#6a1a4c",
+            "rotation": "0"
+            }
+        },
+        "cornersSquareOptions": {
+            "type": "extra-rounded",
+            "color": "#000000"
+        },
+        "cornersSquareOptionsHelper": {
+            "colorType": {
+            "single": true,
+            "gradient": false
+            },
+            "gradient": {
+            "linear": true,
+            "radial": false,
+            "color1": "#000000",
+            "color2": "#000000",
+            "rotation": "0"
+            }
+        },
+        "cornersDotOptions": {
+            "type": "",
+              "color": "#000000"
+          },
+          "cornersDotOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#000000",
+              "color2": "#000000",
+              "rotation": "0"
+              }
+          },
+          "backgroundOptionsHelper": {
+              "colorType": {
+              "single": true,
+              "gradient": false
+              },
+              "gradient": {
+              "linear": true,
+              "radial": false,
+              "color1": "#ffffff",
+              "color2": "#ffffff",
+              "rotation": "0"
+              }
+          }
+
+          });
+          qrCode.append(canvas);
+
+      }
         </script>
 @endsection
