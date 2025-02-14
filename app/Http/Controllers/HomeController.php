@@ -102,7 +102,7 @@ class HomeController extends Controller
     {
         return view('index');
     }
-    public function signin()
+    public function login()
     {
         return view('signin');
     }

@@ -22,8 +22,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Jenssegers\Agent\Agent;
-use Twilio\Rest\Video;
 
 class MyQRCodeController extends Controller
 {
@@ -38,8 +38,14 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
-        $projectCode = 'P' . time() . rand(100, 999);
+        //Control Qr code generation limit 
+        $qrType = $request->qroption; 
 
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
+        
+        $projectCode = 'P' . time() . rand(100, 999); 
          // Generate QR Code and save to storage
          $data = route('preview-email', ['id' => $projectCode]); 
  
@@ -105,6 +111,15 @@ class MyQRCodeController extends Controller
              'Phone' => $request->countrycode . $request->phone,
              'Message' => $request->sms,
          ];
+
+        //Control Qr code generation limit
+
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
+        
          // Generate QR Code and save to storage
     
      $projectCode = 'P' . time() . rand(100, 999);
@@ -182,7 +197,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        //Control Qr code generation limit
 
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
         $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -247,7 +268,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        //Control Qr code generation limit
 
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
          $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -310,7 +337,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
-        
+        //Control Qr code generation limit
+
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
         $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -376,7 +409,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
-        
+        //Control Qr code generation limit
+
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
        
         $projectCode = 'P' . time() . rand(100, 999);
 
@@ -446,7 +485,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
-        
+        //Control Qr code generation limit
+
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
        
         $projectCode = 'P' . time() . rand(100, 999);
 
@@ -515,7 +560,13 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
         
-       
+        //Control Qr code generation limit
+
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
         $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -580,7 +631,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        //Control Qr code generation limit
 
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
         $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -642,7 +699,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        //Control Qr code generation limit
 
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
         $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -712,7 +775,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        //Control Qr code generation limit
 
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
         $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -788,7 +857,13 @@ class MyQRCodeController extends Controller
             'usage' => 'required',
             'folderinput'=>'required'
         ]);
+        //Control Qr code generation limit
 
+        $qrType = $request->qroption; 
+
+        if (Gate::denies('create', [QrBasicInfo::class, $qrType])) {
+            return back()->with('error', 'You have reached the QR code limit for your plan. Please upgrade to add more.');
+        }
         $projectCode = 'P' . time() . rand(100, 999);
 
         // Generate QR Code and save to storage
@@ -920,6 +995,10 @@ class MyQRCodeController extends Controller
     }
     public function previewEmail($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Emailqr::where('code',$code)->first();  
 
         return view('email-preview')->with(['qrCode'=>$qrCode]);
@@ -1049,6 +1128,10 @@ class MyQRCodeController extends Controller
     }
     public function previewWifi($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Wifiqr::where('code',$code)->first();  
 
         return view('wifi-preview')->with(['qrCode'=>$qrCode]);
@@ -1119,6 +1202,10 @@ class MyQRCodeController extends Controller
     }
     public function previewBitcoin($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Bitcoinqr::where('code',$code)->first();  
 
         return view('bitcoin-preview')->with(['qrCode'=>$qrCode]);
@@ -1199,6 +1286,10 @@ class MyQRCodeController extends Controller
     }
     public function previewPdf($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Pdfqr::where('code',$code)->first();  
 
         return view('pdf-preview')->with(['qrCode'=>$qrCode]);
@@ -1283,6 +1374,10 @@ class MyQRCodeController extends Controller
     }
     public function previewMp3($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = MP3qr::where('code',$code)->first();  
 
         return view('mp3-preview')->with(['qrCode'=>$qrCode]);
@@ -1358,6 +1453,10 @@ class MyQRCodeController extends Controller
     }
     public function previewImage($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Imageqr::where('code',$code)->first();  
 
         return view('image-preview')->with(['qrCode'=>$qrCode]);
@@ -1434,6 +1533,10 @@ class MyQRCodeController extends Controller
     }
     public function previewVideo($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Videoqr::where('code',$code)->first();  
 
         return view('video-preview')->with(['qrCode'=>$qrCode]);
@@ -1499,6 +1602,10 @@ class MyQRCodeController extends Controller
     }
     public function previewApp($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Appstoreqr::where('code',$code)->first();  
 
         return view('app-preview')->with(['qrCode'=>$qrCode]);
@@ -1562,6 +1669,10 @@ class MyQRCodeController extends Controller
     }
     public function previewUrl($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Urlqr::where('code',$code)->first();  
 
         return view('url-preview')->with(['qrCode'=>$qrCode]);
@@ -1657,6 +1768,10 @@ class MyQRCodeController extends Controller
     }
     public function previewVcard($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = VCardqr::where('code',$code)->first();  
 
         return view('vcard-preview')->with(['qrCode'=>$qrCode]);
@@ -1755,6 +1870,11 @@ class MyQRCodeController extends Controller
     }
     public function previewSocial($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
+        
         $qrCode = SocialMediaqr::where('code',$code)->first();  
 
         return view('social-preview')->with(['qrCode'=>$qrCode]);
@@ -1874,6 +1994,10 @@ class MyQRCodeController extends Controller
     
     public function previewSms($code)
     {
+        if (Gate::denies('scan', [QrBasicInfo::class])) {
+            
+            abort(403, 'Scan limit reached! Please upgrade your plan.');
+        }
         $qrCode = Sms::where('code',$code)->first();  
 
         return view('sms-preview')->with(['qrCode'=>$qrCode]);

@@ -11,6 +11,14 @@ use App\Http\Controllers\PdfQrCodeController;
 use App\Http\Controllers\SubscriptionController;
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+
+Route::middleware('guest')->group(function(){
+    Route::get('/signin', [HomeController::class, 'login'])->name('login');
+    Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+});
+Route::middleware(['auth'])->group(function () {
 Route::get('/createqrcode', [HomeController::class, 'createqrcode'])->name('createqrcode');
 Route::get('/url', [HomeController::class, 'url'])->name('url');
 Route::get('/wi-fi', [HomeController::class, 'wifi'])->name('wifi');
@@ -31,10 +39,6 @@ Route::get('/scan_data',[HomeController::class,'scanData'])->name('scan_data');
 Route::get('/text', [HomeController::class, 'text'])->name('text');
 Route::get('/Pdf', [HomeController::class, 'Pdf'])->name('Pdf');
 Route::get('/facebook', [HomeController::class, 'facebook'])->name('facebook');
-Route::get('/signin', [HomeController::class, 'signin'])->name('signin');
-Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
-Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
-Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
 Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 
@@ -106,6 +110,7 @@ Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
 Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 Route::post('password-reset', [ProfileController::class, 'password_reset'])->name('password-reset');
 Route::post('delete-account', [ProfileController::class, 'delete_account'])->name('delete-account');
+});
 
 Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
 

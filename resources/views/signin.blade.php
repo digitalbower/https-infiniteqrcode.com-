@@ -49,7 +49,7 @@
           <!-- Right section - Icons -->
           <div class="flex items-center gap-4">
             <button class="hidden lg:inline-flex"></button>
-            <a href="{{ route('signin') }}">
+            <a href="{{ route('login') }}">
               <i
                 class="fas fa-user h-4 w-4 text-black hover:text-red-500 transition-colors duration-300"
               ></i>

@@ -53,6 +53,12 @@
                 <h2
                   class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
               </div>
+              @if(session('error'))
+              <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Error:</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
+              </div>
+              @endif
               <form style="margin-bottom: 1rem;" action="{{route('create-imageqr')}}" method="POST" enctype="multipart/form-data" id="imageqr_form">
                 @csrf
                 <input type="hidden" name="qroption" id="qroption">

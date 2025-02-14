@@ -40,6 +40,12 @@
         </div>
         <div class="lg:lg:lg:grid lg:p-8 p-4 mb-6 bg-gray-950 rounded-lg border-gray-900 border shadow-sm gap-x-6 grid-cols-12">
           <div class="col-span-8">
+            @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong class="font-bold">Error:</strong>
+              <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+            @endif
             <form  id="emailqr_form" style="margin-bottom: 1rem;" action="{{ route('create-emailqr') }}" method="POST">
               @csrf
               <input type="hidden" name="qroption" id="qroption">

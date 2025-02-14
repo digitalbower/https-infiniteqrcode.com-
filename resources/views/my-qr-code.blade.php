@@ -57,7 +57,7 @@
               <i class="fas fa-qrcode text-4xl text-gray-400"></i>
             </div>
             <div class="flex-1 w-auto">
-               <a href='analytics.php?id=$qrCode["code"]'> <h3 class="font-medium text-white">{{$qrCode['projectname']}}</h3></a>
+               <a href="{{route('analytics',$qrCode['code'])}}"> <h3 class="font-medium text-white">{{$qrCode['projectname']}}</h3></a>
               {{-- <a href="{{$qrCode['url']}}" target="_blank" class="md:text-sm md:line-clamp-none line-clamp-1 max-w-[200px] text-[11px] text-blue-400 hover:underline">{{$qrCode['url']}}</a> --}}
               <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                 <span>{{$qrCode['qrtype']}}</span>
@@ -262,7 +262,7 @@
                 <i class="fas fa-qrcode text-4xl text-gray-400"></i>
               </div>
               <div class="flex-1 w-auto">
-                 <a href='analytics.php?id=${qr.code}'> <h3 class="font-medium text-white">${qr.projectname}</h3></a>
+                 <a href="analytics?${qr.code}"> <h3 class="font-medium text-white">${qr.projectname}</h3></a>
                 <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                   <span>${qr.qrtype}</span>
                   <span>${(qr.date)}</span>

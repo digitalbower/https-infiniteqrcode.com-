@@ -46,7 +46,13 @@
                     <div class="col-span-8">
                         <div class="flex justify-start">
                             <h2 class="text-2xl font-medium mb-3 text-center text-white">Content</h2>
-                        </div>                        
+                        </div> 
+                        @if(session('error'))
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                          <strong class="font-bold">Error:</strong>
+                          <span class="block sm:inline">{{ session('error') }}</span>
+                        </div>
+                        @endif                       
                         <form class="space-y-4 text-black"  id="vcardqr_form" style="margin-bottom: 1rem;" enctype="multipart/form-data" action="{{ route('create-vcardqr') }}" method="POST">
                             @csrf
                             <input type="hidden" name="qroption" id="qroption">

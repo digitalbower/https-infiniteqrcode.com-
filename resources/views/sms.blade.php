@@ -52,6 +52,12 @@
             @if(session('success'))
               <div class="p-4 mb-4 text-green-700 bg-green-100 rounded-lg">{{ session('success') }}</div>
             @endif
+            @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <strong class="font-bold">Error:</strong>
+              <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+            @endif
             <form action="{{ route('create-smsqr') }}" id="smsqr_form" style="margin-bottom: 1rem;"  method="POST">
               @csrf
               <div class="flex justify-start">

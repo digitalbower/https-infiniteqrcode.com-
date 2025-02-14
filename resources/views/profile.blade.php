@@ -385,7 +385,7 @@
                     text: 'Account successfully removed!',
                     icon: 'success'
                   }).then(function() {
-                    location.href = "{{route('signin')}}";
+                    location.href = "{{route('login')}}";
                   });
 
                 } else {
