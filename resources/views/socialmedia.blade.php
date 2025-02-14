@@ -79,7 +79,7 @@
                                           class="block text-sm w-1/4 mt-1 font-medium border border-gray-300 p-2 bg-gray-300 text-gray-600">URL
                                           *</label>
                                         <input type="text" id="fburl" name="fburl"
-                                          class="w-full mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                          class="w-full mt-1 p-2 border text-black border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                           placeholder="https://www.facebook.com/page" />
                 
                                       </div>

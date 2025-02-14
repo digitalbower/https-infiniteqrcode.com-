@@ -103,8 +103,9 @@ class HomeController extends Controller
     
         
         // Generate QR Code and save to storage
-       $data = 'https://infiniteqrcode.com/';
-        
+    //    $data = 'https://infiniteqrcode.com/';
+       
+       $data = route('mysms', ['id' => $projectCode]);
 
         
     
