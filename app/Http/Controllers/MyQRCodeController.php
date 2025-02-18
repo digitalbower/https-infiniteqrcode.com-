@@ -14,6 +14,7 @@ use App\Models\ScanStatistics;
 use App\Models\Sms;
 use App\Models\SocialMediaqr;
 use App\Models\Urlqr;
+use App\Models\User;
 use App\Models\VCardqr;
 use App\Models\Videoqr;
 use App\Models\Wifiqr;
@@ -23,7 +24,6 @@ use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Jenssegers\Agent\Agent;
 
 class MyQRCodeController extends Controller
 {
@@ -995,8 +995,11 @@ class MyQRCodeController extends Controller
     }
     public function previewEmail($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Emailqr::where('code',$code)->first();  
@@ -1128,11 +1131,14 @@ class MyQRCodeController extends Controller
     }
     public function previewWifi($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
-        $qrCode = Wifiqr::where('code',$code)->first();  
+        $qrCode = Wifiqr::where('code',$code)->first(); 
 
         return view('wifi-preview')->with(['qrCode'=>$qrCode]);
     }
@@ -1202,8 +1208,11 @@ class MyQRCodeController extends Controller
     }
     public function previewBitcoin($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Bitcoinqr::where('code',$code)->first();  
@@ -1286,8 +1295,11 @@ class MyQRCodeController extends Controller
     }
     public function previewPdf($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Pdfqr::where('code',$code)->first();  
@@ -1296,8 +1308,12 @@ class MyQRCodeController extends Controller
     }
     public function downloadPdf($code){
         $qrCode = Pdfqr::where('code',$code)->first();  
-        $filePath = storage_path('app/public/'.$qrCode->pdfpath); 
-        return response()->download($filePath);
+        $filePath = storage_path('app/public/' . $qrCode->pdfpath);  
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        } else {
+            abort(404, 'File not found.');
+        }
     }
     public function editMp3Qrcode($code){
 
@@ -1374,8 +1390,11 @@ class MyQRCodeController extends Controller
     }
     public function previewMp3($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = MP3qr::where('code',$code)->first();  
@@ -1453,8 +1472,11 @@ class MyQRCodeController extends Controller
     }
     public function previewImage($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Imageqr::where('code',$code)->first();  
@@ -1533,8 +1555,11 @@ class MyQRCodeController extends Controller
     }
     public function previewVideo($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Videoqr::where('code',$code)->first();  
@@ -1602,8 +1627,11 @@ class MyQRCodeController extends Controller
     }
     public function previewApp($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Appstoreqr::where('code',$code)->first();  
@@ -1669,8 +1697,11 @@ class MyQRCodeController extends Controller
     }
     public function previewUrl($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Urlqr::where('code',$code)->first();  
@@ -1768,8 +1799,11 @@ class MyQRCodeController extends Controller
     }
     public function previewVcard($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = VCardqr::where('code',$code)->first();  
@@ -1870,8 +1904,11 @@ class MyQRCodeController extends Controller
     }
     public function previewSocial($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         
@@ -1994,8 +2031,11 @@ class MyQRCodeController extends Controller
     
     public function previewSms($code)
     {
-        if (Gate::denies('scan', [QrBasicInfo::class])) {
-            
+        $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+
+        $user = User::findOrFail($qrBasicInfo->userid); 
+
+        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
             abort(403, 'Scan limit reached! Please upgrade your plan.');
         }
         $qrCode = Sms::where('code',$code)->first();  
@@ -2010,9 +2050,8 @@ class MyQRCodeController extends Controller
             return response()->json(['error' => 'Invalid QR code.'], 400);
         }
 
-        $agent = new Agent();
         $ip_address = $request->ip(); // Get user IP
-        $device_type = $agent->isTablet() ? 'tablet' : ($agent->isMobile() ? 'mobile' : 'desktop');
+        $device_type = $request->header('User-Agent');
         $screen_width = $request->query('screen_width', ''); // Get from frontend
         $screen_height = $request->query('screen_height', ''); 
 
@@ -2042,7 +2081,7 @@ class MyQRCodeController extends Controller
             // Log scan record
             Scan::create([
                 'qr_code_id' => $code,
-                'user_agent' => $request->header('User-Agent'),
+                'user_agent' => $device_type,
                 'device_identifier' => $device_identifier,
             ]);
    

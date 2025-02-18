@@ -33,25 +33,23 @@ class QrBasicInfoPolicy
    /**
      * Determine if the user can scan a QR code.
      */
-    public function scan(User $user): bool
+    public function scan(User $user, QrBasicInfo $qr): bool
     {
-        $user = Auth::user();
-
         // Plan-based scan limits
         $limits = [
             'free' => 50,
             'basic' => 5000,
             'pro' => 20000,
-            'expert' => null, // Unlimited
+            'expert' => PHP_INT_MAX, // Unlimited
         ];
 
         // Get the limit based on user plan
-        $limit = $limits[$user->plan] ?? 0;
+        $limit = $limits[$user->plan] ?? 0;  
 
         // Count current scans
-        $scanCount = QrBasicInfo::where('userid', $user->id)->sum('total_scans');
+        $scanCount =  $qr->sum('total_scans');
 
-        Log::info("Scan count: {$scanCount}, Limit: " . ($limit ?? 'Unlimited'));
+        Log::info("Scan count: {$scanCount}, Limit: " . ($limit ?? 'Unlimited')); 
 
         return !isset($limit) || $scanCount < $limit;
 

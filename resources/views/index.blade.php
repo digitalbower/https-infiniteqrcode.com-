@@ -413,7 +413,7 @@ document.addEventListener("click", function(event) {
             of infinite possibilities!
           </p>
           <div class="pt-5">
-            <button onclick="location.href='sign'"
+            <button onclick="window.location.href='{{ url('signin') }}'"
               class="inline-flex items-center lg:w-auto w-full text-center justify-center px-6 sm:px-8 py-3 bg-[#FFD700] text-[#1B2937] font-semibold rounded-md shadow-md hover:bg-[#C0C9D0] transition duration-200 focus:ring-4 focus:ring-[#FFD700]/50">
               Start Your Free Trial
               <i class="fas fa-arrow-right ml-2"></i>
@@ -524,7 +524,7 @@ document.addEventListener("click", function(event) {
 
 
         <!-- Shop Now Button -->
-        <button onclick="location.href='sign'"
+        <button onclick="window.location.href='{{ url('signin') }}'"
           class="inline-flex items-center px-6 justify-center text-center sm:px-8 py-3 bg-[#FFD700] text-[#1B2937] font-semibold rounded-md shadow-md hover:bg-[#C0C9D0] transition duration-200 focus:ring-4 focus:ring-[#FFD700]/50">
           Claim Your Offer Now
           <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -875,7 +875,7 @@ document.addEventListener("click", function(event) {
               </li>
             </ul>
           </div>
-          <button onclick="location.href='sign'"
+          <button onclick="window.location.href='{{ url('signin') }}'"
             class="w-full bg-[#00b8cbb5] text-white py-3 px-3 lg:text-base text-sm lg:px-6 rounded-lg font-semibold hover:bg-[#0097a5] transition-colors duration-300">
             Start Your 7 - days Free Trial
 
@@ -958,7 +958,7 @@ document.addEventListener("click", function(event) {
               </li>
             </ul>
           </div>
-          <button onclick="location.href='sign'"
+          <button onclick="window.location.href='{{ url('signin') }}'"
             class="w-full bg-[#00b8cbb5] text-white py-3 px-3 lg:text-base text-sm lg:px-6 rounded-lg font-semibold hover:bg-[#0097a5] transition-colors duration-300">
             Start Your 7 - days Free Trial
 
@@ -1036,7 +1036,7 @@ document.addEventListener("click", function(event) {
               </li>
             </ul>
           </div>
-          <button onclick="location.href='sign'"
+          <button onclick="window.location.href='{{ url('signin') }}'"
             class="w-full bg-[#00b8cbb5] text-white py-3 px-3 lg:text-base text-sm lg:px-6 rounded-lg font-semibold hover:bg-[#0097a5] transition-colors duration-300">
             Start Your 7 - days Free Trial
           </button>

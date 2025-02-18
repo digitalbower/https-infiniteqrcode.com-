@@ -18,7 +18,6 @@
                 and
                 make informed decisions using real-time data.
               </p>
-        
             </div>
             
             <div class=" px-2 lg:px-5">
@@ -27,6 +26,23 @@
                 <h3 class="sm:text-2xl text-lg  font-semibold text-white">
                   Select Qr Code
                 </h3>
+                @if($code)
+                <select id="projectChange"
+                  class="flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 bg-gray-900 border border-blue-500 hover:border-blue-400 transition duration-200">
+                  <option 
+                    value="{{ $project['project_code'] }}" {{ ($code ?? '') == $project['project_code'] ? 'selected' : '' }}
+                    data-qrtype="{{ $project->qrtype }}"
+                    data-startdate="{{ $project->start_date }}"
+                    data-enddate = "{{ $project->end_date }}"
+                    data-email="{{ $project->user->email }}"
+                    data-image ="{{ $project->url }}"
+                    data-totalscan ="{{ $project->total_scans }}"
+                    data-uniquescan ="{{ $project->unique_scans }}"
+                    data-table ="{{ $project->qrtable }}" >
+                    {{ $project->project_name }}
+                  </option>
+                </select>
+                @else
                 <select id="projectChange"
                   class="flex items-center gap-2 px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 bg-gray-900 border border-blue-500 hover:border-blue-400 transition duration-200">
                   <option value="no">Project Name</option> 
@@ -39,11 +55,14 @@
                           data-email="{{ $project->user->email }}"
                           data-image ="{{ $project->url }}"
                           data-totalscan ="{{ $project->total_scans }}"
-                          data-uniquescan ="{{ $project->unique_scans }}" >
+                          data-uniquescan ="{{ $project->unique_scans }}"
+                          data-table ="{{ $project->qrtable }}" >
                           {{ $project->project_name }}
                       </option>
                   @endforeach
                 </select>
+                @endif
+                
               </div>
               <div class="flex flex-col gap-6 sm:flex-row mb-3 sm:justify-between ">
                 <div class="flex gap-x-4 mb-3">
@@ -69,7 +88,7 @@
                   </div>
                 </div>
                 <div class=" gap-6  flex-row items-center mb-3 flex md:block justify-between">
-                  <button
+                  <button id="downloadButton"
                     class="flex items-center md:mb-5 gap-2 w-full text-center px-4 py-2 rounded-lg text-blue-500 hover:text-blue-400 border border-blue-500 hover:border-blue-400 transition duration-200">
                     <i class="fas fa-download h-5 w-5"></i>
                     <a id="download" href=""
@@ -197,6 +216,7 @@
         
         $(document).ready(function() {
           let barChartInstance, lineChartInstance;
+         
 
           $('#projectChange').on('change', function() {
               if (window.barChartInstance) {
@@ -214,39 +234,86 @@
                 let image = select.data('image');
                 let totalscan = select.data('totalscan');
                 let uniquescan = select.data('uniquescan');
+                let tableValue = select.data('table');
+                // let $createQrElement = $('#create_qr');
+                // if (code == 'no') {
+                //     $createQrElement.removeClass('hidden');
+                // } else {
+                //     $createQrElement.addClass('hidden');
+                // }
+                if (code.trim() === 'no') {
+                  $('#campaign_start').text('');
+                  $('#campaign_end').text('');
+                  $('#downloadButton').addClass("hidden");
+                  $('#edit').addClass("hidden");
+                }else{
+                  $('#downloadButton').removeClass("hidden");
+                  $('#edit').removeClass("hidden");
+                  let campaignStartDate = new Date(startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+                  $('#campaign_start').text(campaignStartDate || '');
 
-                let $createQrElement = $('#create_qr');
-                if (code === 'no') {
-                    $createQrElement.removeClass('hidden');
-                } else {
-                    $createQrElement.addClass('hidden');
-                }
+                  let campaignEndDate = new Date(endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+                  $('#campaign_end').text(campaignEndDate || '');
 
-                let campaignStartDate = new Date(startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
-                $('#campaign_start').text(campaignStartDate || '');
+                  $('#start_Date').val(new Date(startDate).toISOString().split('T')[0]);
+                  $('#end_Date').val(new Date(endDate).toISOString().split('T')[0]);
 
-                let campaignEndDate = new Date(endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
-                $('#campaign_end').text(campaignEndDate || '');
+                  $('#total_scan').text(totalscan || '');
+                  $('#unique_scan').text(uniquescan || '');
 
-                $('#total_scan').text(totalscan || '');
-                $('#unique_scan').text(uniquescan || '');
+                  
 
-                $('#start_Date').val(new Date(startDate).toISOString().split('T')[0]);
-                $('#end_Date').val(new Date(endDate).toISOString().split('T')[0]);
+                  $('#qrtype').text(qrtype || 'N/A');
+                  $('#startdate').text(startDate || 'N/A');
+                  $('#email').text(email || 'N/A');
+                  $('#image').attr('src', image || 'N/A');
 
-                $('#qrtype').text(qrtype || 'N/A');
-                $('#startdate').text(startDate || 'N/A');
-                $('#email').text(email || 'N/A');
-                $('#image').attr('src', image || 'N/A');
+                  let currentDate = new Date();
+                  let endDateObj = new Date(endDate);
+                  if (endDateObj > currentDate) {
+                      $('#expiryMessage').text('Active').removeClass('bg-red-500').addClass('bg-green-500 text-white');
+                      $('#download').attr('href', image);
+                  } else {
+                      $('#expiryMessage').text('Expired - Please Upgrade').removeClass('bg-green-500').addClass('bg-red-500 text-white');
+                      $('#download').attr('href', '#');
+                  }
 
-                let currentDate = new Date();
-                let endDateObj = new Date(endDate);
-                if (endDateObj > currentDate) {
-                    $('#expiryMessage').text('Active').removeClass('bg-red-500').addClass('bg-green-500 text-white');
-                    $('#download').attr('href', image);
-                } else {
-                    $('#expiryMessage').text('Expired - Please Upgrade').removeClass('bg-green-500').addClass('bg-red-500 text-white');
-                    $('#download').attr('href', '#');
+                  let editUrl = '';
+                  let baseUrl = "{{ url('/') }}";  // Get base URL from Blade
+                 
+                  if (tableValue) {
+                    switch (tableValue) {
+                      case "emailqr": editUrl = "edit-emailqr/" + code; break;
+                      case "smsqr": editUrl = "edit-smsqr/" + code; break;
+                      case "wifiqr": editUrl = "edit-wifiqr/" + code; break;
+                      case "btcqr": editUrl = "edit-bitcoinqr/" + code; break;
+                      case "pdfqr": editUrl = "edit-pdfqr/" + code; break;
+                      case "mp3qr": editUrl = "edit-mp3qr/" + code; break;
+                      case "imageqr": editUrl = "edit-imageqr/" + code; break;
+                      case "apkqr": editUrl = "edit-appqr/" + code; break;
+                      case "videoqr": editUrl = "edit-videoqr/" + code; break;
+                      case "vcard": editUrl = "edit-vcardqr/" + code; break;
+                      case "urlcode": editUrl = "edit-urlqr/" + code; break;
+                      case "socmedqr": editUrl = "edit-socialqr/" + code; break;
+                    }
+
+                    // Unwrap if already wrapped
+                    if ($('#edit').parent('a').length) {
+                      $('#edit').unwrap();
+                    }
+
+                    // Wrap the button in an <a> tag
+                      let finalUrl = baseUrl + '/' + editUrl; 
+                      $('#edit').wrap('<a href="' + finalUrl + '"></a>');
+
+                  } else {
+                    // Remove the <a> wrapper if no table value
+                    if ($('#edit').parent('a').length) {
+                      $('#edit').unwrap();
+                    }
+              
+                  }
+                
                 }
 
                 $.getJSON(`/get-country-data/${code}`, function(data) {
@@ -736,6 +803,7 @@
               });
             });
           });
+          $('#projectChange').trigger('change');
         });
   </script>
 

@@ -70,14 +70,19 @@ class HomeController extends Controller
     {
         return view('socialmedia');
     }
-    public function analytics()
+    public function analytics($code = null)
     {
-
         // $userId = auth()->id();
-        $userId = auth()->id(); // Get the authenticated user's ID
-      
-        $projects = QrBasicInfo::where('userid',$userId)->orderBy('created_at','DESC')->get();
-        return view('analytics',compact('projects'));
+        $userId = Auth::user()->id; // Get the authenticated user's ID
+        if ($code) {
+            $project = QrBasicInfo::where('project_code',$code)->first(); 
+            
+            return view('analytics',['project'=>$project,'code'=>$code]);
+        }
+        else{
+            $projects = QrBasicInfo::where('userid',$userId)->orderBy('created_at','DESC')->get();
+            return view('analytics',['projects'=>$projects,'code'=>$code]);
+        }
     }
     public function getCountriesData($code){
 
