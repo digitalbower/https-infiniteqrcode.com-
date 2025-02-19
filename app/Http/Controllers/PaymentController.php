@@ -28,7 +28,7 @@ class PaymentController extends Controller
     }
 
     public function processPayment(Request $request)
-    {
+    { 
         $stripeKey = "sk_test_51Q4eUWLg6tc3IU2s1KIvKWpoun2MNomSJ6zCrEiMKQzcWx5CKcTeYr1i10rgtCi6Z9jolQQTLkDYX6SB6peRe9fR00GcXSFy4m";
         $user = Auth::user();
         $data = $request->all(); 
@@ -43,19 +43,33 @@ class PaymentController extends Controller
         Stripe::setApiKey($stripeKey);
     
         try {
-            // ✅ Extract Setup Intent ID from the request
-            $setupIntentId = $request->input('setup_intent_id');
-            dd($request->input('setup_intent_id'));
+            $user = Auth::user();
+
+    // Check if the user has a Stripe Customer ID; if not, create one
+    if (!$user->stripe_customer_id) {
+        $customer = Customer::create([
+            'email' => $user->email,
+            'name' => $user->firstname . ' ' . $user->lastname,
+        ]);
+        $user->update(['stripe_customer_id' => $customer->id]);
+    }
+
+    // Create a SetupIntent for saving the payment method
+    $setupIntent = SetupIntent::create([
+        'customer' => $user->stripe_customer_id,
+    ]); 
           
 
     
-            if (!$setupIntentId) {
-                return response()->json(['success' => false, 'error' => 'Setup Intent ID is missing']);
-            }
     
             // ✅ Retrieve the Setup Intent
-            $setupIntent = SetupIntent::retrieve($setupIntentId);
-            $paymentMethodId = $setupIntent->payment_method;
+            // $setupIntent = SetupIntent::retrieve($setupIntentId);
+            // $paymentMethodId = "card"; 
+
+            
+    
+
+    // $paymentMethodId = $setupIntent->payment_method; 
     
             // ✅ Create or update Stripe Customer
             $customer = Customer::create([
@@ -65,7 +79,9 @@ class PaymentController extends Controller
                 'invoice_settings' => ['default_payment_method' => $paymentMethodId],
             ]);
     
-            $amount = intval($data['price'] * 100); // Convert price to cents
+           ;
+           
+            $amount = intval($data['bprice'] . '00'); // Convert price to cents
             $duration = $data['duration'] == '30' ? 'monthly' : 'yearly';
             $startDate = now();
             $endDate = ($duration === 'monthly') ? now()->addMonth() : now()->addYear();
@@ -75,13 +91,17 @@ class PaymentController extends Controller
                 'amount' => $amount,
                 'currency' => 'usd',
                 'customer' => $customer->id,
+                'payment_method' => 'card',
                 'payment_method' => $paymentMethodId,
                 'confirmation_method' => 'automatic',
                 'confirm' => true,
                 'setup_future_usage' => 'off_session',
                 'receipt_email' => $user->email,
+                'return_url' => 'https://infiniteqrcode.com/return', // URL for 3D Secure redirection
             ]);
     
+
+            
             if ($paymentIntent->status === 'requires_action') {
                 return response()->json([
                     'success' => false,
