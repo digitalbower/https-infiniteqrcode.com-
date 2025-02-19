@@ -62,7 +62,7 @@
           <ul class="flex justify-center space-x-8 py-4">
             <li>
               <a
-                href="home"
+                href="{{'/'}}"
                 class="text-sm font-medium hover:text-red-500 transition-colors"
                 >HOME</a
               >
@@ -131,7 +131,7 @@
         <nav
           class="flex flex-col items-center gap-6 mt-12 text-lg font-semibold text-black"
         >
-          <a href="home" class="hover:text-red-500">HOME</a>
+          <a href="{{'/'}}" class="hover:text-red-500">HOME</a>
           <a href="home#specialoffers" class="hover:text-red-500"
             >SPECIAL OFFERS</a
           >

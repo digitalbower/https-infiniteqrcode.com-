@@ -81,9 +81,6 @@
                 <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode" data-value="$qrCode['qrtype']">
                   <i class="fas fa-trash text-gray-400"></i>
                 </button>
-                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded" onclick="location.href='Style-QR-Code.php?id=$qrCode['qrtype']'">
-                  <i class="fa-solid fa-palette text-gray-400"></i>
-                </button>
               </div>
             </div>
           </div>
@@ -271,7 +268,7 @@
               <div class="ml-auto">
                 <div class="flex justify-end">
                   <button class="p-2 w-auto ml-auto text-xs md:text-base hover:bg-gray-600 bg-gray-400 mb-2 rounded">
-                    <a href="qrbackend/qrcodes/${qr.code}.png" class="flex gap-x-2 items-center" download>
+                    <a href="${(qr.url)}" class="flex gap-x-2 items-center" download>
                       <i class="fas fa-download text-white"></i> Download
                     </a>
                   </button>
@@ -284,9 +281,6 @@
   
                   <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode" data-value="${qr.code}">
                     <i class="fas fa-trash text-gray-400"></i>
-                  </button>
-                  <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded" onclick="location.href='Style-QR-Code.php?id=${qr.code}'"}>
-                    <i class="fa-solid fa-palette text-gray-400"></i>
                   </button>
                 </div>
               </div>

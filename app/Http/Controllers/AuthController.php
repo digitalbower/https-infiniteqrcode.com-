@@ -28,9 +28,9 @@ class AuthController extends Controller
         $user->countrycode= $request->countrycode;
         $user->phonenumber= $request->phonenumber;
         $user->plan = 'free';
+        $user->renew_status = 'Enabled';
+        $user->subscribe_status = 'Active';
         $user->save();
-
-        Auth::login($user);
 
         Auth::login($user);
 

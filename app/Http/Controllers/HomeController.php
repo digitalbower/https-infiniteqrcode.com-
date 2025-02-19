@@ -12,8 +12,8 @@ use App\Models\Sms;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\QrBasicInfo;
-
-
+use App\Models\Scan;
+use App\Models\ScanStatistics;
 
 class HomeController extends Controller
 {
@@ -70,15 +70,104 @@ class HomeController extends Controller
     {
         return view('socialmedia');
     }
-    public function analytics()
+    public function analytics($code = null)
     {
-
         // $userId = auth()->id();
-        $userId = auth()->id(); // Get the authenticated user's ID
-      
-        $projects = QrBasicInfo::where('userid',$userId)->orderBy('created_at','DESC')->get();
-        return view('analytics',compact('projects'));
+        $userId = Auth::user()->id; // Get the authenticated user's ID
+        if ($code) {
+            $project = QrBasicInfo::where('project_code',$code)->first(); 
+            
+            return view('analytics',['project'=>$project,'code'=>$code]);
+        }
+        else{
+            $projects = QrBasicInfo::where('userid',$userId)->orderBy('created_at','DESC')->get();
+            return view('analytics',['projects'=>$projects,'code'=>$code]);
+        }
     }
+    public function getCountriesData($code){
+
+        $totalScans = ScanStatistics::where('code', $code)
+        ->count();
+
+        $country_data = ScanStatistics::select(
+            'country',
+            DB::raw('COUNT(country) as scan_count'),
+            DB::raw('(COUNT(*) / '.$totalScans.' * 100) as percentage')
+        )
+        ->where('code', $code)
+        ->groupBy('country')
+        ->orderByDesc('scan_count')
+        ->get();
+
+
+        return response()->json($country_data);
+
+    }
+    public function getCityData($code)
+    {
+        $totalScans = ScanStatistics::where('code', $code)
+                    ->count();
+
+        $city_data = ScanStatistics::select(
+                'city',
+                DB::raw('COUNT(city) as scan_count'),
+                DB::raw('(COUNT(*) / '.$totalScans.' * 100) as percentage')
+            )
+            ->where('code', $code)
+            ->groupBy('city')
+            ->orderByDesc('scan_count')
+            ->get();
+
+
+        return response()->json($city_data);
+    }
+    public function getBarChartAnalyticData(Request $request)
+    {   
+        $code = $request->code; 
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        $range = $request->range;
+
+        $query = Scan::select('user_agent', DB::raw('COUNT(*) as scan_count'))
+            ->where('qr_code_id', $code)
+            ->where('scan_date', '>=', DB::raw('(SELECT MIN(start_date) FROM qr_basic_info)'));
+
+        if ($start_date && $end_date && $range !== 'day') {
+            $query->whereBetween('scan_date', [$start_date, $end_date]);
+        }
+
+        if ($range === 'day') {
+            $query->where('scan_date', '>=', $start_date);
+        }
+
+        $data = $query->groupBy('user_agent')->orderByDesc('scan_count')->get(); 
+
+        return response()->json($data);
+    }
+
+    public function getLineChartAnalyticData(Request $request)
+    {
+        $code = $request->code; 
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        $range = $request->range;
+
+        $query = ScanStatistics::select(DB::raw('DATE(scandate) as scan_date'), DB::raw('SUM(scan_count) as total_scans'))
+            ->where('code', $code);
+
+        if ($start_date && $end_date && $range !== 'day') {
+            $query->whereBetween('scandate', [$start_date, $end_date]);
+        }
+
+        if ($range === 'day') {
+            $query->where('scandate', '>=', $start_date);
+        }
+
+        $data = $query->groupBy(DB::raw('DATE(scandate)'))->orderByDesc('scan_date')->get(); 
+
+        return response()->json($data);
+    }
+
     public function create() {
         return view('qrcode.create');
     }
