@@ -26,7 +26,7 @@
                 No QR Code Available. Start Creating Your First QR Code.
               </div>
               <div class="mt-4">
-                <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='qroption.php'">
+                <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='{{ url('/createqrcode') }}'">
                   Create QR Code
                 </button>
               </div>
@@ -78,7 +78,7 @@
                   <i class="fas fa-edit text-gray-400"></i>
                 </button>
 
-                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode" data-value="$qrCode['qrtype']">
+                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode"   data-code="{{$qrCode['code']}}" data-table="{{$qrCode['qrtable']}}">
                   <i class="fas fa-trash text-gray-400"></i>
                 </button>
               </div>
@@ -108,40 +108,49 @@
        
         $(document).on('click', ".deleteQrCode", function(e) {
           e.preventDefault();
-          const index = $(this).data('value');
-          console.log(index);
-          Swal.fire({
-              text: "Are you sure you want to delete this QR Code?",
-              icon: "warning",
-              buttons: true,
-              dangerMode: true,
+          const table = $(this).data('table');
+          const code = $(this).data('code');
+
+            Swal.fire({
+              title: "Delete Confirmation",
+              text: "Deleting this will permanently remove the QR code and its analytics.This cannot be undone.",
               showCancelButton: true,
-              confirmButtonText: 'Yes', // Change the button text here
-              cancelButtonText: 'No'
-            })
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              confirmButtonText: "Yes, delete it!"
+          })
             .then((yes) => {
               if (yes.isConfirmed) {
                 $.ajax({
                   type: "POST",
-                  url: "fetch/deleteQr.php",
+                  url: "{{route('delete-qr')}}",
                   data: {
-                    id: index
+                    code: code,
+                    table:table,
+                    "_token": "{{ csrf_token() }}",
                   },
-                  success: function(response) {
-                    if (response == 'success') {
-                      $(".message").text('Deleted Successfully').addClass('text-red-600');
-  
-                      // Remove the deleted QR code from the qrCodes array
-                      qrCodes = qrCodes.filter(qr => qr.code !== index);
+                  success: function(response) { 
+                    if (response.success){
+
+                      Swal.fire("Deleted!", response.message, "success");
+
+                      if (Array.isArray(qrCodes)) {
+                        qrCodes = qrCodes.filter(qr => qr.code !== code);
+                      } else {
+                          qrCodes = [];
+                          location.reload();
+                      }
   
                       // Remove the QR code from the DOM
-                      $(`#qr-${index}`).remove();
+                      $(`#qr-${code}`).remove();
   
                       // Update the count
                       $("#qrcount").text(qrCodes.length);
   
                       // Optionally, re-render the QR codes list
-                      renderQrCodes(qrCodes);
+                      if (typeof renderQrCodes === "function") {
+                       renderQrCodes(qrCodes);
+                      }
                     }
                   }
                 });
@@ -239,7 +248,7 @@
             No QR Code Available. Start Creating Your First QR Code.
           </div>
           <div class="mt-4">
-            <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='qroption.php'">
+            <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='{{ url('/createqrcode') }}'">
               Create QR Code
             </button>
           </div>
@@ -279,7 +288,7 @@
                     <i class="fas fa-edit text-gray-400"></i>
                   </button>
   
-                  <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode" data-value="${qr.code}">
+                  <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode"  data-code="${qr.code}" data-table="${qr.qrtable}">
                     <i class="fas fa-trash text-gray-400"></i>
                   </button>
                 </div>

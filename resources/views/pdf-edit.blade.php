@@ -134,8 +134,7 @@
                                       <div id="folderDropdown" class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded shadow mt-1">
                                           @php
                                               $userId = auth()->user()->id; 
-                                              $folders = DB::table('qr_basic_info')
-                                                  ->selectRaw('folder_name as name')
+                                              $folders = App\Models\QrBasicInfo::selectRaw('folder_name as name')
                                                   ->where('userid', $userId)
                                                   ->groupBy('folder_name')
                                                   ->get();

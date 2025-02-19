@@ -18,6 +18,8 @@ use App\Models\User;
 use App\Models\VCardqr;
 use App\Models\Videoqr;
 use App\Models\Wifiqr;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -996,15 +998,19 @@ class MyQRCodeController extends Controller
     public function previewEmail($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Emailqr::where('code',$code)->first();  
 
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            return view('email-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Emailqr::where('code',$code)->first();  
-
-        return view('email-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
     }
     public function editSmsQrcode($code){
 
@@ -1132,15 +1138,19 @@ class MyQRCodeController extends Controller
     public function previewWifi($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Wifiqr::where('code',$code)->first(); 
 
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            return view('wifi-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Wifiqr::where('code',$code)->first(); 
-
-        return view('wifi-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
     }
     public function editBitcoinQrcode($code){
 
@@ -1209,15 +1219,20 @@ class MyQRCodeController extends Controller
     public function previewBitcoin($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
-
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Bitcoinqr::where('code',$code)->first();  
+    
+            return view('bitcoin-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Bitcoinqr::where('code',$code)->first();  
-
-        return view('bitcoin-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+       
     }
     public function editPdfQrcode($code){
 
@@ -1296,15 +1311,20 @@ class MyQRCodeController extends Controller
     public function previewPdf($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
-
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Pdfqr::where('code',$code)->first();  
+    
+            return view('pdf-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Pdfqr::where('code',$code)->first();  
-
-        return view('pdf-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+      
     }
     public function downloadPdf($code){
         $qrCode = Pdfqr::where('code',$code)->first();  
@@ -1391,15 +1411,18 @@ class MyQRCodeController extends Controller
     public function previewMp3($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = MP3qr::where('code',$code)->first();  
 
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            return view('mp3-preview')->with(['qrCode'=>$qrCode]);
+        } else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
         }
-        $qrCode = MP3qr::where('code',$code)->first();  
-
-        return view('mp3-preview')->with(['qrCode'=>$qrCode]);
     }
     public function editImageQrcode($code){
 
@@ -1473,15 +1496,20 @@ class MyQRCodeController extends Controller
     public function previewImage($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
-
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Imageqr::where('code',$code)->first();  
+    
+            return view('image-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Imageqr::where('code',$code)->first();  
-
-        return view('image-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+        
     }
     public function editVideoQrcode($code){
 
@@ -1556,15 +1584,20 @@ class MyQRCodeController extends Controller
     public function previewVideo($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
-
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Videoqr::where('code',$code)->first();  
+    
+            return view('video-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Videoqr::where('code',$code)->first();  
-
-        return view('video-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+       
     }
     public function editAppstoreQrcode($code){
 
@@ -1628,15 +1661,20 @@ class MyQRCodeController extends Controller
     public function previewApp($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
-
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Appstoreqr::where('code',$code)->first();  
+    
+            return view('app-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Appstoreqr::where('code',$code)->first();  
-
-        return view('app-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+    
     }
     public function editUrlQrcode($code){
 
@@ -1698,15 +1736,20 @@ class MyQRCodeController extends Controller
     public function previewUrl($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
-
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Urlqr::where('code',$code)->first();  
+    
+            return view('url-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Urlqr::where('code',$code)->first();  
-
-        return view('url-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+        
     }
     public function editVcardQrcode($code){
 
@@ -1800,15 +1843,21 @@ class MyQRCodeController extends Controller
     public function previewVcard($code)
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
+        if($qrBasicInfo){
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
+            $user = User::findOrFail($qrBasicInfo->userid); 
 
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = VCardqr::where('code',$code)->first();  
+    
+            return view('vcard-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = VCardqr::where('code',$code)->first();  
-
-        return view('vcard-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+       
     }
     public function downloadVcard($code){
 
@@ -1906,15 +1955,21 @@ class MyQRCodeController extends Controller
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
+        if($qrBasicInfo){
 
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            $user = User::findOrFail($qrBasicInfo->userid); 
+
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            
+            $qrCode = SocialMediaqr::where('code',$code)->first();  
+    
+            return view('social-preview')->with(['qrCode'=>$qrCode]);
         }
-        
-        $qrCode = SocialMediaqr::where('code',$code)->first();  
-
-        return view('social-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
     }
     public function myqrcodelist(Request $request)
     {
@@ -1930,17 +1985,16 @@ class MyQRCodeController extends Controller
         ->get();
 
         $tables = [
-            'urlcode', 'btcqr', 'apkqr', 'dynamicurlcode', 'emailqr', 'epcqr', 'eventqr',
-            'facebookqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr', 'textqr', 'twitterqr',
-            'vcard', 'vcardplus', 'videoqr', 'wifiqr', 'couponqr', 'businessqr',
-            'socmedqr', 'ratingqr'
+            'urlcode', 'btcqr', 'apkqr', 'emailqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr',
+            'vcard', 'videoqr', 'wifiqr','socmedqr'
         ];
 
         $query = null;
 
         foreach ($tables as $table) {
             $subQuery = DB::table($table)
-                ->select('id', 'url', 'code', 'qrtype', 'created_at as date', 'userid', 'editstatus');
+                ->select('id', 'url', 'code', 'qrtype', 'created_at as date', 'userid', 'editstatus')
+                ->whereNull('deleted_at');
                 if ($query === null) {
                     $query = $subQuery->where('userid', $userId);
                 } else {
@@ -1962,8 +2016,7 @@ class MyQRCodeController extends Controller
                 continue;
             }
 
-            $projectName = DB::table('qr_basic_info')
-                ->where('userid', $userId)
+            $projectName = QrBasicInfo::where('userid', $userId)
                 ->where('project_code',$row->code)
                 ->orderBy('id', 'ASC')
                 ->select('project_name','qrtable')
@@ -1985,8 +2038,7 @@ class MyQRCodeController extends Controller
 
         $qrCodes = [];
 
-        $projectCodes = DB::table('qr_basic_info')
-        ->where('folder_name', $folder_name)
+        $projectCodes = QrBasicInfo::where('folder_name', $folder_name)
         ->where('userid', $userid)
         ->pluck('project_code') 
         ->toArray();
@@ -1994,10 +2046,8 @@ class MyQRCodeController extends Controller
             return response()->json([]);
         }  
         $tables = [
-            'urlcode', 'btcqr', 'apkqr', 'dynamicurlcode', 'emailqr', 'epcqr', 'eventqr',
-            'facebookqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr', 'textqr', 'twitterqr',
-            'vcard', 'vcardplus', 'videoqr', 'wifiqr', 'couponqr', 'businessqr',
-            'socmedqr', 'ratingqr'
+            'urlcode', 'btcqr', 'apkqr', 'emailqr', 'imageqr', 'mp3qr', 'pdfqr', 'smsqr',
+            'vcard', 'videoqr', 'wifiqr','socmedqr'
         ];
 
         $combinedResults = collect();
@@ -2033,14 +2083,21 @@ class MyQRCodeController extends Controller
     {
         $qrBasicInfo = QrBasicInfo::where('project_code', $code)->first(); 
 
-        $user = User::findOrFail($qrBasicInfo->userid); 
+        if($qrBasicInfo){
 
-        if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
-            abort(403, 'Scan limit reached! Please upgrade your plan.');
+            $user = User::findOrFail($qrBasicInfo->userid); 
+
+            if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
+                abort(403, 'Scan limit reached! Please upgrade your plan.');
+            }
+            $qrCode = Sms::where('code',$code)->first();  
+    
+            return view('sms-preview')->with(['qrCode'=>$qrCode]);
         }
-        $qrCode = Sms::where('code',$code)->first();  
-
-        return view('sms-preview')->with(['qrCode'=>$qrCode]);
+        else{
+            return view('qr-error')->with('message', 'QR Code does not exist.');
+        }
+    
     }
     public function countryStatistics(Request $request){
 
@@ -2105,6 +2162,30 @@ class MyQRCodeController extends Controller
 
         }
     
+   }
+   public function deleteQrcode(Request $request){
+
+        try {
+            DB::beginTransaction();
+
+            $table = $request->table;
+
+            QrBasicInfo::where('project_code', $request->code)->delete();
+
+            Scan::where('qr_code_id', $request->code)->delete();
+
+            ScanStatistics::where('code', $request->code)->delete();
+
+            DB::table($table)->where('code', $request->code)->update(['deleted_at' => Carbon::now()]);
+
+            DB::commit();
+
+            return response()->json(['success' => true, 'message' => 'QR Code deleted successfully.']);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to delete records: ' . $e->getMessage()], 500);
+        }
    }
    
 

@@ -103,7 +103,7 @@ Route::post('create-socialqr',[MyQRCodeController::class, 'createSocialQrcode'])
 Route::get('edit-socialqr/{code}',[MyQRCodeController::class, 'editSocialQrcode'])->name('edit-socialqr');  
 Route::post('update-socialqr/{code}',[MyQRCodeController::class, 'updateSocialQrcode'])->name('update-socialqr');  
 
-
+Route::post("deleteqr",[MyQRCodeController::class, 'deleteQrcode'])->name('delete-qr'); 
 
 
 Route::get('/myqrcodelist', [MyQRCodeController::class, 'myqrcodelist'])->name('myqrcodelist'); //My OR Codes List 

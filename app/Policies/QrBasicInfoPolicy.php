@@ -47,7 +47,7 @@ class QrBasicInfoPolicy
         $limit = $limits[$user->plan] ?? 0;  
 
         // Count current scans
-        $scanCount =  $qr->sum('total_scans');
+        $scanCount =  QrBasicInfo::where('userid', $user->id)->sum('total_scans'); 
 
         Log::info("Scan count: {$scanCount}, Limit: " . ($limit ?? 'Unlimited')); 
 

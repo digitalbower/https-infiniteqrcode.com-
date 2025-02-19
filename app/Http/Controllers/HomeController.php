@@ -295,8 +295,7 @@ class HomeController extends Controller
         $userId = Auth::user()->id;
 
         // Fetch the latest 3 project codes from 'qr_basic_info'
-        $codes = DB::table('qr_basic_info')
-            ->where('userid', $userId)
+        $codes = QrBasicInfo::where('userid', $userId)
             ->orderByDesc('created_At')
             ->limit(3)
             ->pluck('project_code')
@@ -328,8 +327,7 @@ class HomeController extends Controller
         foreach ($combinedResults as $item) {
             if (isset($item['code'])) {
                 $id = $item['code'];
-                $project = DB::table('qr_basic_info')
-                    ->where('project_code', $id)
+                $project = QrBasicInfo::where('project_code', $id)
                     ->select('project_name', 'total_scans')
                     ->first();
 
@@ -388,9 +386,7 @@ class HomeController extends Controller
         $staticCount = 0;
         $dynamicCount = 0;
 
-        $infos = DB::table('qr_basic_info')
-            ->where('userid', $userId)
-            ->get(); 
+        $infos = QrBasicInfo::where('userid', $userId)->get(); 
 
 
             foreach ($infos as $item) {
