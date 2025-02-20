@@ -8,7 +8,7 @@
       <section class="my-8 mt-10 bg-gray-700 rounded-lg p-5">
         <h2 class="text-2xl font-semibold mb-4">My Folders</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4" id="foldersGrid">
-          @forelse ($folders  as $folder)
+          @foreach ($folders  as $folder)
           <div class="bg-gray-800 hover:bg-gray-700 rounded-lg shadow p-4 transition duration-200 foldersGrid1" folder_name="{{$folder->name}}">
               <div class="flex justify-between items-start mb-3">
                 <i class="fas fa-folder text-2xl text-blue-400"></i>
@@ -20,8 +20,7 @@
               <p class="text-sm text-gray-400">QR Codes({{$folder->count ?? 'QR Codes(0)'}})</p>
               <p class="text-xs text-gray-500 mt-2">{{$folder->date ?? ''}}</p>
             </div>
-          @empty
-            <div class="p-4 flex flex-col justify-center items-center text-center">
+            {{-- <div class="p-4 flex flex-col justify-center items-center text-center">
               <div class="text-lg text-gray-500 mb-4">
                 No QR Code Available. Start Creating Your First QR Code.
               </div>
@@ -30,8 +29,8 @@
                   Create QR Code
                 </button>
               </div>
-            </div>
-          @endforelse
+            </div> --}}
+          @endforeach
           
         </div>
       </section>

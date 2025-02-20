@@ -290,7 +290,7 @@
                 
                   if (data.status === 'success') {
                       // Show success message
-                      swal({
+                      Swal.fire({
                           title: 'Updated!',
                           text: 'Account successfully updated!',
                           icon: 'success'
@@ -359,7 +359,7 @@
       });
       $('#delete-account').on('click', function(e) {
         e.preventDefault();
-        swal({
+        Swal.fire({
           title: "Delete Your Account?",
           text: "This action cannot be undone. Are you sure you want to proceed?",
           icon: "warning",
@@ -380,7 +380,7 @@
               success: function(response) {
                 $('.message').text('');
                 if (response.message == 'success') {
-                  swal({
+                   Swal.fire({
                     title: 'Deleted!',
                     text: 'Account successfully removed!',
                     icon: 'success'
@@ -396,7 +396,7 @@
               }
             });
           } else {
-              swal({
+            Swal.fire({
           title: "Cancelled",
           text: "Your account remains safe. Let us know if you need further assistance",
           icon: "warning",

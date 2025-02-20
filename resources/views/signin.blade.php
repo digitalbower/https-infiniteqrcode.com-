@@ -304,14 +304,12 @@
       <select
         class="w-full rounded-md text-gray-400 border py-3 px-1"
         name="countrycode"
-        id="countrycode"
-      >
-        <option value="+1">🇺🇸 USA (+1)</option>
-        <option value="+91" {{ old('countrycode') == '+91' ? 'selected' : '' }}>🇮🇳 India (+91)</option>
-        <option value="+44" {{ old('countrycode') == '+44' ? 'selected' : '' }}>🇬🇧 UK (+44)</option>
-        <option value="+1" {{ old('countrycode') == '+1' ? 'selected' : '' }}>🇨🇦 Canada (+1)</option>
-        <option value="+61" {{ old('countrycode') == '+61' ? 'selected' : '' }}>🇦🇺 Australia (+61)</option>
-        <option value="+49" {{ old('countrycode') == '+49' ? 'selected' : '' }}>🇩🇪 Germany (+49)</option>
+        id="countrycode">
+          @foreach ($countries as $country)
+              <option value="{{ $country['dial_code'] }}">
+                  {{ $country['name'] }} ({{ $country['dial_code'] }})
+              </option>
+          @endforeach
       </select>
     </div>
 
@@ -384,7 +382,7 @@
       />
       <label for="terms" class="ml-2 text-gray-700">
         I agree to all
-        <a href="terms" target="_blank" style="text-decoration: none">Terms & Conditions</a>
+        <a style="color: initial;text-decoration: underline;" href="terms" target="_blank">Terms & Conditions</a>
         <br>
        <span id="termsError"></span>
         @error('terms')

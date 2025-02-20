@@ -116,43 +116,43 @@ Route::post('password-reset', [ProfileController::class, 'password_reset'])->nam
 Route::post('delete-account', [ProfileController::class, 'delete_account'])->name('delete-account');
 });
 
-Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
+// Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
 
 
 
 
 
-Route::get('/qrcode/create', [HomeController::class, 'create'])->name('qrcode.create');
-Route::post('/qrcode/store', [HomeController::class, 'store'])->name('qrcode.store');
-Route::get('/qrcode/list', [HomeController::class, 'list'])->name('qrcode.list');
-Route::get('/qrcode/{id}', [HomeController::class, 'show'])->name('qrcode.show');
+// Route::get('/qrcode/create', [HomeController::class, 'create'])->name('qrcode.create');
+// Route::post('/qrcode/store', [HomeController::class, 'store'])->name('qrcode.store');
+// Route::get('/qrcode/list', [HomeController::class, 'list'])->name('qrcode.list');
+// Route::get('/qrcode/{id}', [HomeController::class, 'show'])->name('qrcode.show');
 
 
-Route::get('/scan-qr', function (Request $request) {
-    $data = json_decode($request->get('data'), true);
-    return view('qr-view', ['data' => $data]);
-});
+// Route::get('/scan-qr', function (Request $request) {
+//     $data = json_decode($request->get('data'), true);
+//     return view('qr-view', ['data' => $data]);
+// });
 
 
 
 
 
-Route::get('/payment/success', function () {
-    return 'Payment Successful!';
-})->name('payment.success');
-Route::get('/payment/failure', function () {
-    return 'Payment Failed!';
-})->name('payment.failure');
+// Route::get('/payment/success', function () {
+//     return 'Payment Successful!';
+// })->name('payment.success');
+// Route::get('/payment/failure', function () {
+//     return 'Payment Failed!';
+// })->name('payment.failure');
 
-Route::get('/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
-Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
+// Route::get('/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
+// Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
 
 
-Route::get('/checkout', function () {
-    return view('checkout');
-})->name('checkout');
+// Route::get('/checkout', function () {
+//     return view('checkout');
+// })->name('checkout');
 
-Route::post('/stripe/payment', [StripeController::class, 'processPayment'])->name('stripe.payment');
+// Route::post('/stripe/payment', [StripeController::class, 'processPayment'])->name('stripe.payment');
 
 
 

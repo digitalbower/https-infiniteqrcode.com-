@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
+use Stripe\Customer;
+use Stripe\Stripe;
 
 class AuthController extends Controller
 {
@@ -30,6 +32,17 @@ class AuthController extends Controller
         $user->plan = 'free';
         $user->renew_status = 'Enabled';
         $user->subscribe_status = 'Active';
+        $user->save();
+
+
+        Stripe::setApiKey(config('services.stripe.secret'));
+
+        $customer = Customer::create([
+            'email' => $user->email,
+            'name' => $user->name,
+        ]);
+
+        $user->stripe_customer_id = $customer->id;
         $user->save();
 
         Auth::login($user);
