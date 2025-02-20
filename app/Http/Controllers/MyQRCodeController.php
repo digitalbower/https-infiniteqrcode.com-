@@ -37,7 +37,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit 
@@ -105,7 +104,6 @@ class MyQRCodeController extends Controller
              'projectname' => 'required',
              'startdate' => 'required|date',
              'enddate' => 'required|date',
-             'usage' => 'required',
              'folderinput'=>'required'
          ]);
  
@@ -196,7 +194,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -267,7 +264,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -336,7 +332,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -408,7 +403,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -484,7 +478,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -558,7 +551,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         
@@ -630,7 +622,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -698,7 +689,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -774,7 +764,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -856,7 +845,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         //Control Qr code generation limit
@@ -946,7 +934,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
          $projectCode = $code;
@@ -1025,7 +1012,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
 
@@ -1087,7 +1073,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
 
@@ -1167,7 +1152,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         
@@ -1247,7 +1231,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         
@@ -1349,7 +1332,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         
@@ -1437,7 +1419,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         
@@ -1524,7 +1505,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
         
@@ -1610,7 +1590,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
 
@@ -1688,7 +1667,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
 
@@ -1774,7 +1752,6 @@ class MyQRCodeController extends Controller
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
-            'usage' => 'required',
             'folderinput'=>'required'
         ]);
 
@@ -1888,7 +1865,6 @@ class MyQRCodeController extends Controller
              'projectname' => 'required',
              'startdate' => 'required|date',
              'enddate' => 'required|date',
-             'usage' => 'required',
              'folderinput'=>'required'
          ]);
 
