@@ -462,7 +462,7 @@
                     });
              
             
-                    const stripe = Stripe("pk_test_51Q4eUWLg6tc3IU2sQ4eWvzve616nswfYJJNUniclSFdA3Sa2FvKwixWtBfzGCKDfyPdWXFj7Vt5GdJeBdzhOYdC4008NbbdB8a"); // Replace with your Stripe publishable key
+                    const stripe = Stripe("sk_test_51Q4eUWLg6tc3IU2s1KIvKWpoun2MNomSJ6zCrEiMKQzcWx5CKcTeYr1i10rgtCi6Z9jolQQTLkDYX6SB6peRe9fR00GcXSFy4m"); // Replace with your Stripe publishable key
                     const elements = stripe.elements();  
                     //const cardElement = elements.create("card");
                     var cardElement = elements.create('card', {

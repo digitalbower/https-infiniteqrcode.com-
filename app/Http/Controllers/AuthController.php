@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
 
+
+
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -36,7 +38,7 @@ class AuthController extends Controller
 
         // Send Welcome Email asynchronously
         Mail::to($user->email)->queue(new WelcomeMail($user));
-
+       
       return redirect()->route('dashboard')->with('success', 'Account created successfully!');
     }
 

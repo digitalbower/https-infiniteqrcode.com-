@@ -1382,6 +1382,7 @@ document.addEventListener("click", function(event) {
             We’re Here to Help
           </h2>
           <form class="space-y-6" id="contact_form" method="post" onsubmit="return false">
+          @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <input type="text" name="name" id="name" required placeholder="Full name"
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -1654,31 +1655,38 @@ document.addEventListener("click", function(event) {
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
-      $("#contact_form").on('submit', function () {
-        $("#loadingIndicator").removeClass('hidden');
-        $.ajax({
-          method: "POST",
-          url: "qrbackend/savecontact.php",
-          data: $("#contact_form").serialize(),
-          success: function (response) {
-            if (response == 1) {
-              $(".success").text('Enquiry Added Successfully').addClass('text-green-500');
-              setTimeout(function () {
-                // Send a request to clear session data after 5 seconds
-                location.reload();
-              }, 3000);
+        $("#contact_form").on('submit', function (e) {
+            e.preventDefault();
+            $("#loadingIndicator").removeClass('hidden');
 
-            } else {
-              $(".success").text('contact admin');
-            }
-          },
-          complete: function (data) {
-            $("#loadingIndicator").addClass('hidden');
-          }
+            $.ajax({
+                method: "POST",
+                url: "/contact-submit",
+                data: $(this).serialize(),
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $(".success").text(response.message).addClass('text-green-500');
+                        setTimeout(function () {
+                            location.reload();
+                        }, 3000);
+                    } else {
+                        $(".success").text('Contact admin').addClass('text-red-500');
+                    }
+                },
+                error: function (xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessages = Object.values(errors).flat().join("\n");
+                    $(".success").text(errorMessages).addClass('text-red-500');
+                },
+                complete: function () {
+                    $("#loadingIndicator").addClass('hidden');
+                }
+            });
         });
-      })
-
-    })
+    });
   </script>
 
 

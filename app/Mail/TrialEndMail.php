@@ -23,6 +23,7 @@ class TrialEndMail extends Mailable
     public function build()
     {
         return $this->subject('⏳ Your Free Trial Ends Soon – Don’t Lose Access!')
-                    ->view('emails.trial_end');
+                    ->view('emails.trial_end')
+                    ->with(['user' => $this->data]);
     }
 }
