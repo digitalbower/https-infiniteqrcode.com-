@@ -486,12 +486,11 @@ document.addEventListener("click", function(event) {
       <div class="flex flex-col justify-center order-2 lg:order-2 mt-8 lg:mt-0">
         <h2
           class="text-2xl sm:text-3xl lg:text-4xl mb-4 sm:mb-5 font-extrabold text-[#1B2937] tracking-tight lg:leading-tight">
-          New Year Offer: Unlock Infinite QR Codes Now!
+          Ramadan Offer: Unlock Infinite QR Codes Now!
         </h2>
         <p class="mb-6 sm:mb-8 text-base sm:text-lg text-gray-700 fade-in">
-          Celebrate the New Year with our exclusive offer! For the next 30 days only, get access to our premium QR code
-          subscription at a special discounted price. Create, customize, and manage unlimited QR codes effortlessly.
-          Start the year smart with dynamic QR solutions!
+          Celebrate the spirit of Ramadan with our exclusive offer! 
+          For the next 30 days only, enjoy a special discounted price on our premium QR code subscription. Create, customize, and manage unlimited QR codes effortlessly. Embrace innovation this Ramadan with dynamic QR solutions!
 
         </p>
 
@@ -1429,7 +1428,9 @@ document.addEventListener("click", function(event) {
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">ADDRESS</h3>
                 <p class="text-black text-lg">
-                  2047 Cyrus Viaduct East<br />Jadynchester
+                  AJL Gulf Group LLC <br />
+                  Infinite QR Code Dept<br />
+                  Sharjah Media City, Sharjah, UAE
                 </p>
               </div>
             </div>
@@ -1442,13 +1443,13 @@ document.addEventListener("click", function(event) {
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-1">EMAIL</h3>
                 <p class="text-black text-lg">
-                  info@construct.com<br />support@construct.com
+                  Info@infiniteqrcode.com
                 </p>
               </div>
             </div>
 
             <!-- Phone Section -->
-            <div class="flex items-start space-x-4">
+            {{-- <div class="flex items-start space-x-4">
               <div class="text-[#000] mt-1">
                 <i class="fas fa-phone-alt text-lg"></i>
               </div>
@@ -1458,7 +1459,7 @@ document.addEventListener("click", function(event) {
                   1-313-845-3395<br />1-469-970-2609
                 </p>
               </div>
-            </div>
+            </div> --}}
 
             <!-- Social Media Section -->
             <div class="flex space-x-4 pt-6">

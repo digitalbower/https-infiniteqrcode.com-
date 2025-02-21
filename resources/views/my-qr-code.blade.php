@@ -8,7 +8,7 @@
       <section class="my-8 mt-10 bg-gray-700 rounded-lg p-5">
         <h2 class="text-2xl font-semibold mb-4">My Folders</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4" id="foldersGrid">
-          @forelse ($folders  as $folder)
+          @foreach ($folders  as $folder)
           <div class="bg-gray-800 hover:bg-gray-700 rounded-lg shadow p-4 transition duration-200 foldersGrid1" folder_name="{{$folder->name}}">
               <div class="flex justify-between items-start mb-3">
                 <i class="fas fa-folder text-2xl text-blue-400"></i>
@@ -20,18 +20,17 @@
               <p class="text-sm text-gray-400">QR Codes({{$folder->count ?? 'QR Codes(0)'}})</p>
               <p class="text-xs text-gray-500 mt-2">{{$folder->date ?? ''}}</p>
             </div>
-          @empty
-            <div class="p-4 flex flex-col justify-center items-center text-center">
+            {{-- <div class="p-4 flex flex-col justify-center items-center text-center">
               <div class="text-lg text-gray-500 mb-4">
                 No QR Code Available. Start Creating Your First QR Code.
               </div>
               <div class="mt-4">
-                <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='qroption.php'">
+                <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='{{ url('/createqrcode') }}'">
                   Create QR Code
                 </button>
               </div>
-            </div>
-          @endforelse
+            </div> --}}
+          @endforeach
           
         </div>
       </section>
@@ -78,7 +77,7 @@
                   <i class="fas fa-edit text-gray-400"></i>
                 </button>
 
-                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode" data-value="$qrCode['qrtype']">
+                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode"   data-code="{{$qrCode['code']}}" data-table="{{$qrCode['qrtable']}}">
                   <i class="fas fa-trash text-gray-400"></i>
                 </button>
               </div>
@@ -108,40 +107,49 @@
        
         $(document).on('click', ".deleteQrCode", function(e) {
           e.preventDefault();
-          const index = $(this).data('value');
-          console.log(index);
-          Swal.fire({
-              text: "Are you sure you want to delete this QR Code?",
-              icon: "warning",
-              buttons: true,
-              dangerMode: true,
+          const table = $(this).data('table');
+          const code = $(this).data('code');
+
+            Swal.fire({
+              title: "Delete Confirmation",
+              text: "Deleting this will permanently remove the QR code and its analytics.This cannot be undone.",
               showCancelButton: true,
-              confirmButtonText: 'Yes', // Change the button text here
-              cancelButtonText: 'No'
-            })
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6",
+              confirmButtonText: "Yes, delete it!"
+          })
             .then((yes) => {
               if (yes.isConfirmed) {
                 $.ajax({
                   type: "POST",
-                  url: "fetch/deleteQr.php",
+                  url: "{{route('delete-qr')}}",
                   data: {
-                    id: index
+                    code: code,
+                    table:table,
+                    "_token": "{{ csrf_token() }}",
                   },
-                  success: function(response) {
-                    if (response == 'success') {
-                      $(".message").text('Deleted Successfully').addClass('text-red-600');
-  
-                      // Remove the deleted QR code from the qrCodes array
-                      qrCodes = qrCodes.filter(qr => qr.code !== index);
+                  success: function(response) { 
+                    if (response.success){
+
+                      Swal.fire("Deleted!", response.message, "success");
+
+                      if (Array.isArray(qrCodes)) {
+                        qrCodes = qrCodes.filter(qr => qr.code !== code);
+                      } else {
+                          qrCodes = [];
+                          location.reload();
+                      }
   
                       // Remove the QR code from the DOM
-                      $(`#qr-${index}`).remove();
+                      $(`#qr-${code}`).remove();
   
                       // Update the count
                       $("#qrcount").text(qrCodes.length);
   
                       // Optionally, re-render the QR codes list
-                      renderQrCodes(qrCodes);
+                      if (typeof renderQrCodes === "function") {
+                       renderQrCodes(qrCodes);
+                      }
                     }
                   }
                 });
@@ -239,7 +247,7 @@
             No QR Code Available. Start Creating Your First QR Code.
           </div>
           <div class="mt-4">
-            <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='qroption.php'">
+            <button class="p-4 bg-blue-600 text-white rounded hover:bg-blue-700" onclick="location.href='{{ url('/createqrcode') }}'">
               Create QR Code
             </button>
           </div>
@@ -279,7 +287,7 @@
                     <i class="fas fa-edit text-gray-400"></i>
                   </button>
   
-                  <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode" data-value="${qr.code}">
+                  <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode"  data-code="${qr.code}" data-table="${qr.qrtable}">
                     <i class="fas fa-trash text-gray-400"></i>
                   </button>
                 </div>

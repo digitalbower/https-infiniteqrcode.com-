@@ -11,6 +11,6 @@ class UserSubscription extends Model
     protected $fillable = [
         'user_id', 'plan_id', 'stripe_customer_id', 'stripe_payment_intent_id',
         'default_payment_method', 'paid_amount', 'plan_interval', 'customer_name',
-        'customer_email', 'plan_period_start', 'plan_period_end', 'status', 'receipt_url'
+        'customer_email', 'plan_period_start', 'plan_period_end', 'status', 'ReceiptURL'
     ];
 }

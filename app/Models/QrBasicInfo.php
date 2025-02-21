@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class QrBasicInfo extends Model
 {
+    use  HasFactory,SoftDeletes;
+
     protected $table = 'qr_basic_info'; // Define table name explicitly
 
     protected $primaryKey = 'id'; // Primary key

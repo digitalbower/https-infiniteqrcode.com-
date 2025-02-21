@@ -14,8 +14,8 @@ class SubscriptionController extends Controller
         Session::put('lastname', Auth::user()->lastname);
 
         $id = Auth::user()->id;
-        $plans = User::leftJoin('user_subscriptions','user_subscriptions.user_id' ,'=','users.username')->where('users.id',$id)->first();
-       
+        $plans = User::leftJoin('user_subscriptions','user_subscriptions.user_id' ,'=','users.id')->where('users.id',$id)->first();
+     
         $subscribe = "";
         return view('subscription')->with(['plans'=>$plans,'subscribe'=>$subscribe]);
     }

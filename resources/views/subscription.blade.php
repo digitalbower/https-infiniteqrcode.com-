@@ -13,7 +13,7 @@
               <div class="flex items-start justify-between mb-6">
                 <div>
                   <h3 class="text-3xl font-bold text-gray-100">{{ ucfirst($plans->plan) }} Plan</h3>
-                  <p class="text-xl text-gray-400">${{$plans->price == '' ? '0' : $plans->price;}}/{{ $plans->duration == '' ? '7 days' : $plans->duration; }}</p>
+                  <p class="text-xl text-gray-400">${{$plans->paid_amount == '' ? '0' : $plans->paid_amount;}}/{{ $plans->duration == '' ? '7 days' : $plans->duration; }}</p>
                 </div>
                 <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300" onclick="location.href='upgrade';">Upgrade</button>
               </div>
@@ -155,7 +155,7 @@
                             <tr class="border-b border-gray-700">
                               <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($plans->subscription_start)) }}</td>
                               <td class="py-3 px-4 text-gray-300"><?php echo date('F j, Y', strtotime($plans->subscription_end)); ?></td>
-                              <td class="py-3 px-4 text-gray-300">{{$plans->price}}</td>
+                              <td class="py-3 px-4 text-gray-300">{{$plans->paid_amount}}</td>
                               <td class="py-3 px-4">
                                 <a href="{{$plans->ReceiptURL}}" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-300">
                                   <i class="fas fa-download mr-2"></i>
@@ -196,8 +196,8 @@
                 class="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-500"
                 placeholder="John Doe"
                 required>
-              <input type="hidden" name="customerid" id="customer_id" value="<?= $plans->id; ?>">
-              <input type="hidden" name="price" id="price" value="<?= $plans->price; ?>">
+              <input type="hidden" name="stripe_customer_id " id="customer_id" value="<?= $plans->stripe_customer_id ; ?>">
+              <input type="hidden" name="price" id="price" value="<?= $plans->paid_amount; ?>">
             </div>
             <div class="mb-4">
               <div id="card-element"></div>
@@ -213,6 +213,117 @@
       </div>
   <script src="https://js.stripe.com/v3/"></script>
   <script>
+    var stripePublicKey = "{{ config('services.stripe.key') }}"; 
+  </script>
+  <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const stripe = Stripe(stripePublicKey); // Use the key from Blade
+     const elements = stripe.elements();
+    const clientSecret = 'client_secret_from_server';
+
+    const card = elements.create('card');
+    card.mount('#card-element');
+
+    const customerid = $('#customer_id').val();
+
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+
+    // Open Modal
+    openModalBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('hidden');
+    });
+
+    // Close Modal
+    closeModalBtn.addEventListener('click', () => {
+      modalOverlay.classList.add('hidden');
+    });
+
+    // Close modal when clicking outside
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.classList.add('hidden');
+      }
+    });
+
+    // Handle Form Submission
+    const cardForm = document.getElementById('cardForm');
+    cardForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+    try {
+        // Step 1: Fetch Client Secret
+        const clientSecretResponse = await fetch('http://127.0.0.1:8000/api/stripe/create-payment-intent', {  
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
+            credentials: 'include' 
+        });
+
+        if (!clientSecretResponse.ok) {
+          throw new Error('Failed to fetch client secret');
+        }
+
+        const {
+          clientSecret
+        } = await clientSecretResponse.json();
+        console.log(clientSecret);
+        // Step 2: Confirm Card Setup
+        const username = document.getElementById('cardName').value; console.log(username);
+        const {
+          setupIntent,
+          error
+        } = await stripe.confirmCardSetup(clientSecret, {
+          payment_method: {
+            card: card,
+            billing_details: {
+              name: username
+            },
+          },
+        });
+
+        if (error) {
+          $("#card-errors").text(error.message);
+          throw error;
+        }
+
+        console.log(customerid);
+        console.log($('#price').val());
+        console.log(setupIntent);
+
+        // Step 3: Save Payment Method
+        const saveResponse = await fetch('http://127.0.0.1:8000/api/stripe/save-paymentcard', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
+          body: JSON.stringify({
+            customerid: customerid,
+            amount: $('#price').val(),
+            paymentMethodId: setupIntent.payment_method,
+
+          }),
+        });
+
+        if (!saveResponse.ok) {
+          const errorData = await saveResponse.json();
+          $("#card-errors").text(errorData.error);
+          throw new Error('Failed to save card details');
+        }
+
+        const saveResult = await saveResponse.json(); 
+        Swal.fire("Card saved successfully!" + saveResult.message);
+        location.reload();
+        // Close modal
+        modalOverlay.classList.add('hidden');
+      } catch (err) {
+        console.error(err);
+        $("#card-errors").text(err.message || 'An unexpected error occurred');
+      }
+    });
+ 
+  
+
+</script>
+  {{-- <script>
     $(document).ready(function() {
       $("#cancel").on('click', function() {
         var sqb = $('#subscribe').val();
@@ -351,8 +462,8 @@
         }
       });
     });
-  </script>
-  <script>
+  </script> --}}
+   <script>
     document.querySelectorAll('input[name="card-default"]').forEach((radio) => {
   radio.addEventListener('change', (event) => {
     const selectedValue = event.target.value;
@@ -370,23 +481,25 @@
       //e.preventDefault();
       const paymentIntentId = $('#payment_method_id').val();
       $.ajax({
-        url: 'fetch/paymentDetails.php', // Replace with your backend PHP file
+        url: "http://127.0.0.1:8000/api/stripe/payment-details", // Replace with your backend PHP file
         method: 'POST',
         data: {
           payment_intent_id: paymentIntentId,
-          customer_id: customerid
+          customer_id: customerid,
+          '_token': csrfToken
         },
         dataType: 'json',
         success: function(response) {
-          console.log(response.card.brand);
-          if (response.success) {
+          if (response.success) { 
+
             // Add card details display loop
             if(response.card.length>1){
               $('#addcard').addClass('hidden');
             }else{
               $('#addcard').removeClass('hidden');
             }
-            response.card.forEach(card => {
+            response.card.forEach(card => {   
+
               $/* ('#card-brand').text(card.brand);
               $('#card-last4').text(".... .... .... " + card.last4);
               $('#card-expiry').text("Expires " + card.exp_month + '/' + card.exp_year); */
@@ -427,7 +540,7 @@
           }
         },
         error: function(xhr, status, error) {
-          alert('AJAX Error: ' + error);
+          console.log('AJAX Error: ' + error);
         },
       });
 
@@ -443,13 +556,13 @@
   updateDefaultCard(cardId,customerid);
 });
 
-function updateDefaultCard(cardId,customerid) {
+function updateDefaultCard(cardId,customerid) { 
     // Make an API call to update the default card
     $.ajax({
-      url: "bsave/update-default-card", // Replace with the correct endpoint
+      url: "http://127.0.0.1:8000/api/stripe/update-default-card", // Replace with the correct endpoint
       method: "POST",
       contentType: "application/json",
-      data: JSON.stringify({ "cardId":cardId,"customerid":customerid }),
+      data: JSON.stringify({ "cardId":cardId,"customerid":customerid,'_token': csrfToken }),
       success: function (response) {
         if (response.success) {
           Swal.fire("Default card updated successfully!");
@@ -468,112 +581,6 @@ function updateDefaultCard(cardId,customerid) {
 
     });
   </script>
-  <script>
-    const stripe = Stripe("pk_test_51Q4eUWLg6tc3IU2sQ4eWvzve616nswfYJJNUniclSFdA3Sa2FvKwixWtBfzGCKDfyPdWXFj7Vt5GdJeBdzhOYdC4008NbbdB8a"); // Replace with your Stripe publishable key
-    const clientSecret = 'client_secret_from_server';
-
-    const elements = stripe.elements();
-    const card = elements.create('card');
-    card.mount('#card-element');
-
-    const customerid = $('#customer_id').val();
-
-    const openModalBtn = document.getElementById('openModalBtn');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const modalOverlay = document.getElementById('modalOverlay');
-
-    // Open Modal
-    openModalBtn.addEventListener('click', () => {
-      modalOverlay.classList.remove('hidden');
-    });
-
-    // Close Modal
-    closeModalBtn.addEventListener('click', () => {
-      modalOverlay.classList.add('hidden');
-    });
-
-    // Close modal when clicking outside
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) {
-        modalOverlay.classList.add('hidden');
-      }
-    });
-
-    // Handle Form Submission
-    const cardForm = document.getElementById('cardForm');
-    cardForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      try {
-        // Step 1: Fetch Client Secret
-        const clientSecretResponse = await fetch('bsave/create-payment-intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-
-        if (!clientSecretResponse.ok) {
-          throw new Error('Failed to fetch client secret');
-        }
-
-        const {
-          clientSecret
-        } = await clientSecretResponse.json();
-
-        // Step 2: Confirm Card Setup
-        const username = document.getElementById('cardName').value;
-        const {
-          setupIntent,
-          error
-        } = await stripe.confirmCardSetup(clientSecret, {
-          payment_method: {
-            card: card,
-            billing_details: {
-              name: username
-            },
-          },
-        });
-
-        if (error) {
-          $("#card-errors").text(error.message);
-          throw error;
-        }
-
-
-        // Step 3: Save Payment Method
-        const saveResponse = await fetch('bsave/save-payment-card', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            customerid: customerid,
-            amount: $('#price').val(),
-            paymentMethodId: setupIntent.payment_method,
-
-          }),
-        });
-
-        if (!saveResponse.ok) {
-          const errorData = await saveResponse.json();
-          $("#card-errors").text(errorData.error);
-          throw new Error('Failed to save card details');
-        }
-
-        const saveResult = await saveResponse.json();
-        alert('Card saved successfully: ' + saveResult.message);
-
-        // Close modal
-        modalOverlay.classList.add('hidden');
-      } catch (err) {
-        console.error(err);
-        $("#card-errors").text(err.message || 'An unexpected error occurred');
-      }
-    });
  
-  
-
-</script>
 
 @endsection

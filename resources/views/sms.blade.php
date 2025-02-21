@@ -180,8 +180,7 @@
                                 @php
                                 $userId = auth()->user()->id; 
 
-                                $folders = DB::table('qr_basic_info')
-                                        ->selectRaw('folder_name as name')
+                                $folders = App\Models\QrBasicInfo::selectRaw('folder_name as name')
                                         ->where('userid', $userId)
                                         ->groupBy('folder_name')
                                         ->get();
