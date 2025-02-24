@@ -4,7 +4,7 @@
 @section('content')
 
      
-    <div class="mx-auto lg:p-0 sm:p-4 w-full lg:pl-72 space-y-6">
+    <div class="mx-auto lg:p-8 p-4 w-full lg:pl-72 space-y-6">
       <section class="my-8 mt-10 bg-gray-700 rounded-lg p-5">
         <h2 class="text-2xl font-semibold mb-4">My Folders</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4" id="foldersGrid">

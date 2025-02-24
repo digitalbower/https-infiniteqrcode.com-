@@ -9,8 +9,13 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\GoogleAuthController;
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+
+Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+Route::post('/contact-submit', [ContactController::class, 'submitForm']);
 
 Route::middleware('guest')->group(function(){
     Route::get('/signin', [HomeController::class, 'login'])->name('login');
@@ -116,6 +121,7 @@ Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
 Route::post('profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 Route::post('password-reset', [ProfileController::class, 'password_reset'])->name('password-reset');
 Route::post('delete-account', [ProfileController::class, 'delete_account'])->name('delete-account');
+Route::post('profile-picture/update',[ProfileController::class,'updateProfilePicture'])->name('profile-picture.update');
 });
 
 // Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
@@ -156,9 +162,4 @@ Route::post('delete-account', [ProfileController::class, 'delete_account'])->nam
 
 // Route::post('/stripe/payment', [StripeController::class, 'processPayment'])->name('stripe.payment');
 
-use App\Http\Controllers\GoogleAuthController;
-
-Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
-Route::post('/contact-submit', [ContactController::class, 'submitForm']);
 

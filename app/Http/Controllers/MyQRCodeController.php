@@ -1957,7 +1957,7 @@ class MyQRCodeController extends Controller
         )
         ->where('userid', $userId)
         ->groupBy('folder_name')
-        ->orderBy('created_At', 'asc')
+        ->orderBy('created_At', 'DESC')
         ->get();
 
         $tables = [
@@ -1980,7 +1980,7 @@ class MyQRCodeController extends Controller
         }
 
        if ($query !== null) {
-            $results = $query->get(); 
+            $results = $query->orderBy('date', 'DESC')->get(); 
         } else {
             $results = collect(); 
         }
@@ -1994,7 +1994,6 @@ class MyQRCodeController extends Controller
 
             $projectName = QrBasicInfo::where('userid', $userId)
                 ->where('project_code',$row->code)
-                ->orderBy('id', 'ASC')
                 ->select('project_name','qrtable')
                 ->first(); 
 
@@ -2037,11 +2036,11 @@ class MyQRCodeController extends Controller
     
             $combinedResults = $combinedResults->merge($results);
         }
+        $combinedResults = $combinedResults->sortByDesc('date')->values();
 
         foreach ($combinedResults as $item) {
             $projectName = DB::table('qr_basic_info')
                 ->where('project_code', $item->code)
-                ->orderBy('created_at', 'asc')
                 ->select('project_name','qrtable')
                 ->first(); 
     

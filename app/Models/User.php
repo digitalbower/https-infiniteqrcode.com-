@@ -29,7 +29,8 @@ class User extends Authenticatable
         'countrycode',
         'phonenumber',
         'renew_status',
-        'subscribe_status'
+        'subscribe_status',
+        'propic'
     ];
 
     /**

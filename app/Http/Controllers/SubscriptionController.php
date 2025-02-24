@@ -18,7 +18,13 @@ class SubscriptionController extends Controller
         Session::put('lastname', Auth::user()->lastname);
 
         $id = Auth::user()->id;
-        $plans = User::leftJoin('user_subscriptions','user_subscriptions.user_id' ,'=','users.id')->where('users.id',$id)->first();
+        if(Auth::user()->plan == "free"){
+            $plans = User::find($id); 
+        }
+        else{
+             $plans = User::leftJoin('user_subscriptions','user_subscriptions.user_id' ,'=','users.id')->where('users.id',$id)->first();
+             
+        }
      
         $subscribe = $plans->subscribe_status; 
         $renew_status = $plans->renew_status;
@@ -34,8 +40,7 @@ class SubscriptionController extends Controller
     public function renewSubscription(Request $request){
     
         // Ensure user is authenticated
-        $id = Auth::user()->id;
-        $user = User::find($id);
+        $user = Auth::user();
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
@@ -48,28 +53,28 @@ class SubscriptionController extends Controller
             switch ($request->canceltype) {
                 case 'Enabled':
                     if ($user->renew_status == 'disabled') {
-                        $user->update(['renew_status' => 'Enabled']);
+                        User::where('id', $user->id)->update(['renew_status' => 'Enabled']);
                         $this->sendMail($user, "Automatic Payment Turned On", 'emails.enable');
                     }
                     break;
 
                 case 'disabled':
                     if ($user->renew_status == 'Enabled') {
-                        $user->update(['renew_status' => 'disabled']);
+                        User::where('id', $user->id)->update(['renew_status' => 'disabled']);
                         $this->sendMail($user, "Automatic Payment Turned Off", 'emails.disable');
                     }
                     break;
 
                 case 'cancel':
                     if ($user->subscribe_status == 'Active') {
-                        $user->update(['renew_status' => 'disabled', 'subscribe_status' => 'Inactive']);
+                        User::where('id', $user->id)->update(['renew_status' => 'disabled', 'subscribe_status' => 'Inactive']);
                         $this->sendMail($user, "Subscription Cancellation Request", 'emails.cancel');
                     }
                     break;
 
                 case 'Reactivate':
                     if ($user->subscribe_status == 'Inactive') {
-                        $user->update(['renew_status' => 'Enabled', 'subscribe_status' => 'Active']);
+                        User::where('id', $user->id)->update(['renew_status' => 'Enabled', 'subscribe_status' => 'Active']);
                         $this->sendMail($user, "Subscription Reactivate Request", 'emails.reactivate');
                     }
                     break;

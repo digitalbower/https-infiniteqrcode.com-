@@ -397,8 +397,6 @@
   
                   
    <script>
-       
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const stripe = Stripe(stripePublicKey); // Use the key from Blade
         const elements = stripe.elements();
        

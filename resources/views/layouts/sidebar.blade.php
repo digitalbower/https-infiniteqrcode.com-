@@ -100,57 +100,51 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 <script>
-    document.getElementById('uploadButton').addEventListener('click', function() {
-        document.getElementById('imageInput').click();
-    });
+   const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    document.getElementById('imageInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
+document.getElementById('uploadButton').addEventListener('click', function() {
+    document.getElementById('imageInput').click();
+});
 
-                // Create a modal or container for cropping
-                const cropperContainer = document.getElementById('cropperContainer');
-                //cropperContainer.innerHTML = '<div style="width: 300px; height: 300px;"><img id="cropImage" style="width: 100%;" /></div>';
-                //document.body.appendChild(cropperContainer);
-                cropperContainer.classList.remove('hidden');
-                document.getElementById('cropImage').src = e.target.result;
+document.getElementById('imageInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('cropperContainer').classList.remove('hidden');
+            document.getElementById('cropImage').src = e.target.result;
 
-                const cropper = new Cropper(document.getElementById('cropImage'), {
-                    aspectRatio: 1,
-                    viewMode: 1,
-                });
+            const cropper = new Cropper(document.getElementById('cropImage'), {
+                aspectRatio: 1,
+                viewMode: 1,
+            });
 
-                const saveButton = document.getElementById('saveButton');
-                //saveButton.innerText = 'Save Cropped Image';
-                saveButton.onclick = function() {
-                    cropper.getCroppedCanvas().toBlob(function(blob) {
-                        const formData = new FormData();
-                        formData.append('croppedImage', blob);
+            document.getElementById('saveButton').addEventListener('click', function() {
+                cropper.getCroppedCanvas().toBlob(function(blob) {
+                    const formData = new FormData();
+                    formData.append('croppedImage', blob);
+                    formData.append('_token', csrfToken); // CSRF token added
 
-                        // AJAX request to upload the image
-                        fetch('qrbackend/savepropic.php', {
-                                method: 'POST',
-                                body: formData,
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    document.getElementById('profileImage').src = data.imagePath; // Update image src
-                                }
-                            });
-
+                    fetch('/profile-picture/update', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            document.getElementById('profileImage').src = data.imagePath; // Update profile image
+                        } else {
+                            alert('Failed to upload image: ' + data.message);
+                        }
                         cropper.destroy();
-                        cropperContainer.remove();
-                    });
-                };
+                        document.getElementById('cropperContainer').classList.add('hidden');
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+});
 
-                cropperContainer.appendChild(saveButton);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
 </script>
