@@ -213,11 +213,12 @@
             <span class="success text-red-600">{{session('error')}}</span>
           @endif
           <span class="success"></span>
-          {{-- <div class="text-center text-gray-500 mt-4">or</div> --}}
+           <div class="text-center text-gray-500 mt-4">or</div> 
 
           <!-- Google Button -->
-          {{-- <div class="mt-4">
+          <div class="mt-4">
             <div class="mt-4">
+            <a href="{{ route('google.login') }}">
               <button
                 class="w-full flex items-center justify-center bg-white text-gray-700 transition-colors"
               >
@@ -240,8 +241,9 @@
                   data-size="large"
                 ></div>
               </button>
+              </a>
             </div>
-          </div> --}}
+          </div> 
         </div>
 
         <!-- Sign Up Section -->

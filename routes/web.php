@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
 
@@ -155,5 +156,9 @@ Route::post('delete-account', [ProfileController::class, 'delete_account'])->nam
 
 // Route::post('/stripe/payment', [StripeController::class, 'processPayment'])->name('stripe.payment');
 
+use App\Http\Controllers\GoogleAuthController;
 
+Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+Route::post('/contact-submit', [ContactController::class, 'submitForm']);
 

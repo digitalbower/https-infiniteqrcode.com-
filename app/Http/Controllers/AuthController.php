@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Mail;
 use Stripe\Customer;
 use Stripe\Stripe;
 
+
+
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -49,7 +51,7 @@ class AuthController extends Controller
 
         // Send Welcome Email asynchronously
         Mail::to($user->email)->queue(new WelcomeMail($user));
-
+       
       return redirect()->route('dashboard')->with('success', 'Account created successfully!');
     }
 
