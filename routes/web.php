@@ -63,6 +63,7 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 Route::get('/subscription', [SubscriptionController::class, 'subscription'])->name('subscription'); // Subscription 
 Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade'); //Upgrade
+Route::post('/renew-subscription', [SubscriptionController::class, 'renewSubscription'])->name('renew-subscription'); //Renew
 
 //Create QR code 
 Route::post('create-emailqr',[MyQRCodeController::class, 'createEmailQrcode'])->name('create-emailqr');  

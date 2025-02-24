@@ -1,24 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<?php session_start(); ?>
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Infinite QR Codes</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="shortcut icon" href="{{asset('images/indexfav.png')}}" type="image/x-icon">
-  <link href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.carousel.min.css"
-    rel="stylesheet" />
-  <link href="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/assets/owl.theme.default.min.css"
-    rel="stylesheet" />
-  <script src="https://owlcarousel2.github.io/OwlCarousel2/assets/vendors/jquery.min.js"></script>
-  <script src="https://owlcarousel2.github.io/OwlCarousel2/assets/owlcarousel/owl.carousel.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     body,
     a,
@@ -326,9 +317,14 @@
 function toggleDropdown(dropdownId) {
   const dropdown = document.getElementById(dropdownId);
   const arrow = document.getElementById(`${dropdownId}Arrow`);
-  dropdown.classList.toggle("hidden");
-  dropdown.classList.toggle("block");
-  if (arrow) arrow.classList.toggle("rotate-180");
+  if (dropdown) {
+    dropdown.classList.toggle("hidden");
+    dropdown.classList.toggle("block"); // Ensure the dropdown is visible
+  }
+  
+  if (arrow) {
+    arrow.classList.toggle("rotate-180");
+  }
 }
 
 // Close dropdown when clicking outside
@@ -336,11 +332,14 @@ document.addEventListener("click", function(event) {
   const dropdown = document.getElementById("userDropdown");
   const button = document.getElementById("userDropdownButton");
 
-  if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+  if (dropdown && button && !dropdown.contains(event.target) && !button.contains(event.target)) {
     dropdown.classList.add("hidden");
     dropdown.classList.remove("block");
+
     const arrow = document.getElementById("userDropdownArrow");
-    if (arrow) arrow.classList.remove("rotate-180");
+    if (arrow) {
+      arrow.classList.remove("rotate-180");
+    }
   }
 });
 </script>
@@ -1043,6 +1042,8 @@ document.addEventListener("click", function(event) {
       </div>
     </div>
   </section>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
   <script>
     function togglePricing() {
       const boostPrice = document.getElementById("boostPrice");
@@ -1312,7 +1313,6 @@ document.addEventListener("click", function(event) {
       </div>
     </div>
   </section>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
       $(".faq-button").on("click", function () {
@@ -1651,8 +1651,6 @@ document.addEventListener("click", function(event) {
     }
 
   </script>
-
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function () {
       $("#contact_form").on('submit', function () {

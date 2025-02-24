@@ -28,6 +28,8 @@ class User extends Authenticatable
         'password',
         'countrycode',
         'phonenumber',
+        'renew_status',
+        'subscribe_status'
     ];
 
     /**
