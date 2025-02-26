@@ -107,17 +107,15 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script>
     $(document).ready(function() {
-     //$("#share").on('click',function(){
-        const phone = $(".mobile1").text();  // Use .val() to get the input value
-        const message = $(".smsarea").text();  // Get the textarea value
+        const phone = $(".mobile1").text().trim(); // Ensure there’s no extra whitespace
+        const message = $(".smsarea").text().trim(); // Same for the message
+
         if (phone && message) {
-            // Construct the SMS link
-            const smsLink = `sms:${phone}?body=${encodeURIComponent(message)}`;
-            console.log(smsLink);
-            // Update the href of the SMS link
+            // Properly encode the phone number and message
+            const smsLink = `sms:${encodeURIComponent(phone)}?body=${encodeURIComponent(message)}`;
+            console.log(smsLink); // For debugging
             $('#smsLink').attr('href', smsLink);
-        } 
-     //});
+        }
     });
         
     

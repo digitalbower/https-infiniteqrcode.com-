@@ -75,7 +75,7 @@
         <!-- Profile Image -->
         <div class="relative flex justify-center py-8">
           <div class="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
-            <img src="{{asset('storage/'.$qrCode->contactimg)}}" alt="Profile" class="w-full h-full object-cover">
+            <img src="{{ $qrCode->contactimg && Storage::disk('public')->exists($qrCode->contactimg) ? asset('storage/'.$qrCode->contactimg) : asset('images/download.jpeg') }}" alt="Profile" class="w-full h-full object-cover">
           </div>
         </div>
       </div>
@@ -83,36 +83,87 @@
       <!-- Name and Title -->
       <div class="text-center space-y-1 mb-2 mt-1">
         <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider font-poppins">{{ strtoupper($qrCode->first_name . ' ' . $qrCode->last_name) }}</h1>
-        <p class="text-white text-sm tracking-widest font-light font-poppins">BUSINESS CONSULTANT</p>
+        <p class="text-white text-sm tracking-widest font-light font-poppins">{{$qrCode->company}}</p>
       </div>
   
       <!-- Contact Form -->
-      <div class="gap-2 relative px-4 grid grid-cols-4 pb-2">
-        <input type="text" placeholder="First Name" value="{{$qrCode->first_name}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="text" placeholder="Last Name" value="{{$qrCode->last_name}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="tel" placeholder="Phone Number" value="{{$qrCode->mobile}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="email" placeholder="Email" value="{{$qrCode->email}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="text" placeholder="Company" value="{{$qrCode->company}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="text" placeholder="Address" value="{{$qrCode->street}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="url" placeholder="Website" value="{{$qrCode->website}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="text" placeholder="City" value="{{$qrCode->city}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="text" placeholder="State" value="{{$qrCode->state}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-        <input type="text" placeholder="ZIP Code" value="{{$qrCode->zip}}"
-          class="w-full bg-[#008B9E] border-0 text-white col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
-   
-        <input type="text" placeholder="Country" value="{{$qrCode->country}}"
-        class="w-full bg-[#008B9E] border-0 text-white col-start-2 col-span-2 placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+      <div class="grid grid-cols-2 gap-x-8 gap-y-4 px-4 pb-4">
+        <!-- First Name -->
+        <div class="flex flex-col">
+          <label for="first_name" class="text-sm text-white mb-1">First Name</label>
+          <input type="text" id="first_name" name="first_name" placeholder="First Name" value="{{$qrCode->first_name}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
       
-       
+        <!-- Last Name -->
+        <div class="flex flex-col">
+          <label for="last_name" class="text-sm text-white mb-1">Last Name</label>
+          <input type="text" id="last_name" name="last_name" placeholder="Last Name" value="{{$qrCode->last_name}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- Phone Number -->
+        <div class="flex flex-col">
+          <label for="mobile" class="text-sm text-white mb-1">Phone Number</label>
+          <input type="tel" id="mobile" name="mobile" placeholder="Phone Number" value="{{$qrCode->mobile}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- Email -->
+        <div class="flex flex-col">
+          <label for="email" class="text-sm text-white mb-1">Email</label>
+          <input type="email" id="email" name="email" placeholder="Email" value="{{$qrCode->email}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- Company -->
+        <div class="flex flex-col">
+          <label for="company" class="text-sm text-white mb-1">Company</label>
+          <input type="text" id="company" name="company" placeholder="Company" value="{{$qrCode->company}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- Address -->
+        <div class="flex flex-col">
+          <label for="street" class="text-sm text-white mb-1">Address</label>
+          <input type="text" id="street" name="street" placeholder="Address" value="{{$qrCode->street}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- Website -->
+        <div class="flex flex-col">
+          <label for="website" class="text-sm text-white mb-1">Website</label>
+          <input type="url" id="website" name="website" placeholder="Website" value="{{$qrCode->website}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- City -->
+        <div class="flex flex-col">
+          <label for="city" class="text-sm text-white mb-1">City</label>
+          <input type="text" id="city" name="city" placeholder="City" value="{{$qrCode->city}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- State -->
+        <div class="flex flex-col">
+          <label for="state" class="text-sm text-white mb-1">State</label>
+          <input type="text" id="state" name="state" placeholder="State" value="{{$qrCode->state}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- ZIP Code -->
+        <div class="flex flex-col">
+          <label for="zip" class="text-sm text-white mb-1">ZIP Code</label>
+          <input type="text" id="zip" name="zip" placeholder="ZIP Code" value="{{$qrCode->zip}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
+      
+        <!-- Country -->
+        <div class="flex flex-col">
+          <label for="country" class="text-sm text-white mb-1">Country</label>
+          <input type="text" id="country" name="country" placeholder="Country" value="{{$qrCode->country}}"
+            class="w-full bg-[#008B9E] border-0 text-white placeholder-white/70 h-9 text-sm lg:text-base rounded-md px-2">
+        </div>
       </div>
       <button id="add-contact"
       class="w-full bg-[#FFB95C] hover:bg-[#FFB95C]/90 text-zinc-900 font-semibold text-base h-10 rounded-md mt-2">

@@ -267,7 +267,7 @@
 
     try {
         // Step 1: Fetch Client Secret
-        const clientSecretResponse = await fetch('http://127.0.0.1:8000/api/stripe/create-payment-intent', {  
+        const clientSecretResponse = await fetch('/api/stripe/create-payment-intent', {  
             method: 'POST',
             headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
             credentials: 'include' 
@@ -305,7 +305,7 @@
         console.log(setupIntent);
 
         // Step 3: Save Payment Method
-        const saveResponse = await fetch('http://127.0.0.1:8000/api/stripe/save-paymentcard', {
+        const saveResponse = await fetch('/api/stripe/save-paymentcard', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
           body: JSON.stringify({
@@ -336,7 +336,7 @@
   
 
 </script>
-  <script>
+<script>
     $(document).ready(function() {
       $("#cancel").on('click', function() {
         var subscription_status = $('#subscribe').val();
@@ -415,10 +415,10 @@
         }
       });
 
-      $("#autorenew").change(function() {
+        $("#autorenew").change(function() {
+        var isChecked = $(this).is(":checked");
         var renew_status = $("#autorenew").data('autorenew');
-        if ($(this).is(":checked")) {
-           console.log("hi");
+        if (isChecked) {
           Swal.fire({
               text: " Do you want to Enable the Auto-renew Now",
               icon: "warning",
@@ -453,6 +453,9 @@
                   }
                 });
               }
+              else {
+                $("#autorenew").prop("checked", false); // Revert to unchecked
+            }
             });
           // Add your logic for ON state here
         } else {
@@ -492,9 +495,10 @@
                     $("#loadingIndicator").addClass("hidden"); // Hide loader
                   }
                 });
-              }
+              }else {
+                $("#autorenew").prop("checked", true); // Revert to checked
+            }
             });
-          // Add your logic for OFF state here
         }
       });
     });
@@ -517,7 +521,7 @@
       //e.preventDefault();
       const paymentIntentId = $('#payment_method_id').val();
       $.ajax({
-        url: "http://127.0.0.1:8000/api/stripe/payment-details", // Replace with your backend PHP file
+        url: "/api/stripe/payment-details", // Replace with your backend PHP file
         method: 'POST',
         data: {
           payment_intent_id: paymentIntentId,
@@ -595,7 +599,7 @@
 function updateDefaultCard(cardId,customerid) { 
     // Make an API call to update the default card
     $.ajax({
-      url: "http://127.0.0.1:8000/api/stripe/update-default-card", // Replace with the correct endpoint
+      url: "/api/stripe/update-default-card", // Replace with the correct endpoint
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ "cardId":cardId,"customerid":customerid,'_token': csrfToken }),

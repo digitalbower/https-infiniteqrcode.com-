@@ -171,8 +171,6 @@ class HomeController extends Controller
     public function create() {
         return view('qrcode.create');
     }
-
-
     // Show QR Code List
     public function list() {
         $qrcodes = Sms::latest()->get();
@@ -256,14 +254,14 @@ class HomeController extends Controller
             ->orderBy('created_At', 'desc')
             ->first(); 
 
-        $subscriptionStart = Carbon::parse($user->subscription_start);
+        $subscriptionStart = Carbon::parse($user->subscription_start); 
         $subscriptionEnd = Carbon::parse($user->subscription_end); 
         $currentDate = Carbon::now();
 
         $timestamp = strtotime($subscriptionEnd);
         $formattedDate = date('d M. Y', $timestamp); 
 
-        $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd); 
+        $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd) + 1; 
         $remainingDays = $currentDate->diffInDays($subscriptionEnd, false);
         $isPast = $currentDate->greaterThan($subscriptionEnd);
 
@@ -335,7 +333,6 @@ public function scanData(){
     return response()->json($response);
 
 }
-
 public function getAllCountries(){
 
     $countries = [
@@ -459,7 +456,8 @@ public function getAllCountries(){
     return $countries;
 
 }
-            
+
+
           
           
 }

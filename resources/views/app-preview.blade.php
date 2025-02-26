@@ -126,9 +126,6 @@
             @endif
           </div>
   
-          <div class="absolute bottom-4 left-1/2 -translate-x-1/2">
-            <p class="text-white text-sm pt-4">infiniteqrcode.com</p>
-          </div>
         </div>
         <div class="absolute bottom-0 left-0 w-32 h-32 md:w-32 md:h-32">
           <div class="w-full h-full bg-[#E5855E] rounded-tr-[100%]"></div>
