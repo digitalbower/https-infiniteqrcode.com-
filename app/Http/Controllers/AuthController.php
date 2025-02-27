@@ -63,9 +63,14 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
+
+        $email = $fields['email']; 
+        $password = $fields['password'];
+        $user = Auth::attempt(['email' => $email, 'password' => $password]);
+        dd($user); 
         if (Auth::attempt($fields)) { 
             return redirect()->route('profile')->with('success', 'Logged in successfully!');
-        }
+        } ;
 
         return back()->with('error', 'Invalid credentials');
     }
