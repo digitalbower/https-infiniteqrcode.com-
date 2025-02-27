@@ -1,23 +1,18 @@
 $(document).ready(function () {
   // Toggle dropdown visibility
-  $("#folderDropdownButton").click(function () {
+  $("#folderDropdownButton").click(function (event) {
+    event.stopPropagation(); // Prevents closing when clicking the button
     $("#folderDropdown").toggleClass("hidden");
   });
-  $("#folderList").on("click", "li", function () {
-    const selectedText = $(this).text().trim(); // Get folder name
-    $("#selectedFolder").text(selectedText); // Update button text
-    $("#folderinput").val(selectedText); // Set hidden input value
-    $("#folderDropdown").addClass("hidden"); // Close dropdown
-  });
-  // Select a folder
   $("#folderList").on("click", "li:not(.new-folder-input)", function () {
     const selectedText = $(this).text().trim(); // Get folder name
     $("#selectedFolder").text(selectedText); // Update button text
     $("#folderinput").val(selectedText); // Set hidden input value
     $("#folderDropdown").addClass("hidden"); // Close dropdown
   });
-  $("#addFolderButton").click(function () {
-    const folderCount = $("#folderList li").length; // Count current folders
+  $("#addFolderButton").click(function (event) {
+    event.stopPropagation(); // Prevent dropdown from closing
+    const folderCount = $("#folderList li").length;
     if (folderCount >= 5) {
       alert("You can only create up to 5 folders.");
     } else {
@@ -104,42 +99,16 @@ $(document).ready(function () {
     $("#folderinput").val(selectedText);
     $("#folderDropdown").addClass("hidden");
   });
-  // Prevent closing the dropdown if input is clicked
-  $(document).on("click", "li", function (event) {
-   
-      const newFolderInput = $("#newFolderInput");
-      // If new folder input is not focused or doesn't exist
-      if (!newFolderInput.length || !newFolderInput.is(":focus")) {
-        $("#folderList .new-folder-input").remove();
-        // Uncomment this line if you want to hide the dropdown
-        // $("#folderDropdown").addClass("hidden");
-      } else {
-        // Alert if the input field is empty
-        if (newFolderInput.val().trim()=='') {
-          alert("Folder name cannot be empty!");
-        }
-      }
-    
+  // Ensure input doesn't close itself when clicked
+  $(document).on("click", "#newFolderInput", function (event) {
+    event.stopPropagation(); // Prevent the input field from being removed when clicked
   });
-  $(document).on("click", function (event) {
-    const isDropdownButton = $(event.target).closest("#folderDropdownButton").length;
-    const isDropdownContent = $(event.target).closest("#folderDropdown").length;
-    // If the click is outside both the button and the dropdown content
-    if (!isDropdownButton && !isDropdownContent) {
-      const newFolderInput = $("#newFolderInput");
-      // If new folder input is not focused or doesn't exist
-      if (!newFolderInput.length || !newFolderInput.is(":focus")) {
-        $("#folderList .new-folder-input").remove();
-        // Uncomment this line if you want to hide the dropdown
-        // $("#folderDropdown").addClass("hidden");
-      } else {
-        // Alert if the input field is empty
-        if (!newFolderInput.val().trim()) {
-          alert("Folder name cannot be empty!");
-        }
-      }
-    }
+
+  // Prevent dropdown from closing when clicking inside
+  $(document).on("click", "#folderDropdown", function (event) {
+    event.stopPropagation();
   });
+
   // Function to check if folder name already exists
   function isFolderNameExists(folderName) {
     let exists = false;
@@ -154,4 +123,12 @@ $(document).ready(function () {
     });
     return exists;
   }
+  $(document).on("keyup", "#newFolderInput", function () {
+    const inputValue = $(this).val().trim();
+    if (inputValue === "") {
+      $("#FolderB").prop("disabled", true); // Disable button if empty
+    } else {
+      $("#FolderB").prop("disabled", false); // Enable button if text exists
+    }
+  });
 });

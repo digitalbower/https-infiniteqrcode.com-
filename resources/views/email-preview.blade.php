@@ -65,11 +65,8 @@
 
     <!-- Message Body -->
     <div class="mt-4 text-sm text-gray-700">
-      <p>Dear Recipient,</p>
       <p class="mt-2 text-gray-600" id="pmessage">{{$qrCode->message}}
       </p>
-      <p class="mt-4">Warmest regards,</p>
-      <p>Really Great Site</p>
     </div>
 
     <!-- Send Button -->

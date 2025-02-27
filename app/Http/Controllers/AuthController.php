@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 use Stripe\Customer;
 use Stripe\Stripe;
 
@@ -19,10 +20,10 @@ class AuthController extends Controller
        $request->validate([
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => ['required','string','email','max:255',Rule::unique('users')->whereNull('deleted_at')], // Ignore soft deleted records,
             'password' => 'required|string|min:6|confirmed',
-            'phonenumber' => 'required|numeric'
-       ]); 
+            'phonenumber' => 'required|numeric',
+       ]);
         $user = new User();
         $user->firstname= $request->firstname;
         $user->lastname= $request->lastname;

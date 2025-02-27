@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
@@ -81,5 +82,32 @@ class ProfileController extends Controller
         }
         
         
+    }
+    public function updateProfilePicture(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'croppedImage' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+        ]);
+
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
+        }
+        if ($request->hasFile('croppedImage')) { 
+            if ( $user->propic && Storage::disk('public')->exists( $user->propic)) {  
+                Storage::disk('public')->delete( $user->propic);
+            }
+            $file = $request->file('croppedImage');  
+            $fileName = 'profile_' . time() . '.png'; // Ensure it's saved as a PNG
+            $filePath = $file->storeAs('profiles', $fileName, 'public');
+
+            User::where('id', $user->id)->update(['propic' => $filePath]);
+           
+            return response()->json(['success' => true, 'imagePath' => asset('storage/' . $filePath) ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Failed to upload image']);
     }
 }

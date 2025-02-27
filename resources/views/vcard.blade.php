@@ -123,16 +123,12 @@
                                 </div>
 
                                 <div>
-                                    <label class="block font-medium mb-1">Company:*</label>
+                                    <label class="block font-medium mb-1">Company:</label>
                                     <input type="text" placeholder="Company"
                                         class="border rounded-md p-2 focus:ring-2 mb-2 focus:ring-blue-500"
                                         name="company" id="company" value="{{old('company')}}" />
                                       
                                 </div>
-                                <small id="company_name"></small>
-                                @error('company')
-                                 <small class="text-red-700 company">{{ $message }}</small>
-                                @enderror 
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
@@ -140,18 +136,12 @@
                                         <input type="text" placeholder="Street"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                                             name="street" id="street" value="{{old('street')}}"/>
-                                        @error('street')
-                                            <small class="text-red-700 street">{{ $message }}</small>
-                                        @enderror 
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">Website:</label>
                                         <input type="text" placeholder="Website"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="website" id="Website" value="{{old('website')}}"/>
-                                        @error('website')
-                                            <small class="text-red-700 street">{{ $message }}</small>
-                                        @enderror
+                                            name="website" id="Website" value="{{old('website')}}"/>                                 
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
@@ -159,19 +149,13 @@
                                         <label class="block font-medium mb-1">City:</label>
                                         <input type="text" placeholder="City"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="city" id="city"  value="{{old('city')}}"/>
-                                        @error('city')
-                                            <small class="text-red-700 city">{{ $message }}</small>
-                                        @enderror 
+                                            name="city" id="city"  value="{{old('city')}}"/>                                    
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">ZIP:</label>
                                         <input type="text" placeholder="ZIP"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                                             name="zip" id="zip" value="{{old('zip')}}"/>
-                                        @error('zip')
-                                            <small class="text-red-700 zip">{{ $message }}</small>
-                                        @enderror 
                                     </div>
                                 </div>
 
@@ -181,18 +165,12 @@
                                         <input type="text" placeholder="State"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                                             name="state" id="state" value="{{old('state')}}"/>
-                                        @error('state')
-                                            <small class="text-red-700 state">{{ $message }}</small>
-                                        @enderror 
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">Country:</label>
                                         <input type="text" placeholder="Country"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
                                             name="country" id="country" value="{{old('country')}}"/>
-                                        @error('country')
-                                            <small class="text-red-700 country">{{ $message }}</small>
-                                        @enderror 
                                     </div>
                                 </div>
 
@@ -278,7 +256,7 @@
                                                     </div>
                                                 </div>
                                                 <input id="folderinput" placeholder="Folder Name" type="hidden"
-                                                    name="folderinput" readonly value=""
+                                                    name="folderinput" readonly value="{{old('foldername')}}"
                                                     class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                                                     @error('folderinput')
                                                     <small class="text-red-700 folderinput">{{ $message }}</small>
@@ -470,9 +448,9 @@
 
                                             <!-- Name and Title -->
                                             <div class="text-center space-y-1 mb-2 mt-1">
-                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name">MATT
+                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name" id="name">MATT
                                                     ZHANG</h1>
-                                                <p class="text-white text-sm tracking-widest font-light company">
+                                                <p class="text-white text-sm tracking-widest font-light company" id="pcompany1">
                                                     BUSINESS CONSULTANT</p>
                                             </div>
 
@@ -593,25 +571,15 @@
                 return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
             }, "Only JPG, JPEG, or PNG files are allowed.");
             $("#vcardqr_form").validate({   
+                ignore: [],  
                 rules: {  
                 contactimg:{
-                    required: true,
                     imageType: true
                 },
                 first_name:"required",
                 last_name:"required",
                 mobile:"required",
                 email:"required",
-                company:"required",
-                street:"required",
-                website:{
-                    required: true,
-                    url: true
-                },
-                city:"required",
-                zip:"required",
-                state:"required",
-                country:"required",
                 projectname:"required",
                 folderinput:"required",
                 startdate: {
@@ -626,23 +594,12 @@
                 },  
                 messages: {  
                 contactimg: {
-                    required: "Please select an image",
                     imageType: "Only JPG, JPEG, PNG, or GIF files are allowed."
                 },
                 first_name:"Enter First Name",
                 last_name:"Enter Last Name",
                 mobile:"Enter mobile",
                 email:"Enter email",
-                company:"Enter company",
-                street:"Enter street",
-                website:{
-                    required:"Enter website",
-                    url:"Enter a valid URL"
-                },
-                city:"Enter city",
-                zip:"Enter zip",
-                state:"Enter state",
-                country:"Enter country",
                 projectname:"Enter Project Name",
                 folderinput:"Choose the Folder Name",
                 startdate: {
@@ -659,8 +616,7 @@
                 errorClass: "text-red-500",
                 errorPlacement: function (error, element) {
                 if (element.attr("type") == "file") error.appendTo("#contactimg");
-                else if(element.attr("name") == "company") error.appendTo("#company_name")
-                    else error.insertAfter(element);
+                else error.insertAfter(element);
                 }
             });
             });
@@ -723,6 +679,8 @@
             function syncFields() {
                 
                 // Sync values from source form to target form
+                document.getElementById('name').textContent  = document.getElementById('first_name').value + " " + document.getElementById('lastname').value;
+                document.getElementById('pcompany1').textContent  = document.getElementById('company').value;
                 document.getElementById('firstName').value = document.getElementById('first_name').value;
                 document.getElementById('lastName').value = document.getElementById('lastname').value;
                 document.getElementById('phone').value = document.getElementById('mobile').value;

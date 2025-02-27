@@ -54,7 +54,6 @@
   </style>    
 </head>
 <body class="flex justify-center items-center min-h-screen font-poppins bg-cover bg-center">
-  @if($qrCode)
   <section class="absolute w-full h-full top-0 left-0 z-0 overflow-hidden bg-[#ddd1ca]">
     <!-- Animated Circles -->
     <div class="absolute bottom-[-100px] w-10 h-10 bg-gray-100 rounded-full opacity-50 animate-rise"
@@ -98,82 +97,25 @@
       </div>
       <!-- Action Button -->
       <div class="mt-4 flex justify-center bottom-4 absolute w-full px-4 text-center ">
-        <button class="bg-[#d3a58a] w-full text-white  text-center flex justify-center text-sm px-4 py-2 rounded-lg flex items-center ">
-        <a id="smsLink" href="#" target="_blank" >SEND</a>
-        </button>
+        <a id="smsLink" href="#" target="_blank" class="bg-[#d3a58a] w-full text-white  text-center flex justify-center text-sm px-4 py-2 rounded-lg flex items-center" >
+          SEND
+        </a>
       </div>
     </div>
   </div>
- 
-  @else
-    <section class="absolute w-full h-full top-0 left-0 z-0 overflow-hidden bg-[#ddd1ca]">
-    <!-- Animated Circles -->
-    <div class="absolute bottom-[-100px] w-10 h-10 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 10%; animation-duration: 8s;"></div>
-    <div class="absolute bottom-[-100px] w-5 h-5 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 20%; animation-duration: 5s; animation-delay: 1s;"></div>
-    <div class="absolute bottom-[-100px] w-12 h-12 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 35%; animation-duration: 7s; animation-delay: 2s;"></div>
-    <div class="absolute bottom-[-100px] w-20 h-20 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 50%; animation-duration: 11s;"></div>
-    <div class="absolute bottom-[-100px] w-9 h-9 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 55%; animation-duration: 6s; animation-delay: 1s;"></div>
-    <div class="absolute bottom-[-100px] w-11 h-11 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 65%; animation-duration: 8s; animation-delay: 3s;"></div>
-    <div class="absolute bottom-[-100px] w-24 h-24 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 70%; animation-duration: 12s; animation-delay: 2s;"></div>
-    <div class="absolute bottom-[-100px] w-6 h-6 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 80%; animation-duration: 6s; animation-delay: 2s;"></div>
-    <div class="absolute bottom-[-100px] w-4 h-4 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 70%; animation-duration: 5s; animation-delay: 1s;"></div>
-    <div class="absolute bottom-[-100px] w-24 h-24 bg-gray-100 rounded-full opacity-50 animate-rise"
-      style="left: 25%; animation-duration: 10s; animation-delay: 4s;"></div>
-  </section>
-
-  <!-- Form Card -->
-  <div class="w-full p-4 absolute h-full text-white overflow-hidden flex justify-center items-center">
-    <!-- SMS Box -->
-    <div class="border w-full relative max-w-xl h-auto min-h-[400px] max-h-[400px] pt-3 mt-10 text-card-foreground shadow-sm bg-white rounded-3xl"
-      data-v0-t="card">
-      <div class="p-4">
-        <div class="flex flex-col gap-4">
-          <!-- Recipient Information -->
-          <div class="flex items-center gap-2">
-            <span class="text-neutral-600">To:</span>
-            <span class="bg-[#e8e0d9] text-[#8b7b71] px-4 py-1 rounded-full text-sm">Savannah C. Riley</span>
-          </div>
-          <hr class="bg-[#d3a58as]"/>
-          <!-- Message Content -->
-          <p class="text-neutral-800 text-base leading-relaxed">
-            Congratulations, you've won the $500 gift card in our Summer Giveaway Contest. Please DM us to claim your prize.
-          </p>
-        </div>
-      </div>
-      
-      <!-- Action Button -->
-      <div class="mt-4 flex justify-center bottom-4 absolute w-full px-4 text-center ">
-        <button class="bg-[#d3a58a] w-full text-white  text-center flex justify-center text-sm px-4 py-2 rounded-lg flex items-center ">
-        SEND
-        </button>
-      </div>
-    </div>
-  </div>
-@endif
 <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
    <script>
     $(document).ready(function() {
-     //$("#share").on('click',function(){
-        const phone = $(".mobile1").text();  // Use .val() to get the input value
-        const message = $(".smsarea").text();  // Get the textarea value
+        const phone = $(".mobile1").text().trim(); // Ensure there’s no extra whitespace
+        const message = $(".smsarea").text().trim(); // Same for the message
+
         if (phone && message) {
-            // Construct the SMS link
-            const smsLink = `sms:${phone}?body=${encodeURIComponent(message)}`;
-            console.log(smsLink);
-            // Update the href of the SMS link
+            // Properly encode the phone number and message
+            const smsLink = `sms:${encodeURIComponent(phone)}?body=${encodeURIComponent(message)}`;
+            console.log(smsLink); // For debugging
             $('#smsLink').attr('href', smsLink);
-        } 
-     //});
+        }
     });
         
     

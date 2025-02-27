@@ -185,7 +185,7 @@
                                       </div>
                                   </div>
                                   <input id="folderinput" placeholder="Folder Name" type="hidden"
-                                      name="folderinput" readonly value=""
+                                      name="folderinput" readonly value="value="{{old('foldername')}}""
                                       class="w-full p-3 mt-2 border border-gray-300 rounded-lg text-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                                       @error('folderinput')
                                       <small class="text-red-700 folderinput">{{ $message }}</small>
@@ -411,6 +411,7 @@
         return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
     }, "Only JPG, JPEG, or PNG files are allowed.");
     $("#imageqr_form").validate({   
+      ignore: [], 
         rules: {  
             imagepath:{
                     required: true,

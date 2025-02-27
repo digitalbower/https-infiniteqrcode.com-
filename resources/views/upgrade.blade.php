@@ -398,7 +398,6 @@
                   
    <script>
        
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const stripe = Stripe(stripePublicKey); // Use the key from Blade
         const elements = stripe.elements();
        
@@ -407,137 +406,214 @@
         hidePostalCode: true,
         });
         cardElement.mount("#card-element");
+        let retryCount = 0;
+        let isProcessing = false;
+        
+        
+        // Main payment handler
+        async function handlePayment(intentClientSecret) {
+            if (isProcessing) {
+                console.warn('Payment is already in progress. Skipping duplicate attempts.');
+                return;
+            }
+        
+            try {
+                isProcessing = true;
+        
+                const result = await stripe.confirmCardPayment(intentClientSecret);
+        
+                if (result.error) {
+                    console.error('Payment failed:', result.error.message);
+                    alert('Payment failed: ' + result.error.message);
+                } else {
+                    const paymentIntent = result.paymentIntent;
+        
+                    switch (paymentIntent.status) {
+                        case 'succeeded':
+                            console.log('Payment succeeded:', paymentIntent);
+                            await completeSubscription(paymentIntent.id); // Finalize subscription
+                            break;
+        
+                        case 'requires_action':
+                            if (retryCount < 3) {
+                                retryCount++;
+                                console.log('Retrying 3D Secure authentication:', retryCount);
+                                await handlePayment(intentClientSecret);
+                            } else {
+                                alert('Authentication retries exhausted. Please try again.');
+                            }
+                            break;
+        
+                        default:
+                            console.warn('Unexpected payment status:', paymentIntent.status);
+                    }
+                }
+            } catch (err) {
+                console.error('Error during payment:', err);
+                alert('An unexpected error occurred.');
+            } finally {
+                isProcessing = false;
+            }
+        }
+        
+        async function completeSubscription(paymentIntentId) {
+            try {
+                const response = await fetch('/api/subscribe/confirm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
+                    body: JSON.stringify({ payment_intent_id: paymentIntentId }),
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+        
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire("Payment successful!", "", "success");
+                    setTimeout(() => window.location.replace('/subscription'), 2000);
+                } else {
+                    console.error('Subscription failed:', result.error || 'Unknown error');
+                    Swal.fire('Failed to finalize subscription: ' + (result.error || 'Please try again.'));
+                }
+            } catch (err) {
+                console.error('Error finalizing subscription:', err.message || err);
+                 Swal.fire('Failed to complete the subscription. Please check your connection and try again.');
+            }
+        }
+
+
+
+        function handleStripeError(error) {
+            $("#loadingIndicator").addClass("hidden");
+            let errorMessage = "An error occurred. Please try again.";
+        
+            if (error.type === "card_error" || error.type === "validation_error") {
+                errorMessage = error.message;
+            }
+        
+            if (error.code) {
+                switch (error.code) {
+                case "card_declined":
+                    errorMessage = "Your card was declined. Please use a different card.";
+                    break;
+                case "expired_card":
+                    errorMessage = "Your card has expired. Please use a valid card.";
+                    break;
+                case "incorrect_cvc":
+                    errorMessage = "The CVC code is incorrect. Please check and try again.";
+                    break;
+                case "processing_error":
+                    errorMessage = "There was a problem processing your card. Please try again later.";
+                    break;
+                case "insufficient_funds":
+                    errorMessage = "Your card has insufficient funds. Please use another card.";
+                    break;
+                case "authentication_required":
+                    errorMessage = "Authentication is required. Please follow the instructions to complete the payment.";
+                    break;
+                default:
+                    errorMessage = error.message || "An error occurred. Please try again.";
+                }
+            }
+    
+            $("#error-message").text(errorMessage);
+        }
 
         const form = document.getElementById("multiStepForm");
 
         form.addEventListener("submit", async (event) => {
             event.preventDefault(); // Prevent default form submission
             $("#loadingIndicator").removeClass("hidden"); // Show loader
-        try {
-        // Create a payment method
-            const { paymentMethod, error } = await stripe.createPaymentMethod({
-                    type: "card",
+            try {
+                // Create a payment method
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                        type: "card",
+                        card: cardElement,
+                    }); 
+    
+                if (error) {
+                handleStripeError(error);
+                return;
+                }
+
+
+                // Fetch client secret
+        
+                const response1 = await fetch('/api/stripe/create-payment-intent', {  
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
+                    credentials: 'include' 
+                });
+        
+        
+                const data = await response1.json(); 
+                if (!data.clientSecret) {
+                    throw new Error("Invalid clientSecret from server.");
+                }
+                
+                const client_Secret  = data.clientSecret;
+
+        
+
+                //  // Confirm card setup
+                const username = document.getElementById("name").value; 
+                const { setupIntent, error: error1 } = await stripe.confirmCardSetup(client_Secret, {
+                payment_method: {
                     card: cardElement,
-                }); console.log(paymentMethod);
+                    billing_details: { name: username },
+                },
+                });
+        
+                if (error1) {
+                handleStripeError(error1);
+                return;
+                }
 
-        if (error) {
-        handleStripeError(error);
-        return;
-        }
+                //  // Gather form data
+                const plan = document.getElementById("plan").value; 
+                const duration = document.getElementById("duration").value; 
+                const price = document.getElementById("billingprice").value;
+        
+                if (!plan) {
+                $("#loadingIndicator").addClass("hidden");
+                document.getElementById("error-message").textContent = "Choose a plan.";
+                return;
+                }
+                
 
+                //  // Send data to backend
+                const response = await fetch("/api/stripe/subscribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json",'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({
+                    setup_intent_id: setupIntent.id,
+                    payment_method_id: paymentMethod.id,
+                    plan,
+                    duration,
+                    price,
+                }),
+                });
 
-        // Fetch client secret
-
-        const response1 = await fetch('http://127.0.0.1:8000/api/stripe/create-payment-intent', {  
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
-            credentials: 'include' 
+                const result = await response.json();
+                console.log(result);
+                if (result.success) {
+                    Swal.fire("Payment successful!", "", "success");
+                    setTimeout(() => window.location.replace('/subscription'), 2000);
+                } else if (result.requires_action && result.payment_intent_client_secret) {
+                    console.log("Handling 3D Secure authentication...");
+                    await handlePayment(result.payment_intent_client_secret);
+                }
+                else {
+                    handleStripeError({ message: result.error || "An error occurred during payment processing." });
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById("error-message").textContent = err.message || "An unexpected error occurred.";
+            } finally {
+                $("#loadingIndicator").addClass("hidden");
+            }
         });
-
-
-        const data = await response1.json(); 
-        if (!data.clientSecret) {
-            throw new Error("Invalid clientSecret from server.");
-        }
-        const client_Secret = data.clientSecret;
-
-        console.log(client_Secret);
-
-        //  // Confirm card setup
-        const username = document.getElementById("name").value; console.log(username);
-        const { setupIntent, error: error1 } = await stripe.confirmCardSetup(client_Secret, {
-        payment_method: {
-            card: cardElement,
-            billing_details: { name: username },
-        },
-        });
-
-        if (error1) {
-        handleStripeError(error1);
-        return;
-        }
-
-        //  // Gather form data
-        const plan = document.getElementById("plan").value; console.log(plan);
-        const duration = document.getElementById("duration").value; console.log(duration);
-        const price = document.getElementById("billingprice").value;console.log(price);
-
-        if (!plan) {
-        $("#loadingIndicator").addClass("hidden");
-        document.getElementById("error-message").textContent = "Choose a plan.";
-        return;
-        }
-
-        //  // Send data to backend
-        const response = await fetch("http://127.0.0.1:8000/api/stripe/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json",'X-CSRF-TOKEN': csrfToken },
-        body: JSON.stringify({
-            setup_intent_id: setupIntent.id,
-            payment_method_id: paymentMethod.id,
-            plan,
-            duration,
-            price,
-        }),
-        });
-
-        const result = await response.json();
-        if (result.success) {
-            Swal.fire("Payment successful!", "", "success");
-            setTimeout(() => window.location.replace('/subscription'), 2000);
-        } else if (result.requires_action) {
-        const { error: confirmError } = await stripe.confirmCardPayment(result.payment_intent_client_secret);
-        if (confirmError) {
-            handleStripeError(confirmError);
-            return;
-        }
-        } else {
-        handleStripeError({ message: result.error || "An error occurred during payment processing." });
-        }
-    } catch (err) {
-        console.error(err);
-        document.getElementById("error-message").textContent = err.message || "An unexpected error occurred.";
-    } finally {
-        $("#loadingIndicator").addClass("hidden");
-    }
-    });
-
-    function handleStripeError(error) {
-    $("#loadingIndicator").addClass("hidden");
-    let errorMessage = "An error occurred. Please try again.";
-
-    if (error.type === "card_error" || error.type === "validation_error") {
-        errorMessage = error.message;
-    }
-
-    if (error.code) {
-        switch (error.code) {
-        case "card_declined":
-            errorMessage = "Your card was declined. Please use a different card.";
-            break;
-        case "expired_card":
-            errorMessage = "Your card has expired. Please use a valid card.";
-            break;
-        case "incorrect_cvc":
-            errorMessage = "The CVC code is incorrect. Please check and try again.";
-            break;
-        case "processing_error":
-            errorMessage = "There was a problem processing your card. Please try again later.";
-            break;
-        case "insufficient_funds":
-            errorMessage = "Your card has insufficient funds. Please use another card.";
-            break;
-        case "authentication_required":
-            errorMessage = "Authentication is required. Please follow the instructions to complete the payment.";
-            break;
-        default:
-            errorMessage = error.message || "An error occurred. Please try again.";
-        }
-    }
-
-    $("#error-message").text(errorMessage);
-    }
-
    </script>
    <script>
             document.querySelectorAll('.selectpland').forEach(button => {
@@ -618,7 +694,7 @@
                 vplan.value = ` ${plan}`;
 
                 // Log or use the discounted yearly price
-                console.log("Discounted Yearly Price: $" + discountedYearlyPrice.toFixed(2));
+                // console.log("Discounted Yearly Price: $" + discountedYearlyPrice.toFixed(2));
 
                 // Optionally, display it
                 //alert("Discounted Yearly Price: $" + discountedYearlyPrice.toFixed(2));

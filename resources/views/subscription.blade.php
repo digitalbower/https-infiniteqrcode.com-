@@ -70,52 +70,59 @@
                 </div>
               </div>
   
-              @if ($plans->plan != 'free')
-                <div class="flex items-center justify-between mb-6">
-                  <div>
-                    <label for="auto-renew" class="text-gray-100 font-medium">Enabled auto-renew</label>
-                    <p class="text-sm text-gray-400">
-                      Your subscription will automatically renew when it expires
-                    </p>
-                  </div>
-                  <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" value="1" class="sr-only peer" id="autorenew" {{$plans->renew_status }}>
-                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                  </label>
-                </div>
-              @endif
-  
-              @if ($plans->renew_status == 'disabled' && $plans->plan != 'free')
+              @if ($renew_status == 'Enabled' && $plans->plan  != 'free') 
+              <div class="flex items-center justify-between mb-6">
                 <div>
-                  <label for="auto-renew" class="text-gray-100 font-medium"> Autorenew Disabled </label>
+                  <label for="auto-renew" class="text-gray-100 font-medium">Enabled auto-renew</label>
                   <p class="text-sm text-gray-400">
-                    Your auto-renew option is disabled. Renew your plan before [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to continue enjoying uninterrupted access to all features and benefits.
+                    Your subscription will automatically renew when it expires
                   </p>
                 </div>
-              @endif
-  
-              @if ($plans->renew_status == 'disabled' && $plans->subscribe_status == 'Active' && $plans->plan != 'free')
-                <div>
-                  <label for="auto-renew" class="text-gray-100 font-medium"> Reactivate Your Plan Today </label>
-                  <p class="text-sm text-gray-400">
-                    Your plan has been canceled. Reactivate before [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to regain access to all features and benefits.
-                  </p>
-                </div>
-              @endif
-  
-              @if ($plans->renew_status == 'disabled' && $plans->subscribe_status == 'Active')
-                <div>
-                  <label for="auto-renew" class="text-gray-100 font-medium"> Activate a Plan to Unlock Features </label>
-                  <p class="text-sm text-gray-400">
-                    Your current plan has expired or is inactive. Choose a plan today to access advanced features and manage your QR codes effortlessly.
-                  </p>
-                </div>
-              @endif
-  
-                
-              <input type="hidden" value="<?= $subscribe; ?>" id="subscribe" name="subscribe">
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" value="1" class="sr-only peer" id="autorenew" data-autorenew="{{ $renew_status }}" 
+                  {{ $renew_status == "Enabled" ? 'checked' : '' }}>
+                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+            @endif
+
+            @if ($renew_status == 'disabled' && $plans->plan  != 'free') 
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <label for="auto-renew" class="text-gray-100 font-medium"> Autorenew Disabled </label>
+                <p class="text-sm text-gray-400">
+                  Your auto-renew option is disabled. Renew your plan before  [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to continue enjoying uninterrupted access to all features and benefits.
+                </p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" value="1" class="sr-only peer" id="autorenew" data-autorenew="{{ $renew_status }}" 
+                {{ $renew_status == "Enabled" ? 'checked' : '' }}>
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+            @endif
+
+            @if ($renew_status == 'disabled' && $subscribe == 'Inactive' && $plans->plan  != 'free') 
+              <div>
+                <label for="auto-renew" class="text-gray-100 font-medium"> Reactivate Your Plan Today </label>
+                <p class="text-sm text-gray-400">
+                  Your plan has been canceled. Reactivate before  [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to regain access to all features and benefits.
+                </p>
+              </div>
+            @endif
+
+            @if ($renew_status == 'disabled' && $subscribe == 'Inactive')
+              <div>
+                <label for="auto-renew" class="text-gray-100 font-medium"> Activate a Plan to Unlock Features </label>
+                <p class="text-sm text-gray-400">
+                  Your current plan has expired or is inactive. Choose a plan today to access advanced features and manage your QR codes effortlessly.
+                </p>
+              </div>
+            @endif
+                  
+              <input type="hidden" value="{{ $subscribe}}" id="subscribe" name="subscribe">
               <button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mt-3 {{ $plans->plan == 'free' ? 'hidden' : '';}}" id="cancel">
-                <?php echo $subscribe == 'disabled' ? 'Reactivate' : 'Cancel'; ?> Subscription
+                {{ $subscribe == 'Inactive' ? 'Reactivate' : 'Cancel'}} Subscription
               </button>
               <!-- Payment Methods -->
               <div class="bg-gray-700 border border-gray-700 rounded-lg shadow-lg overflow-hidden {{ $plans->plan == 'free' ? 'hidden' : ''; }}" id="card-info">
@@ -154,7 +161,7 @@
                        
                             <tr class="border-b border-gray-700">
                               <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($plans->subscription_start)) }}</td>
-                              <td class="py-3 px-4 text-gray-300"><?php echo date('F j, Y', strtotime($plans->subscription_end)); ?></td>
+                              <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($plans->subscription_end))}} </td>
                               <td class="py-3 px-4 text-gray-300">{{$plans->paid_amount}}</td>
                               <td class="py-3 px-4">
                                 <a href="{{$plans->ReceiptURL}}" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-300">
@@ -196,8 +203,8 @@
                 class="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-500"
                 placeholder="John Doe"
                 required>
-              <input type="hidden" name="stripe_customer_id " id="customer_id" value="<?= $plans->stripe_customer_id ; ?>">
-              <input type="hidden" name="price" id="price" value="<?= $plans->paid_amount; ?>">
+              <input type="hidden" name="stripe_customer_id " id="customer_id" value="{{$plans->stripe_customer_id}}">
+              <input type="hidden" name="price" id="price" value="{{$plans->paid_amount}}">
             </div>
             <div class="mb-4">
               <div id="card-element"></div>
@@ -211,12 +218,18 @@
           </form>
         </div>
       </div>
+      <div id="loadingIndicator"  class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
+        <div class="flex flex-col items-center">
+            <div class="loader animate-spin h-16 w-16 border-4 border-t-4 border-blue-500 rounded-full">
+
+        </div>
+        <p class="mt-4 text-white text-lg font-semibold">Loading...</p>
+      </div>
   <script src="https://js.stripe.com/v3/"></script>
   <script>
     var stripePublicKey = "{{ config('services.stripe.key') }}"; 
   </script>
   <script>
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const stripe = Stripe(stripePublicKey); // Use the key from Blade
      const elements = stripe.elements();
     const clientSecret = 'client_secret_from_server';
@@ -254,7 +267,7 @@
 
     try {
         // Step 1: Fetch Client Secret
-        const clientSecretResponse = await fetch('http://127.0.0.1:8000/api/stripe/create-payment-intent', {  
+        const clientSecretResponse = await fetch('/api/stripe/create-payment-intent', {  
             method: 'POST',
             headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
             credentials: 'include' 
@@ -292,7 +305,7 @@
         console.log(setupIntent);
 
         // Step 3: Save Payment Method
-        const saveResponse = await fetch('http://127.0.0.1:8000/api/stripe/save-paymentcard', {
+        const saveResponse = await fetch('/api/stripe/save-paymentcard', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
           body: JSON.stringify({
@@ -323,29 +336,31 @@
   
 
 </script>
-  {{-- <script>
+<script>
     $(document).ready(function() {
       $("#cancel").on('click', function() {
-        var sqb = $('#subscribe').val();
-        if (sqb != 'disabled') {
+        var subscription_status = $('#subscribe').val();
+        if (subscription_status != 'Inactive') {
           Swal.fire({
-            title: "Are you sure?",
-            text: " Do you want to cancel the Subscription now",
-            icon: "info",
-            buttons: true,
-            dangerMode: true,
-            showCancelButton: true,
+            text: "Do you want to cancel the Subscription now",
+            icon: "warning",
+            showCancelButton: true,  // Replaces "buttons"
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6"
           }).then((result) => {
             if (result.isConfirmed) {
+              $("#loadingIndicator").removeClass("hidden");
               $.ajax({
                 type: "POST",
-                url: "bsave/renewsubscription",
+                url: "{{route('renew-subscription')}}",
                 data: {
-                  canceltype: "cancel"
+                  canceltype: "cancel",
+                  '_token':csrfToken
                 },
                 dataType: "json",
                 success: function(response) {
-                  alert(response.success);
                   if (response.success) {
                     Swal.fire("Subscription Cancelled");
                     setTimeout(() => {
@@ -354,63 +369,76 @@
                   } else if (!response.success) {
                     console.log(response.success);
                   }
+                },
+                complete: function () {
+                  $("#loadingIndicator").addClass("hidden"); // Hide loader
                 }
               });
             }
           });
         } else {
           Swal.fire({
-            title: "Are you sure?",
             text: " Do you want to Reactivate the Subscription now",
-            icon: "info",
-            buttons: true,
-            dangerMode: true,
-            showCancelButton: true,
+            icon: "warning",
+            showCancelButton: true,  // Replaces "buttons"
+            confirmButtonText: "Yes",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6"
           }).then((result) => {
             if (result.isConfirmed) {
+              $("#loadingIndicator").removeClass("hidden");
               $.ajax({
                 type: "POST",
-                url: "bsave/renewsubscription",
+                url: "{{route('renew-subscription')}}",
                 data: {
-                  canceltype: "Reactivate"
+                  canceltype: "Reactivate",
+                  '_token':csrfToken
                 },
                 dataType: "json",
                 success: function(response) {
-                  alert(response.success);
                   if (response.success) {
-                    Swal.fire("Subscription Cancelled");
+                    Swal.fire("Subscription Reactivated");
                     setTimeout(() => {
                       location.href = 'upgrade';
                     }, 2000);
                   } else if (!response.success) {
                     console.log(response.success);
                   }
+                },
+                complete: function () {
+                  $("#loadingIndicator").addClass("hidden"); // Hide loader
                 }
               });
             }
           });
         }
-      })
-      $("#autorenew").change(function() {
-        if ($(this).is(":checked")) {
+      });
+
+        $("#autorenew").change(function() {
+        var isChecked = $(this).is(":checked");
+        var renew_status = $("#autorenew").data('autorenew');
+        if (isChecked) {
           Swal.fire({
-              title: "Are you sure?",
               text: " Do you want to Enable the Auto-renew Now",
-              icon: "info",
-              buttons: true,
-              dangerMode: true,
-              showCancelButton: true,
+              icon: "warning",
+              showCancelButton: true,  // Replaces "buttons"
+              confirmButtonText: "Yes",
+              cancelButtonText: "Cancel",
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6"
             })
             .then((result) => {
               if (result.isConfirmed) {
+                $("#loadingIndicator").removeClass("hidden");
                 $.ajax({
                   type: "POST",
-                  url: "bsave/renewsubscription",
+                  url: "{{route('renew-subscription')}}",
                   data: {
-                    canceltype: "enable"
+                    canceltype: "Enabled",
+                    '_token':csrfToken
                   },
                   success: function(response) {
-                    alert(response.success);
                     if (response.success) {
                       Swal.fire("Subscription Auto renewal Enabled");
                       setTimeout(() => {
@@ -419,32 +447,40 @@
                     } else {
                       console.log(response.success);
                     }
+                  },
+                  complete: function () {
+                    $("#loadingIndicator").addClass("hidden"); // Hide loader
                   }
                 });
               }
+              else {
+                $("#autorenew").prop("checked", false); // Revert to unchecked
+            }
             });
           // Add your logic for ON state here
         } else {
           Swal.fire({
-              title: "Are you sure?",
               text: " Do you want to Disable the Auto-renew Now",
-              icon: "info",
-              buttons: true,
-              dangerMode: true,
-              showCancelButton: true,
+              icon: "warning",
+              showCancelButton: true,  // Replaces "buttons"
+              confirmButtonText: "Yes",
+              cancelButtonText: "Cancel",
+              confirmButtonColor: "#d33",
+              cancelButtonColor: "#3085d6"
             })
             .then((result) => {
               if (result.isConfirmed) {
+                $("#loadingIndicator").removeClass("hidden");
                 $.ajax({
                   type: "POST",
-                  url: "bsave/renewsubscription",
+                  url: "{{route('renew-subscription')}}",
                   data: {
-                    canceltype: "disable"
+                    canceltype: "disabled",
+                    '_token':csrfToken
                   },
                   success: function(response) {
-                    alert(response.success);
                     if (response.success) {
-                      Swal.fire("subscription Auto renewal Disabled");
+                      Swal.fire("Subscription Auto renewal Disabled");
                       setTimeout(() => {
                         location.reload();
                       }, 2000);
@@ -454,15 +490,19 @@
                         //location.href = 'upgrade';
                       }, 2000);
                     }
+                  },
+                  complete: function () {
+                    $("#loadingIndicator").addClass("hidden"); // Hide loader
                   }
                 });
-              }
+              }else {
+                $("#autorenew").prop("checked", true); // Revert to checked
+            }
             });
-          // Add your logic for OFF state here
         }
       });
     });
-  </script> --}}
+  </script>
    <script>
     document.querySelectorAll('input[name="card-default"]').forEach((radio) => {
   radio.addEventListener('change', (event) => {
@@ -481,7 +521,7 @@
       //e.preventDefault();
       const paymentIntentId = $('#payment_method_id').val();
       $.ajax({
-        url: "http://127.0.0.1:8000/api/stripe/payment-details", // Replace with your backend PHP file
+        url: "/api/stripe/payment-details", // Replace with your backend PHP file
         method: 'POST',
         data: {
           payment_intent_id: paymentIntentId,
@@ -559,7 +599,7 @@
 function updateDefaultCard(cardId,customerid) { 
     // Make an API call to update the default card
     $.ajax({
-      url: "http://127.0.0.1:8000/api/stripe/update-default-card", // Replace with the correct endpoint
+      url: "/api/stripe/update-default-card", // Replace with the correct endpoint
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ "cardId":cardId,"customerid":customerid,'_token': csrfToken }),

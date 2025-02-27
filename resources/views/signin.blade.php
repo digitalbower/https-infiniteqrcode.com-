@@ -257,7 +257,6 @@
           <form id="registerform" class="space-y-4" action="{{ route('auth.register') }}" method="POST">
     @csrf
     <!-- First Name -->
-    <div>
       <input
         type="text"
         placeholder="First Name"
@@ -269,10 +268,7 @@
       @error('firstname')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
-    </div>
-
     <!-- Last Name -->
-    <div>
       <input
         type="text"
         placeholder="Last Name"
@@ -284,39 +280,30 @@
       @error('lastname')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
-    </div>
-
     <!-- Email -->
-    <div>
       <input
         type="email"
         placeholder="Email"
         id="Email1"
         name="email"
         value="{{ old('email') }}"
-        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('email') border-red-500 @enderror"
+        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
       />
       @error('email')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
-    </div>
 
-    <!-- Country Code -->
-    <div>
       <select
-        class="w-full rounded-md text-gray-400 border py-3 px-1"
+        class="w-full rounded-md mr-4 text-gray-400 border py-3 px-1 w-0.5"
         name="countrycode"
-        id="countrycode">
+        id="countrycode"
+            readonly>
           @foreach ($countries as $country)
               <option value="{{ $country['dial_code'] }}">
                   {{ $country['name'] }} ({{ $country['dial_code'] }})
               </option>
           @endforeach
       </select>
-    </div>
-
-    <!-- Mobile -->
-    <div>
       <input
         type="tel"
         placeholder="Mobile"
@@ -328,31 +315,25 @@
       @error('phonenumber')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
-    </div>
-
-    <!-- Password -->
     <div class="relative">
       <input
         type="password"
         placeholder="Password"
         id="Password1"
         name="password"
-        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('password') border-red-500 @enderror"
+        class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
       />
       <button
       type="button"
-      id="togglePassword"
       class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
       onclick="toggleSignUpPasswordVisibility()"
     >
-      <i class="fas fa-eye" id="eyeIcon"></i>
+      <i class="fas fa-eye" id="signUpEyeIcon"></i>
     </button>
       @error('password')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
     </div>
-
-    <!-- Confirm Password -->
     <div class="relative">
       <input
         type="password"
@@ -361,38 +342,37 @@
         name="password_confirmation"
         class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent @error('CPassword1') border-red-500 @enderror"
       />
+    <br />
       <button
       type="button"
-      id="togglePassword"
       class="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
       onclick="toggleConfirmPasswordVisibility()"
     >
-      <i class="fas fa-eye" id="eyeIcon"></i>
+      <i class="fas fa-eye" id="confirmEyeIcon"></i>
     </button>
       @error('CPassword1')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
     </div>
-
-    <!-- Terms -->
-    <div class="relative flex items-center">
+    <div class="relative flex items-center mb-3">
+    <div>
+      <label for="terms" class="ml-2 text-gray-700">
       <input
         type="checkbox"
         id="terms"
         name="terms"
         class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring focus:ring-blue-200"
       />
-      <label for="terms" class="ml-2 text-gray-700">
         I agree to all
-        <a style="color: initial;text-decoration: underline;" href="terms" target="_blank">Terms & Conditions</a>
-        <br>
-       <span id="termsError"></span>
+        <a href="terms" target="_blank" style="text-decoration: underline;">Terms & Conditions</a>
+        <br />
         @error('terms')
         <small class="error-message text-red-500">{{ $message }}</small>
         @enderror
       </label>
     </div>
-
+    <br />
+  </div>
     <button
       type="submit"
       class="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition-colors"
@@ -401,9 +381,9 @@
     </button>
   </form>
           <span class="success"></span>
-          {{-- <div class="text-center text-gray-500 mt-4">or</div>
-          <div class="mt-4">
+          <div class="text-center text-gray-500 mt-4">or</div>
             <div class="mt-4">
+              <a href="{{ route('google.login') }}" >
               <button
                 class="w-full flex items-center justify-center bg-white text-gray-700 transition-colors"
               >
@@ -426,9 +406,9 @@
                   data-size="large"
                 ></div>
               </button>
+              </a>
             </div>
-          </div> --}}
-        </div>
+          </div>
       </div>
     </section>
     <div
@@ -618,322 +598,166 @@
         }
       });  
      
-        
-        // $("#registerform").on("submit", function (e) {
-        //   e.preventDefault();
-        //   let isValid = false;
-
-        //   // Clear previous error messages
-        //   $(".error-message").text("");
-
-        //   // Validate First Name
-        //   const firstName = $("#firstName1").val().trim();
-        //   if (firstName === "") {
-        //     $("#firstName1")
-        //       .next(".error-message")
-        //       .text("First Name is required");
-        //     isValid = false;
-        //   } else {
-        //     isValid = true;
-        //   }
-
-        //   // Validate Last Name
-        //   const Mobile = $("#Mobile1").val().trim();
-        //   if (Mobile === "") {
-        //     $("#Mobile1").next(".error-message").text("Mobile No. is required");
-        //     isValid = false;
-        //   } else {
-        //     isValid = true;
-        //   }
-        //   const lastName = $("#lastName1").val().trim();
-        //   if (lastName === "") {
-        //     $("#lastName1")
-        //       .next(".error-message")
-        //       .text("Last Name is required");
-        //     isValid = false;
-        //   } else {
-        //     isValid = true;
-        //   }
-
-        //   // Validate Email
-        //   const email = $("#Email1").val().trim();
-        //   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        //   if (email === "" || !emailPattern.test(email)) {
-        //     $("#Email1")
-        //       .next(".error-message")
-        //       .text("A valid Email is required");
-        //     isValid = false;
-        //   } else {
-        //     isValid = true;
-        //   }
-
-        //   // Validate Password
-        //   const password = $("#Password1").val().trim();
-        //   if (password === "") {
-        //     $(".perror-message").text("Password is required");
-        //     isValid = false;
-        //   } else {
-        //     isValid = true;
-        //   }
-
-        //   // Validate Confirm Password
-        //   const confirmPassword = $("#CPassword1").val().trim();
-        //   if (confirmPassword !== password) {
-        //     $(".cperror-message").text("Passwords do not match");
-        //     isValid = false;
-        //   } else {
-        //     isValid = true;
-        //   }
-
-        //   // Validate Terms & Conditions
-        //   if (!$("#terms").is(":checked")) {
-        //     $(".error-message1").text(
-        //       "You must agree to the Terms & Conditions"
-        //     );
-        //     isValid = false;
-        //   } else {
-        //     isValid = true;
-        //   }
-
-        //   // If valid, send data via AJAX
-        //   timeout = 1000; 
-        //   if (isValid) {
-        //     $("#loadingIndicator").removeClass("hidden");
-        //     $.ajax({
-        //       type: "POST",
-        //       url: "{{ route('auth.register') }}",
-        //       data: $("#registerform").serialize(),
-        //       success: function (response) {
-        //         if (response == "1") {
-
-        //           setTimeout(() => {
-        //           location.href = 'dashboard.php';
-        //         }, 2000);
-                
-             
-        //       }
-                
-        //         else if (response == "2") {
-        //           $(".success").text("Fill missed values");
-        //           $(".success").addClass("text-red-600");
-        //         } else if (response == "3") {
-        //           $(".success").text("User Already Exists");
-        //           $(".success").addClass("text-red-600");
-        //         } else {
-        //           $(".success").text("Contact admin");
-        //           $(".success").addClass("text-red-600");
-        //         }
-        //       },
-        //       complete: function () {
-        //         $("#loadingIndicator").addClass("hidden");
-        //       },
-        //       error: function (data) {
-        //         $("#loadingIndicator").addClass("hidden");
-        //         $(".success").text("An error occurred. Please try again.");
-        //         $(".success").addClass("text-red-600");
-        //       },
-        //     });
-        //   }
-        // });
-       
-
-//         $(".Password1").on("click", function () {
-//           const passwordInput = $("#Password1");
-//           // Toggle input type between 'password' and 'text'
-//           const type =
-//             passwordInput.attr("type") === "password" ? "text" : "password";
-//           // Toggle the eye icon SVG
-//           const eyeIcon = $(".Password1 span");
-//           if (passwordInput.val() !== "") {
-//             passwordInput.attr("type", type);
-//             if (type === "password") {
-//               eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
-//               eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
-//             } else {
-//               eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
-//               eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
-//             }
-//           } else {
-//             $(".success").text("Add Password");
-//             $(".success").addClass("text-red-600");
-//           }
-//         });
-//         $(".CPassword1").on("click", function () {
-//           const passwordInput = $("#CPassword1");
-//           // Toggle input type between 'password' and 'text'
-//           const type =
-//             passwordInput.attr("type") === "password" ? "text" : "password";
-//           // Toggle the eye icon SVG
-//           const eyeIcon = $(".CPassword1 span");
-//           if (passwordInput.val() !== "") {
-//             passwordInput.attr("type", type);
-//             if (type === "password") {
-//               eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
-//               eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
-//             } else {
-//               eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
-//               eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
-//             }
-//           } else {
-//             $(".success").text("Add Confirm Password");
-//             $(".success").addClass("text-red-600");
-//           }
-//         });
-
-// $('#login1').on('click', function () {
-//     let isValid = false;
-//     // Clear previous error messages
-//     $('.error-message').text('');
-//     // Validate Username or Email
-//     const username = $('#username').val().trim();
-//     if (username === '') {
-//         $('#username').next('.error-message').text('Username or Email needed');
-//         isValid = false;
-//     } else {
-//         $('#username').next('.error-message').text('');
-//         isValid = true;
-//     }
-//     // Validate Password
-//     const password = $('#password').val();
-//     if (password === '') {
-//         $('#password').next('.error-message').text('Password is needed');
-//         isValid = false;
-//     } else {
-//         $('#password').next('.error-message').text('');
-//         isValid = true;
-//     }
-
-//     timeout = 1000; // Adjust timeout for redirection delay
-
-//     // If valid, send data via AJAX
-//     if (isValid) {
-//         $('#loadingIndicator').removeClass('hidden');  // Show loader
-//         $.ajax({
-//             url: 'qrbackend/login.php',
-//             type: 'POST',
-//             data: {
-//                 username: username,
-//                 password: password
-//             },
-//             dataType: 'json',
-//             success: function (response) {
-//               console.log('Response:', response); // Log the response for debugging
-
-//                 if (response.status === 'success' && response.message === '1') {
-//                     // Login success, redirect to dashboard
-//                     setTimeout(() => {
-//                         $('#loadingIndicator').addClass('hidden');  // Hide loader
-//                         window.location.href = 'dashboard.php';
-//                     }, timeout);
-//                 } else if (response.status === 'success' && response.message === '2') {
-//                     // Profile redirect
-//                     setTimeout(() => {
-//                         $('#loadingIndicator').addClass('hidden');  // Hide loader
-//                         window.location.href = 'Profile.php';
-//                     }, timeout);
-//                 } else {
-//                     // Error handling
-//                     $('.success').text(response.message);
-//                     $('.success').addClass('text-red-600');
-//                     $('#loadingIndicator').addClass('hidden');  // Hide loader in case of error
-//                 }
-//             },
-//             complete: function () {
-//                 // Make sure the loader is hidden at the end of the process
-//                 $('#loadingIndicator').addClass('hidden');
-//             },
-//             error: function () {
-//                 $('#loadingIndicator').addClass('hidden');
-//                 $('.success').text('An error occurred. Please try again.');
-//                 $('.success').addClass('text-red-600');
-//             }
-//         });
-//     }
-// });
-
-      });
-    </script>
-    <script>
-      // Toggle between Sign In and Sign Up forms
-      document
-        .getElementById("signInTab")
-        .addEventListener("click", function () {
-          document
-            .getElementById("login")
-            .parentElement.classList.remove("hidden");
-          document.getElementById("signUpSection").classList.add("hidden");
-          document
-            .getElementById("signInTab")
-            .classList.add("border-red-600", "text-[#1B2937]");
-          document
-            .getElementById("signUpTab")
-            .classList.remove("border-b-2", "border-red-600", "text-gray-400");
-          document
-            .getElementById("signUpTab")
-            .classList.add("hover:text-gray-600");
-        });
-
-      document
-        .getElementById("signUpTab")
-        .addEventListener("click", function () {
-          document
-            .getElementById("login")
-            .parentElement.classList.add("hidden");
-          document.getElementById("signUpSection").classList.remove("hidden");
-          document
-            .getElementById("signUpTab")
-            .classList.remove("text-gray-400", "hover:text-gray-600");
-          document
-            .getElementById("signUpTab")
-            .classList.add("border-b-2", "border-red-600", "text-[#1B2937]");
-          document
-            .getElementById("signInTab")
-            .classList.remove("border-b-2", "border-red-600", "text-[#1B2937]");
-        });
-
-      // Toggle Password Visibility
-      function togglePasswordVisibility() {
-        const passwordInput = document.getElementById("password"); 
-        const eyeIcon = document.getElementById("eyeIcon");
-        if (passwordInput.type === "password") { 
-          passwordInput.type = "text";
-          eyeIcon.classList.remove("fa-eye");
-          eyeIcon.classList.add("fa-eye-slash");
-        } else {
-          passwordInput.type = "password";
-          eyeIcon.classList.remove("fa-eye-slash");
-          eyeIcon.classList.add("fa-eye");
-        }
-      }
-
-      function toggleSignUpPasswordVisibility() {
-        const signUpPasswordInput = document.getElementById("Password1"); 
-        const eyeIcon = document.getElementById("eyeIcon");
-        if (signUpPasswordInput.type === 'password') { 
-          signUpPasswordInput.type = 'text';  
-          eyeIcon.classList.remove('fa-eye');
-          eyeIcon.classList.add('fa-eye-slash'); 
-        } else { 
-          signUpPasswordInput.type = 'password';
-          eyeIcon.classList.remove('fa-eye-slash');
-          eyeIcon.classList.add('fa-eye');
-        }
-      }
       
-
-      function toggleConfirmPasswordVisibility() {
-        const confirmPasswordInput = document.getElementById("CPassword1");
-        const eyeIcon = document.getElementById("eyeIcon");
-        if (confirmPasswordInput.type === "password") {
-          confirmPasswordInput.type = "text";
-          eyeIcon.classList.remove("fa-eye");
-          eyeIcon.classList.add("fa-eye-slash");
+      $(".Password1").on("click", function () {
+        const passwordInput = $("#Password1");
+        // Toggle input type between 'password' and 'text'
+        const type =
+          passwordInput.attr("type") === "password" ? "text" : "password";
+        // Toggle the eye icon SVG
+        const eyeIcon = $(".Password1 span");
+        if (passwordInput.val() !== "") {
+          passwordInput.attr("type", type);
+          if (type === "password") {
+            eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
+            eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
+          } else {
+            eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
+            eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
+          }
         } else {
-          confirmPasswordInput.type = "password";
-          eyeIcon.classList.remove("fa-eye-slash");
-          eyeIcon.classList.add("fa-eye");
+          $(".success").text("Add Password");
+          $(".success").addClass("text-red-600");
         }
+      });
+      $(".CPassword1").on("click", function () {
+        const passwordInput = $("#CPassword1");
+        // Toggle input type between 'password' and 'text'
+        const type =
+          passwordInput.attr("type") === "password" ? "text" : "password";
+        // Toggle the eye icon SVG
+        const eyeIcon = $(".CPassword1 span");
+        if (passwordInput.val() !== "") {
+          passwordInput.attr("type", type);
+          if (type === "password") {
+            eyeIcon.removeClass(`mdi-eye-outline`); // Eye icon
+            eyeIcon.addClass(`mdi-eye-off-outline`); // Eye icon
+          } else {
+            eyeIcon.addClass(`mdi-eye-outline`); // Eye slash icon
+            eyeIcon.removeClass(`mdi-eye-off-outline`); // Eye slash icon
+          }
+        } else {
+          $(".success").text("Add Confirm Password");
+          $(".success").addClass("text-red-600");
+        }
+      });
+
+
+    });
+  </script>
+  <script>
+    // Toggle between Sign In and Sign Up forms
+    document
+      .getElementById("signInTab")
+      .addEventListener("click", function () {
+        document
+          .getElementById("login")
+          .parentElement.classList.remove("hidden");
+        document.getElementById("signUpSection").classList.add("hidden");
+        document
+          .getElementById("signInTab")
+          .classList.add("border-red-600", "text-[#1B2937]");
+        document
+          .getElementById("signUpTab")
+          .classList.remove("border-b-2", "border-red-600", "text-gray-400");
+        document
+          .getElementById("signUpTab")
+          .classList.add("hover:text-gray-600");
+      });
+
+    document
+      .getElementById("signUpTab")
+      .addEventListener("click", function () {
+        document
+          .getElementById("login")
+          .parentElement.classList.add("hidden");
+        document.getElementById("signUpSection").classList.remove("hidden");
+        document
+          .getElementById("signUpTab")
+          .classList.remove("text-gray-400", "hover:text-gray-600");
+        document
+          .getElementById("signUpTab")
+          .classList.add("border-b-2", "border-red-600", "text-[#1B2937]");
+        document
+          .getElementById("signInTab")
+          .classList.remove("border-b-2", "border-red-600", "text-[#1B2937]");
+      });
+
+    // Toggle Password Visibility
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("password");
+      const eyeIcon = document.getElementById("eyeIcon");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
       }
-    </script>
-  </body>
+    }
+
+    function toggleSignUpPasswordVisibility() {
+      const signUpPasswordInput = document.getElementById("Password1");
+      const signUpEyeIcon = document.getElementById("signUpEyeIcon");
+      if (signUpPasswordInput.type === "password") {
+        signUpPasswordInput.type = "text";
+        signUpEyeIcon.classList.remove("fa-eye");
+        signUpEyeIcon.classList.add("fa-eye-slash");
+      } else {
+        signUpPasswordInput.type = "password";
+        signUpEyeIcon.classList.remove("fa-eye-slash");
+        signUpEyeIcon.classList.add("fa-eye");
+      }
+    }
+
+    function toggleConfirmPasswordVisibility() {
+      const confirmPasswordInput = document.getElementById("CPassword1");
+      const confirmEyeIcon = document.getElementById("confirmEyeIcon");
+      if (confirmPasswordInput.type === "password") {
+        confirmPasswordInput.type = "text";
+        confirmEyeIcon.classList.remove("fa-eye");
+        confirmEyeIcon.classList.add("fa-eye-slash");
+      } else {
+        confirmPasswordInput.type = "password";
+        confirmEyeIcon.classList.remove("fa-eye-slash");
+        confirmEyeIcon.classList.add("fa-eye");
+      }
+    }
+  </script>
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const menuOverlay = document.getElementById("menuOverlay");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const menuClose = document.getElementById("menuClose");
+
+    menuToggle.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+      menuOverlay.classList.toggle("show");
+    });
+
+    menuClose.addEventListener("click", () => {
+      mobileMenu.classList.add("hidden");
+      menuOverlay.classList.remove("show");
+    });
+
+    menuOverlay.addEventListener("click", () => {
+      mobileMenu.classList.add("hidden");
+      menuOverlay.classList.remove("show");
+    });
+    const menuLinks = document.querySelectorAll("#mobileMenu nav a");
+    menuLinks.forEach(link => {
+      link.addEventListener("click", closeMobileMenu);
+    });
+
+    function closeMobileMenu() {
+      const mobileMenu = document.getElementById("mobileMenu");
+      mobileMenu.classList.add("hidden");
+      menuOverlay.classList.remove("show");
+    }
+
+  </script>
+
+</body>
 </html>

@@ -749,18 +749,11 @@ class MyQRCodeController extends Controller
     }
     public function createVcardQrcode(Request $request){
         $request->validate([
-            'contactimg'=>'required|file|mimes:jpeg,png,jpg',
+            'contactimg'=>'nullable|file|mimes:jpeg,png,jpg',
             'first_name'=> 'required',
             'last_name'=> 'required',
             'mobile'=> 'required',
             'email'=> 'required',
-            'company'=> 'required',
-            'street'=> 'required',
-            'website'=> 'required',
-            'city'=> 'required',
-            'zip'=> 'required',
-            'state'=> 'required',
-            'country'=> 'required',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -805,7 +798,7 @@ class MyQRCodeController extends Controller
           VCardqr::create([
             'code' => $projectCode,
             'qrtype' => $request->qroption,
-            'contactimg'=>$filePath,
+            'contactimg'=>$filePath ?? null,
             'first_name'=> $request->first_name,
             'last_name'=> $request->last_name,
             'mobile'=> $request->mobile,
@@ -1742,13 +1735,6 @@ class MyQRCodeController extends Controller
             'last_name'=> 'required',
             'mobile'=> 'required',
             'email'=> 'required',
-            'company'=> 'required',
-            'street'=> 'required',
-            'website'=> 'required',
-            'city'=> 'required',
-            'zip'=> 'required',
-            'state'=> 'required',
-            'country'=> 'required',
             'projectname' => 'required',
             'startdate' => 'required|date',
             'enddate' => 'required|date',
@@ -1840,10 +1826,13 @@ class MyQRCodeController extends Controller
 
         $qrCode = VCardqr::where('code',$code)->first(); 
 
+        $fullName = trim($qrCode->first_name . ' ' . $qrCode->last_name);
+        $displayName = !empty($fullName) ? $fullName : $qrCode->company;
+
         $vcard = "BEGIN:VCARD\n";
         $vcard .= "VERSION:3.0\n";
-        $vcard .= "FN:$qrCode->first_name\n";
-        $vcard .= "ORG:$qrCode->company\n";
+        $vcard .= "N:" . ($qrCode->first_name ?? '') . ";" . ($qrCode->first_name ?? '') . ";;;\n"; // Structured name
+        $vcard .= "FN:$displayName\n"; 
         $vcard .= "TEL:$qrCode->mobile\n";
         $vcard .= "EMAIL:$qrCode->email\n";
         $vcard .= "URL:$qrCode->website\n";
@@ -1957,7 +1946,7 @@ class MyQRCodeController extends Controller
         )
         ->where('userid', $userId)
         ->groupBy('folder_name')
-        ->orderBy('created_At', 'asc')
+        ->orderBy('created_At', 'DESC')
         ->get();
 
         $tables = [
@@ -1980,7 +1969,7 @@ class MyQRCodeController extends Controller
         }
 
        if ($query !== null) {
-            $results = $query->get(); 
+            $results = $query->orderBy('date', 'DESC')->get(); 
         } else {
             $results = collect(); 
         }
@@ -1994,7 +1983,6 @@ class MyQRCodeController extends Controller
 
             $projectName = QrBasicInfo::where('userid', $userId)
                 ->where('project_code',$row->code)
-                ->orderBy('id', 'ASC')
                 ->select('project_name','qrtable')
                 ->first(); 
 
@@ -2037,11 +2025,11 @@ class MyQRCodeController extends Controller
     
             $combinedResults = $combinedResults->merge($results);
         }
+        $combinedResults = $combinedResults->sortByDesc('date')->values();
 
         foreach ($combinedResults as $item) {
             $projectName = DB::table('qr_basic_info')
                 ->where('project_code', $item->code)
-                ->orderBy('created_at', 'asc')
                 ->select('project_name','qrtable')
                 ->first(); 
     

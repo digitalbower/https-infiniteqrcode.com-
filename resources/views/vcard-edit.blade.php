@@ -119,35 +119,24 @@
                                 </div>
 
                                 <div>
-                                    <label class="block font-medium mb-1">Company:*</label>
+                                    <label class="block font-medium mb-1">Company:</label>
                                     <input type="text" placeholder="Company"
                                         class="border rounded-md p-2 focus:ring-2 mb-2 focus:ring-blue-500"
                                         name="company" id="company" value="{{$vcard->company}}" />
-                                      
                                 </div>
-                                <small id="company_name"></small>
-                                @error('company')
-                                 <small class="text-red-700 company">{{ $message }}</small>
-                                @enderror 
 
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <label class="block font-medium mb-1">Street:</label>
                                         <input type="text" placeholder="Street"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="street" id="street" value="{{$vcard->street}}"/>
-                                        @error('street')
-                                            <small class="text-red-700 street">{{ $message }}</small>
-                                        @enderror 
+                                            name="street" id="street" value="{{$vcard->street}}"/>                                   
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">Website:</label>
                                         <input type="text" placeholder="Website"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="website" id="Website" value="{{$vcard->website}}"/>
-                                        @error('website')
-                                            <small class="text-red-700 street">{{ $message }}</small>
-                                        @enderror
+                                            name="website" id="Website" value="{{$vcard->website}}"/>                                      
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
@@ -155,19 +144,13 @@
                                         <label class="block font-medium mb-1">City:</label>
                                         <input type="text" placeholder="City"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="city" id="city"  value="{{$vcard->city}}"/>
-                                        @error('city')
-                                            <small class="text-red-700 city">{{ $message }}</small>
-                                        @enderror 
+                                            name="city" id="city"  value="{{$vcard->city}}"/>                                       
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">ZIP:</label>
                                         <input type="text" placeholder="ZIP"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="zip" id="zip" value="{{$vcard->zip}}"/>
-                                        @error('zip')
-                                            <small class="text-red-700 zip">{{ $message }}</small>
-                                        @enderror 
+                                            name="zip" id="zip" value="{{$vcard->zip}}"/>                                     
                                     </div>
                                 </div>
 
@@ -176,19 +159,13 @@
                                         <label class="block font-medium mb-1">State:</label>
                                         <input type="text" placeholder="State"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="state" id="state" value="{{$vcard->state}}"/>
-                                        @error('state')
-                                            <small class="text-red-700 state">{{ $message }}</small>
-                                        @enderror 
+                                            name="state" id="state" value="{{$vcard->state}}"/>                                   
                                     </div>
                                     <div>
                                         <label class="block font-medium mb-1">Country:</label>
                                         <input type="text" placeholder="Country"
                                             class="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500"
-                                            name="country" id="country" value="{{$vcard->country}}"/>
-                                        @error('country')
-                                            <small class="text-red-700 country">{{ $message }}</small>
-                                        @enderror 
+                                            name="country" id="country" value="{{$vcard->country}}"/>                                      
                                     </div>
                                 </div>
 
@@ -272,7 +249,6 @@
                                 </div>
                                 <input id="folderinput" type="hidden" name="folderinput" value="{{ $vcard->folder_name ?? '' }}" />
                               </div>                            
-                              <small id="folder"></small>
                               @error('folderinput')
                               <small class="text-red-700 folderinput">{{ $message }}</small>
                               @enderror
@@ -453,7 +429,7 @@
                                                 <div class="relative flex justify-center py-8">
                                                     <div
                                                         class="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
-                                                        <img src="{{ Storage::disk('public')->exists($vcard->contactimg) ? asset('storage/'.$vcard->contactimg) : asset('images/default.jpeg') }}" alt="Profile"
+                                                        <img src="{{ $vcard->contactimg && Storage::disk('public')->exists($vcard->contactimg) ? asset('storage/'.$vcard->contactimg) : asset('images/download.jpeg') }}" alt="Profile"
                                                             class="w-full h-full object-cover" id="propreview"
                                                             name="propreview">
                                                     </div>
@@ -462,9 +438,9 @@
 
                                             <!-- Name and Title -->
                                             <div class="text-center space-y-1 mb-2 mt-1">
-                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name">{{ strtoupper($vcard->first_name . ' ' . $vcard->last_name) }}</h1>
-                                                <p class="text-white text-sm tracking-widest font-light company">
-                                                    BUSINESS CONSULTANT</p>
+                                                <h1 class="text-[#FFB95C] text-2xl font-bold tracking-wider name" id="name">{{ strtoupper($vcard->first_name . ' ' . $vcard->last_name) }}</h1>
+                                                <p class="text-white text-sm tracking-widest font-light company" id="pcompany1">
+                                                    {{$vcard->company}}</p>
                                             </div>
 
                                             <!-- Contact Form -->
@@ -627,6 +603,7 @@
                 return this.optional(element) || /\.(jpg|jpeg|png)$/i.test(value);
             }, "Only JPG, JPEG, or PNG files are allowed.");
             $("#editvcardqr_form").validate({   
+                ignore: [],     
                 rules: {  
                 contactimg:{
                     imageType: true
@@ -635,16 +612,6 @@
                 last_name:"required",
                 mobile:"required",
                 email:"required",
-                company:"required",
-                street:"required",
-                website:{
-                    required: true,
-                    url: true
-                },
-                city:"required",
-                zip:"required",
-                state:"required",
-                country:"required",
                 projectname:"required",
                 folderinput:"required",
                 startdate: {
@@ -665,16 +632,6 @@
                 last_name:"Enter Last Name",
                 mobile:"Enter mobile",
                 email:"Enter email",
-                company:"Enter company",
-                street:"Enter street",
-                website:{
-                    required:"Enter website",
-                    url:"Enter a valid URL"
-                },
-                city:"Enter city",
-                zip:"Enter zip",
-                state:"Enter state",
-                country:"Enter country",
                 projectname:"Enter Project Name",
                 folderinput:"Choose the Folder Name",
                 startdate: {
@@ -691,7 +648,6 @@
                 errorClass: "text-red-500",
                 errorPlacement: function (error, element) {
                 if (element.attr("type") == "file") error.appendTo("#contactimg");
-                else if(element.attr("name") == "company") error.appendTo("#company_name")
                     else error.insertAfter(element);
                 }
             });
@@ -755,6 +711,8 @@
             function syncFields() {
                 
                 // Sync values from source form to target form
+                document.getElementById('name').textContent  = document.getElementById('first_name').value + " " + document.getElementById('lastname').value;
+                document.getElementById('pcompany1').textContent  = document.getElementById('company').value;
                 document.getElementById('firstName').value = document.getElementById('first_name').value;
                 document.getElementById('lastName').value = document.getElementById('lastname').value;
                 document.getElementById('phone').value = document.getElementById('mobile').value;

@@ -21,13 +21,25 @@ class User extends Authenticatable
 
      protected $table = 'users';
      
-    protected $fillable = [
+     protected $fillable = [
         'firstname',
         'lastname',
         'email',
         'password',
         'countrycode',
         'phonenumber',
+        'stripe_customer_id',
+        'renew_status',
+        'subscribe_status',
+        'propic',
+        'subscription_start',
+        'subscription_end',
+        'payment_method_id',
+        'payment_intent_id',
+        'plan',
+        'price',
+        'duration',
+        'google_id'
     ];
 
     /**
