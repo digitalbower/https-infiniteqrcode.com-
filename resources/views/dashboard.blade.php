@@ -110,7 +110,7 @@ src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
                         class="text-white capitalize">{{$user->plan}}</span></div>
                       @if(auth()->user()->plan == "free")
                       <div class="flex justify-between items-center mb-2"><span class="text-gray-400">Plan Validity</span><span
-                        class="text-green-500">Valid till {{ $formattedDate }}  (7 Days)</span></div>
+                        class="text-green-500">Valid till {{ $freeFormatDate }}  (7 Days)</span></div>
                       @else
                       <div class="flex justify-between items-center mb-2"><span class="text-gray-400">Plan Validity</span><span
                         class="text-green-500">Valid till {{ $formattedDate }}  ({{$diffTotal}} Days)</span></div>

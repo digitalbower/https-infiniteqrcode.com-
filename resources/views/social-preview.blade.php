@@ -29,6 +29,18 @@
     .animate-rise {
       animation: rise infinite ease-in;
     }
+
+    /* Hide scrollbar */
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
   </style>
 </head>
 <body class="bg-gray-700 flex justify-center items-center min-h-screen font-poppins">
@@ -56,8 +68,8 @@
 
   <!-- Form Card -->
   <div class="w-full absolute h-full text-white flex justify-center items-center">
+      <div class="w-full relative mt-12 max-w-md">
    
-    <div class="w-full relative mt-12 max-w-md  relative">
         <div class="absolute -top-6 left-1/2 -translate-x-1/2 transform">
             <div class="bg-[#FF8A7B] text-black px-6 py-2 rounded shadow relative font-serif">
                 <div class="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -71,91 +83,65 @@
                 FOLLOW ME ON SOCIAL MEDIA
             </h2>
         </div>
-        <div class=" p-6 grid grid-cols-2 gap-2 ">
-            <!-- Facebook -->
+        <div class="p-6 flex justify-center items-center">
             @if($qrCode->fburl)
             <button id="facebook"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-facebook-f w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->fbtext}}</p>
             </button>
-            <style>
-                /* Hide scrollbar */
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    /* IE and Edge */
-                    scrollbar-width: none;
-                    /* Firefox */
-                }
-            </style>
             @elseif($qrCode->yturl)
-            <!-- YouTube -->
             <button id="youtube"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-youtube w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->ybtext}}</p>
             </button>
             @elseif($qrCode->whurl)
-            <!-- WhatsApp -->
             <button id="whatsapp"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-whatsapp w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->whtext}}</p>
             </button>
             @elseif($qrCode->insurl)
-            <!-- Instagram -->
             <button id="instagram"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-instagram w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->instext}}</p>
             </button>
             @elseif($qrCode->wchurl)
-            <!-- WeChat -->
             <button id="wechat"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-weixin w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->wchtext}}</p>
             </button>
             @elseif($qrCode->tikurl)
-            <!-- TikTok -->
             <button id="ticktock"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-tiktok w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->tiktext}}</p>
             </button>
             @elseif($qrCode->dyurl)
-            <!-- Douyin -->
             <button id="douyin"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-snapchat-ghost w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->dytext}}</p>
             </button>
             @elseif($qrCode->telurl)
-            <!-- Telegram -->
             <button id="telegram"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-telegram-plane w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->teltext}}</p>
             </button>
             @elseif($qrCode->snpurl)
-            <!-- Snapchat -->
             <button id="snapchat"
-                class="w-full bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-start px-2 py-2">
+                class="w-full max-w-xs bg-white hover:bg-gray-100 text-gray-600 rounded-md font-serif flex items-center gap-2 justify-center px-4 py-2">
                 <i class="fab fa-snapchat-ghost w-5 h-5"></i>
                 <p class="text-sm">{{$qrCode->snptext}}</p>
             </button>
             @endif
         </div>
-
-
     </div>
-
-      
-  </div>
+</div>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>

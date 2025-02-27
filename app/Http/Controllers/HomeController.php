@@ -259,8 +259,15 @@ class HomeController extends Controller
         $currentDate = Carbon::now();
 
         $timestamp = strtotime($subscriptionEnd);
-        $formattedDate = date('d M. Y', $timestamp); 
-
+        $formattedDate = date('d M. Y', $timestamp);  
+        if($user->plan == "free"){
+            $subscriptionStartDate = Carbon::parse($user->created_at); 
+            $freeDate = $subscriptionStartDate->copy()->addDays(7);
+            $freeFormatDate = $freeDate->format('d M. Y');
+        }
+        else{
+            $freeFormatDate = "";
+        }
         $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd) + 1; 
         $remainingDays = $currentDate->diffInDays($subscriptionEnd, false);
         $isPast = $currentDate->greaterThan($subscriptionEnd);
@@ -309,7 +316,7 @@ class HomeController extends Controller
             }
             $totalCount = $staticCount + $dynamicCount;
 
-    return view('dashboard', compact('userId', 'user','formattedDate','totalCount','staticCount','dynamicCount','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'isPast', 'diffTotal'));
+    return view('dashboard', compact('userId', 'user','formattedDate','totalCount','staticCount','dynamicCount','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'isPast', 'diffTotal','freeFormatDate'));
 }
 public function scanData(){
 
