@@ -929,39 +929,12 @@ class MyQRCodeController extends Controller
             'enddate' => 'required|date',
             'folderinput'=>'required'
         ]);
-         $projectCode = $code;
-
-          // Generate QR Code and save to storage
-
-         $data = route('preview-email', ['id' => $projectCode]);
- 
-         
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
- 
           // Save in DB
         $email = Emailqr::where('code',$code)->first();
-        $email->code= $projectCode;
         $email->qrtype= $request->qroption;
         $email->email=$request->email;
         $email->subject=$request->subject;
         $email->message=$request->message;
-        $email->url=$qrCodeUrl;
-        $email->qrimage=$qrCodePath;
-        $email->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $email->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1007,38 +980,12 @@ class MyQRCodeController extends Controller
             'enddate' => 'required|date',
             'folderinput'=>'required'
         ]);
-
-        $projectCode = $code;
-         
-          // Generate QR Code and save to storage
-
-         $data = route('preview-sms', ['id' => $projectCode]);
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
- 
           // Save in DB
         $sms = Sms::where('code',$code)->first();
-        $sms->code= $projectCode;
         $sms->qrtype= $request->qroption;
         $sms->qrsms=$request->sms;
         $sms->countrycode=$request->countrycode;
         $sms->phonenumber=$request->phone;
-        $sms->url=$qrCodeUrl;
-        $sms->qrimage=$qrCodePath;
-        $sms->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $sms->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1069,37 +1016,12 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-wifi', ['id' => $projectCode]);
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
-
           // Save in DB
         $wifi = Wifiqr::where('code',$code)->first();
-        $wifi->code= $projectCode;
         $wifi->qrtype= $request->qroption;
         $wifi->ssid=$request->ssid;
         $wifi->password=$request->password;
         $wifi->enctype=$request->enctype;
-        $wifi->url=$qrCodeUrl;
-        $wifi->qrimage=$qrCodePath;
-        $wifi->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $wifi->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1148,38 +1070,13 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
         
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-bitcoin', ['id' => $projectCode]);
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
- 
           // Save in DB
           $bitcoin = Bitcoinqr::where('code',$code)->first();
-          $bitcoin->code= $projectCode;
           $bitcoin->qrtype= $request->qroption;
           $bitcoin->currency=$request->currency;
           $bitcoin->quantity=$request->quantity;
           $bitcoin->btcaddr=$request->btcaddr;
           $bitcoin->btcnetwrk=$request->btcnetwrk;
-          $bitcoin->url=$qrCodeUrl;
-          $bitcoin->qrimage=$qrCodePath;
-          $bitcoin->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
           $bitcoin->save();
   
           $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1226,28 +1123,6 @@ class MyQRCodeController extends Controller
             'enddate' => 'required|date',
             'folderinput'=>'required'
         ]);
-        
-       
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-pdf', ['id' => $projectCode]);
-        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
-
-        // Generate QR Code with Logo (Merge Logo)
-
-        $qrCode = QrCode::format('svg')
-            //  Merge logo
-            ->size(300)
-            ->errorCorrection('H')
-            ->generate($data);
-
-        // Save QR Code to Storage
-        Storage::disk('public')->put($qrCodePath, $qrCode);
-
-        // Generate the full URL of the QR Code
-        $qrCodeUrl = asset('storage/' . $qrCodePath);
 
         // Save in DB
         $pdf = Pdfqr::where('code',$code)->first();
@@ -1267,11 +1142,7 @@ class MyQRCodeController extends Controller
             // Update DB
             $pdf->pdfpath=$filePath;
         }
-          $pdf->code= $projectCode;
           $pdf->qrtype= $request->qroption;
-          $pdf->url=$qrCodeUrl;
-          $pdf->qrimage=$qrCodePath;
-          $pdf->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
           $pdf->save();
   
           $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1328,27 +1199,6 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
         
-       
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-mp3', ['id' => $projectCode]);
-        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
-
-        // Generate QR Code with Logo (Merge Logo)
-
-        $qrCode = QrCode::format('svg')
-            //  Merge logo
-            ->size(300)
-            ->errorCorrection('H')
-            ->generate($data);
-
-        // Save QR Code to Storage
-        Storage::disk('public')->put($qrCodePath, $qrCode);
-
-        // Generate the full URL of the QR Code
-        $qrCodeUrl = asset('storage/' . $qrCodePath);
 
         $mp3 = MP3qr::where('code',$code)->first();
 
@@ -1365,12 +1215,8 @@ class MyQRCodeController extends Controller
         }
        
         // Save in DB
-        $mp3->code= $projectCode;
         $mp3->qrtype= $request->qroption;
         $mp3->qrtext = $request->qrtext;
-        $mp3->url=$qrCodeUrl;
-        $mp3->qrimage=$qrCodePath;
-        $mp3->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $mp3->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1415,28 +1261,6 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
         
-       
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-image', ['id' => $projectCode]);
-        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
-
-        // Generate QR Code with Logo (Merge Logo)
-
-        $qrCode = QrCode::format('svg')
-            //  Merge logo
-            ->size(300)
-            ->errorCorrection('H')
-            ->generate($data);
-
-        // Save QR Code to Storage
-        Storage::disk('public')->put($qrCodePath, $qrCode);
-
-        // Generate the full URL of the QR Code
-        $qrCodeUrl = asset('storage/' . $qrCodePath);
-
         $img = Imageqr::where('code',$code)->first();
         // Store the file
         if ($request->hasFile('imagepath')) {
@@ -1449,11 +1273,7 @@ class MyQRCodeController extends Controller
 
             $img->imagepath=$filePath;
         }
-        $img->code= $projectCode;
         $img->qrtype= $request->qroption;
-        $img->url=$qrCodeUrl;
-        $img->qrimage=$qrCodePath;
-        $img->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $img->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1500,28 +1320,7 @@ class MyQRCodeController extends Controller
             'enddate' => 'required|date',
             'folderinput'=>'required'
         ]);
-        
-       
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
 
-        $data = route('preview-video', ['id' => $projectCode]);
-        $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
-
-        // Generate QR Code with Logo (Merge Logo)
-
-        $qrCode = QrCode::format('svg')
-            //  Merge logo
-            ->size(300)
-            ->errorCorrection('H')
-            ->generate($data);
-
-        // Save QR Code to Storage
-        Storage::disk('public')->put($qrCodePath, $qrCode);
-
-        // Generate the full URL of the QR Code
-        $qrCodeUrl = asset('storage/' . $qrCodePath);
         $video = Videoqr::where('code',$code)->first();
 
         // Store the file
@@ -1537,11 +1336,7 @@ class MyQRCodeController extends Controller
             $video->videopath=$filePath;
         }
         // Save in DB
-        $video->code= $projectCode;
         $video->qrtype= $request->qroption;
-        $video->url=$qrCodeUrl;
-        $video->qrimage=$qrCodePath;
-        $video->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $video->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1586,38 +1381,13 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-app', ['id' => $projectCode]);
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
-
         // Save in DB
         $app = Appstoreqr::where('code',$code)->first();
-        $app->code= $projectCode;
         $app->qrtype= $request->qroption;
         $app->appurl=$request->appurl;
         $app->playstoreurl=$request->playstoreurl;
         $app->windowsurl=$request->windowsurl;
         $app->Huawei=$request->Huawei;
-        $app->url=$qrCodeUrl;
-        $app->qrimage=$qrCodePath;
-        $app->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $app->save();
 
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1662,36 +1432,9 @@ class MyQRCodeController extends Controller
             'enddate' => 'required|date',
             'folderinput'=>'required'
         ]);
-
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-url', ['id' => $projectCode]);
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
-
- 
          $app = Urlqr::where('code',$code)->first();
-         $app->code= $projectCode;
          $app->qrtype= $request->qroption;
          $app->qrurl=$request->qrurl;
-         $app->url=$qrCodeUrl;
-         $app->qrimage=$qrCodePath;
-         $app->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
          $app->save();
  
          $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1741,27 +1484,6 @@ class MyQRCodeController extends Controller
             'folderinput'=>'required'
         ]);
 
-        $projectCode = $code;
-         
-        // Generate QR Code and save to storage
-
-        $data = route('preview-vcard', ['id' => $projectCode]);
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
-
         $vcard = VCardqr::where('code',$code)->first();
          if ($request->hasFile('contactimg')) {
             if ($vcard->contactimg && Storage::disk('public')->exists($vcard->contactimg)) {  
@@ -1775,7 +1497,6 @@ class MyQRCodeController extends Controller
         }
  
  
-        $vcard->code= $projectCode;
         $vcard->qrtype= $request->qroption;
         $vcard->first_name= $request->first_name;
         $vcard->last_name= $request->last_name;
@@ -1788,9 +1509,6 @@ class MyQRCodeController extends Controller
         $vcard->zip= $request->zip;
         $vcard->state= $request->state;
         $vcard->country= $request->country;
-        $vcard->url=$qrCodeUrl;
-        $vcard->qrimage=$qrCodePath;
-        $vcard->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
         $vcard->save();
  
         $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -1831,7 +1549,7 @@ class MyQRCodeController extends Controller
 
         $vcard = "BEGIN:VCARD\n";
         $vcard .= "VERSION:3.0\n";
-        $vcard .= "N:" . ($qrCode->first_name ?? '') . ";" . ($qrCode->first_name ?? '') . ";;;\n"; // Structured name
+        $vcard .= "N:" . ($qrCode->last_name ?? '') . ";" . ($qrCode->first_name ?? '') . ";;;\n"; // Structured name
         $vcard .= "FN:$displayName\n"; 
         $vcard .= "TEL:$qrCode->mobile\n";
         $vcard .= "EMAIL:$qrCode->email\n";
@@ -1856,31 +1574,8 @@ class MyQRCodeController extends Controller
              'enddate' => 'required|date',
              'folderinput'=>'required'
          ]);
-
-         $projectCode = $code;
-         
-         // Generate QR Code and save to storage
- 
-         $data = route('preview-social', ['id' => $projectCode]);
-         $qrCodePath = 'qrcodes/' . $projectCode . '.svg';
- 
-         // Generate QR Code with Logo (Merge Logo)
- 
-         $qrCode = QrCode::format('svg')
-             //  Merge logo
-             ->size(300)
-             ->errorCorrection('H')
-             ->generate($data);
- 
-         // Save QR Code to Storage
-         Storage::disk('public')->put($qrCodePath, $qrCode);
- 
-         // Generate the full URL of the QR Code
-         $qrCodeUrl = asset('storage/' . $qrCodePath);
- 
-       
+      
          $social = SocialMediaqr::where('code',$code)->first();
-         $social->code= $projectCode;
          $social->qrtype= $request->qroption;
          $social->whtext = $request->whtext;
          $social->whurl= $request->whturl;
@@ -1901,9 +1596,6 @@ class MyQRCodeController extends Controller
          $social->teltext=  $request->teltext;
          $social->snpurl=  $request->snpurl;
          $social->snptext= $request->snptext;
-         $social->url=$qrCodeUrl;
-         $social->qrimage=$qrCodePath;
-         $social->userid= Auth::user()->id ?? 'Guest'; // Store user ID or 'Guest'
          $social->save();
   
           $qrBasicInfo = QrBasicInfo::where('project_code',$code)->first();
@@ -2063,70 +1755,72 @@ class MyQRCodeController extends Controller
         }
     
     }
-    public function countryStatistics(Request $request){
-
+    public function countryStatistics(Request $request)
+    {
         $code = $request->code;
-
+    
         if (!$code) {
             return response()->json(['error' => 'Invalid QR code.'], 400);
         }
-
-        $ip_address = $request->ip(); // Get user IP
-        $device_type = $request->header('User-Agent');
-        $screen_width = $request->query('screen_width', ''); // Get from frontend
-        $screen_height = $request->query('screen_height', ''); 
-
-        // Unique device identifier (hash based on device details)
-        $device_identifier = hash('sha256', $ip_address . $device_type . $screen_width . $screen_height);
-
+    
+        // Get IP and user agent details
+        $ip_address = $request->ip() ?? $request->ip;
+        $device_type = $request->header('User-Agent') ?? 'unknown_device'; 
+        $screen_width = $request->input('screen_width', 'unknown_width');
+        $screen_height = $request->input('screen_height', 'unknown_height');
+        $fingerprint = $request->input('fingerprint', 'unknown_fingerprint');
+        
+        $session_id = session()->getId() ?? $request->session_id;
+    
+        // Unique device identifier: combining fingerprint with other attributes
+        $device_identifier = hash('sha256', $ip_address . $device_type . $screen_width . $screen_height . $session_id . $fingerprint);
+    
+        // Retrieve QR code based on project code
         $qrCode = QrBasicInfo::where('project_code', $code)->first();
-        $scan_stati = ScanStatistics::where('code', $code)->first();
-
         if (!$qrCode) {
             return response()->json(['error' => 'QR code not found.'], 404);
         }
+    
+        // Get city and country or set defaults
+        $city = $request->input('city', 'Unknown');
+        $country = $request->input('country', 'Unknown');
 
         // Check if this device has already scanned
         $existingScan = Scan::where('qr_code_id', $code)
-                            ->where('device_identifier', $device_identifier)
-                            ->exists();
-
-
+        ->where('device_identifier', $device_identifier)
+        ->first();
         // If first-time scan from this device
-        if (!$existingScan) {  
-            // Increase total scans
-            $qrCode->total_scans += 1;
-            $qrCode->unique_scans += 1;
-            $qrCode->save();
+        if (!$existingScan) {
 
-            // Log scan record
+            $qrCode->increment('total_scans');
+            $qrCode->increment('unique_scans');
+
             Scan::create([
                 'qr_code_id' => $code,
                 'user_agent' => $device_type,
                 'device_identifier' => $device_identifier,
             ]);
-   
-            ScanStatistics::create([
-                'code'=>$request->code,
-                'city'=>$request->city,
-                'country'=>$request->country,
-                'scan_count' =>  1
-            ]);
-           
+            // Update or insert scan statistics
+            ScanStatistics::updateOrInsert(
+                ['code' => $code, 'city' => $city, 'country' => $country],
+                ['scan_count' => \DB::raw('scan_count + 1'), 'created_at' => now(), 'updated_at' => now()]
+            );
+            \Log::info('New unique scan recorded', ['qr_code_id' => $code, 'device_identifier' => $device_identifier]);
             return response()->json(['message' => 'New unique scan recorded.'], 200);
-        }
-        else {
-            // Just increment total scans if already scanned
+        } else {
+        // Increment total scans
+        $qrCode->increment('total_scans');
 
-            $qrCode->increment('total_scans');
+        // Increment scan count for existing scan statistics
+        ScanStatistics::where('code', $code)
+            ->where('city', $city)
+            ->where('country', $country)
+            ->increment('scan_count');
 
-            $scan_stati->increment('scan_count');
-
-            return response()->json(['message' => 'Scan count updated.'], 200);
-
-        }
-    
-   }
+        \Log::info('Scan count updated', ['qr_code_id' => $code, 'device_identifier' => $device_identifier]);
+        return response()->json(['message' => 'Scan count updated.'], 200);
+    }
+}
    public function deleteQrcode(Request $request){
 
         try {

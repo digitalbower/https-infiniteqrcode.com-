@@ -65,10 +65,10 @@
                   </button>
 
                   <!-- Wi-Fi -->
-                  <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
+                  {{-- <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
                     <i class="fa-solid fa-wifi text-2xl mb-1 text-gray-700"></i>
                     <br /><span class="text-sm font-semibold text-gray-900">Wi-Fi</span>
-                  </button>
+                  </button> --}}
 
                   <!-- Bitcoin -->
                   <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
@@ -95,10 +95,10 @@
                   </button>
 
                   <!-- MP3 -->
-                  <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
+                  {{-- <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
                     <i class="fa-solid fa-music text-2xl mb-1 text-gray-700"></i>
                     <br /><span class="text-sm font-semibold text-gray-900">MP3</span>
-                  </button>
+                  </button> --}}
 
                   <!-- Images -->
                   <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
@@ -199,10 +199,10 @@
                   </button>
 
                   <!-- Wi-Fi -->
-                  <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
+                  {{-- <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
                     <i class="fa-solid fa-wifi text-2xl mb-1 text-gray-700"></i>
                     <br /><span class="text-sm font-semibold text-gray-900">Wi-Fi</span>
-                  </button>
+                  </button> --}}
 
                   <!-- Bitcoin -->
                   <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
@@ -229,10 +229,10 @@
                   </button>
 
                   <!-- MP3 -->
-                  <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
+                  {{-- <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">
                     <i class="fa-solid fa-music text-2xl mb-1 text-gray-700"></i>
                     <br /><span class="text-sm font-semibold text-gray-900">MP3</span>
-                  </button>
+                  </button> --}}
 
                   <!-- Images -->
                   <button class="qr-button p-3 rounded-md hover:bg-[#F5A623] relative">

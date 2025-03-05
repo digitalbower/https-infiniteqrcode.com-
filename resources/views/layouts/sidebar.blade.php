@@ -31,6 +31,7 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
     <nav class="flex-1 px py-6">
     <ul class="space-y-2">
     <!-- Dashboard -->
+    @if(!auth()->user()->payment_failed_at)
     <li>
         <a href="{{route('dashboard')}}"
          class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
@@ -75,7 +76,7 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
     </li>
 
     <!-- Upgrade -->
-    @if(auth()->user()->plan != 'expert' )
+    @if(auth()->user()->plan == 'free' )
     <li class="mx-0 pt-4">
         <a href="{{route('upgrade')}}" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
             <button class="bg-blue-500 flex items-center w-full text-white py-3 px-12 rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
@@ -92,6 +93,7 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
             </button>
         </a>
     </li>
+    @endif
 </ul>
 </nav>
 

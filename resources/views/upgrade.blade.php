@@ -390,11 +390,314 @@
             </div>   
         </div>    
     </main>
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <!-- Modal Content -->
+        <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-md p-6 relative z-50">
+            <!-- Close Button -->
+            <button id="closeModalBtn" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-2xl">
+                &times;
+            </button>
+            <h2 class="text-xl font-semibold text-gray-800">Enter Card Details</h2>
+            <p class="text-gray-600 mt-1">Fill in the form below to add your card.</p>
+
+            <!-- Card Form -->
+            <form id="cardForm" class="mt-4" action="#" method="post" onsubmit="return false;">
+                <div class="mb-4">
+                  <label for="cardName" class="block text-sm font-medium text-gray-700">
+                    Cardholder Name
+                  </label>
+                  <input
+                    type="text"
+                    id="cardName" readonly
+                    name="cardName" value="{{Session::get('firstname')}} {{Session::get('lastname')}}"
+                    class="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+                    placeholder="John Doe"
+                    required>
+                  <input type="hidden" name="stripe_customer_id " id="customer_id" value="{{auth()->user()->stripe_customer_id}}">
+                  <input type="hidden" name="price" id="price" value="{{auth()->user()->price}}">
+                </div>
+                <div class="mb-4">
+                  <div id="card-element2"></div>
+                </div>
+                <div id="card-errors" class="text-red-700"></div>
+                <button
+                  type="submit"
+                  class="w-full bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition">
+                  Pay Now
+                </button>
+              </form>
+        </div>
+    </div>
+    <style>
+       .overflow-hidden {
+            overflow: hidden;
+        }
+
+        #modalOverlay {
+            pointer-events: auto; /* Ensure clicks work inside modal */
+        }
+
+        #modalOverlay.hidden {
+            display: none;
+        }
+
+
+    </style>
     <script>
         var stripePublicKey = "{{ config('services.stripe.key') }}"; 
     </script>
     <script src="https://js.stripe.com/v3/"></script>
-  
+    @if(session('showPaymentPopup'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modalOverlay = document.getElementById('modalOverlay');
+            const cardElementContainer = document.getElementById('card-element2');
+
+            const stripe = Stripe(stripePublicKey); // Make sure stripePublicKey is set in Blade
+            const elements = stripe.elements();
+            let cardElement = null;
+            let retryCount = 0;
+            let isProcessing = false;
+        
+            // Show the modal and disable interaction with the rest of the page
+            modalOverlay.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+
+            // Mount the card element only once
+            if (!cardElementContainer.classList.contains('mounted')) {
+                cardElement = elements.create("card", { hidePostalCode: true });
+                cardElement.mount("#card-element2");
+                cardElementContainer.classList.add('mounted');
+            }
+            // Disable closing the modal
+            document.getElementById('closeModalBtn')?.remove();
+            modalOverlay.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // Prevent ESC key from closing the modal
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                }
+            });
+
+            const form = document.getElementById('cardForm');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const errorDiv = document.getElementById('card-errors');
+            form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Disable the submit button to prevent multiple clicks
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+
+            try {
+                // Create a payment method
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                        type: "card",
+                        card: cardElement,
+                    }); 
+    
+                if (error) {
+                handleStripeError(error);
+                return;
+                }
+
+
+                // Fetch client secret
+        
+                const response1 = await fetch('/api/stripe/create-payment-intent', {  
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
+                    credentials: 'include' 
+                });
+        
+        
+                const data = await response1.json(); 
+                if (!data.clientSecret) {
+                    throw new Error("Invalid clientSecret from server.");
+                }
+                
+                const client_Secret  = data.clientSecret;
+
+        
+
+                //  // Confirm card setup
+                const username = document.getElementById("name").value; 
+                const { setupIntent, error: error1 } = await stripe.confirmCardSetup(client_Secret, {
+                payment_method: {
+                    card: cardElement,
+                    billing_details: { name: username },
+                },
+                });
+        
+                if (error1) {
+                handleStripeError(error1);
+                return;
+                }
+
+                //  // Gather form data
+                const plan = document.getElementById("plan").value; 
+                const duration = document.getElementById("duration").value; 
+                const price = document.getElementById("billingprice").value;
+        
+                if (!plan) {
+                document.getElementById("error-message").textContent = "Choose a plan.";
+                return;
+                }
+                
+
+                //  // Send data to backend
+                const response = await fetch("/api/stripe/subscribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json",'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({
+                    setup_intent_id: setupIntent.id,
+                    payment_method_id: paymentMethod.id,
+                    plan,
+                    duration,
+                    price,
+                }),
+                });
+
+                const result = await response.json();
+                console.log(result);
+                if (result.success) {
+                    Swal.fire("Payment successful!", "", "success");
+                    setTimeout(() => window.location.replace('/subscription'), 2000);
+                } else if (result.requires_action && result.payment_intent_client_secret) {
+                    console.log("Handling 3D Secure authentication...");
+                    await handlePayment(result.payment_intent_client_secret);
+                }
+                else {
+                    handleStripeError({ message: result.error || "An error occurred during payment processing." });
+                }
+            } catch (err) {
+                    console.error(err);
+                    document.getElementById('error-message').textContent = err.message || 'An unexpected error occurred.';
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Pay Now';
+                }
+        });
+    });
+ 
+        
+        // Main payment handler
+        async function handlePayment(intentClientSecret) {
+            if (isProcessing) {
+                console.warn('Payment is already in progress. Skipping duplicate attempts.');
+                return;
+            }
+        
+            try {
+                isProcessing = true;
+        
+                const result = await stripe.confirmCardPayment(intentClientSecret);
+        
+                if (result.error) {
+                    console.error('Payment failed:', result.error.message);
+                    alert('Payment failed: ' + result.error.message);
+                } else {
+                    const paymentIntent = result.paymentIntent;
+        
+                    switch (paymentIntent.status) {
+                        case 'succeeded':
+                            console.log('Payment succeeded:', paymentIntent);
+                            await completeSubscription(paymentIntent.id); // Finalize subscription
+                            break;
+        
+                        case 'requires_action':
+                            if (retryCount < 3) {
+                                retryCount++;
+                                console.log('Retrying 3D Secure authentication:', retryCount);
+                                await handlePayment(intentClientSecret);
+                            } else {
+                                alert('Authentication retries exhausted. Please try again.');
+                            }
+                            break;
+        
+                        default:
+                            console.warn('Unexpected payment status:', paymentIntent.status);
+                    }
+                }
+            } catch (err) {
+                console.error('Error during payment:', err);
+                alert('An unexpected error occurred.');
+            } finally {
+                isProcessing = false;
+            }
+        }
+        
+        async function completeSubscription(paymentIntentId) {
+            try {
+                const response = await fetch('/api/subscribe/confirm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
+                    body: JSON.stringify({ payment_intent_id: paymentIntentId }),
+                });
+        
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+        
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire("Payment successful!", "", "success");
+                    setTimeout(() => window.location.replace('/subscription'), 2000);
+                } else {
+                    console.error('Subscription failed:', result.error || 'Unknown error');
+                    Swal.fire('Failed to finalize subscription: ' + (result.error || 'Please try again.'));
+                }
+            } catch (err) {
+                console.error('Error finalizing subscription:', err.message || err);
+                 Swal.fire('Failed to complete the subscription. Please check your connection and try again.');
+            }
+        }
+
+
+
+        function handleStripeError(error) {
+            $("#loadingIndicator").addClass("hidden");
+            let errorMessage = "An error occurred. Please try again.";
+        
+            if (error.type === "card_error" || error.type === "validation_error") {
+                errorMessage = error.message;
+            }
+        
+            if (error.code) {
+                switch (error.code) {
+                case "card_declined":
+                    errorMessage = "Your card was declined. Please use a different card.";
+                    break;
+                case "expired_card":
+                    errorMessage = "Your card has expired. Please use a valid card.";
+                    break;
+                case "incorrect_cvc":
+                    errorMessage = "The CVC code is incorrect. Please check and try again.";
+                    break;
+                case "processing_error":
+                    errorMessage = "There was a problem processing your card. Please try again later.";
+                    break;
+                case "insufficient_funds":
+                    errorMessage = "Your card has insufficient funds. Please use another card.";
+                    break;
+                case "authentication_required":
+                    errorMessage = "Authentication is required. Please follow the instructions to complete the payment.";
+                    break;
+                default:
+                    errorMessage = error.message || "An error occurred. Please try again.";
+                }
+            }
+    
+            $("#error-message").text(errorMessage);
+        }
+
+    </script>
+    @endif
+
+
                   
    <script>
        

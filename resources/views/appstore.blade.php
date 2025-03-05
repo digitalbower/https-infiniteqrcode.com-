@@ -205,7 +205,7 @@
                                 <label for="startDate"
                                     class="block font-medium text-gray-800">Start Date</label>
                                 <div>
-                                    <input id="startDate" min="<?php echo date('Y-m-d'); ?>"
+                                    <input id="startDate"
                                         type="date"
                                         class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         name="startdate" value="{{old('startdate')}}">
@@ -249,7 +249,7 @@
                                 class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{old('remarks')}}</textarea>
                         </div>
                         <div class="flex justify-between mt-8">
-                            <button type="button" onclick="location.href='QrOption.php'"
+                            <button type="button" onclick="location.href='/createqrcode'"
                                 class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
                             <span id="message"
                                 class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>

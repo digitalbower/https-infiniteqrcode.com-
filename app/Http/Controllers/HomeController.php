@@ -86,62 +86,48 @@ class HomeController extends Controller
     }
     public function getCountriesData($code){
 
-        $totalScans = ScanStatistics::where('code', $code)
-        ->count();
-
         $country_data = ScanStatistics::select(
             'country',
-            DB::raw('COUNT(country) as scan_count'),
-            DB::raw('(COUNT(*) / '.$totalScans.' * 100) as percentage')
+            DB::raw('SUM(scan_count) as total_scans')
         )
         ->where('code', $code)
         ->groupBy('country')
-        ->orderByDesc('scan_count')
+        ->orderByDesc('total_scans')
         ->get();
-
-
+    
         return response()->json($country_data);
 
     }
     public function getCityData($code)
     {
-        $totalScans = ScanStatistics::where('code', $code)
-                    ->count();
 
         $city_data = ScanStatistics::select(
-                'city',
-                DB::raw('COUNT(city) as scan_count'),
-                DB::raw('(COUNT(*) / '.$totalScans.' * 100) as percentage')
-            )
-            ->where('code', $code)
-            ->groupBy('city')
-            ->orderByDesc('scan_count')
-            ->get();
-
-
+        'city',
+        DB::raw('SUM(scan_count) as total_scans'))
+        ->where('code', $code)
+        ->groupBy('city')
+        ->orderByDesc('total_scans')
+        ->get();
+        
         return response()->json($city_data);
+    
     }
     public function getBarChartAnalyticData(Request $request)
     {   
         $code = $request->code; 
         $start_date = $request->start_date;
         $end_date = $request->end_date;
-        $range = $request->range;
 
-        $query = Scan::select('user_agent', DB::raw('COUNT(*) as scan_count'))
-            ->where('qr_code_id', $code)
-            ->where('scan_date', '>=', DB::raw('(SELECT MIN(start_date) FROM qr_basic_info)'));
+        $query = DB::table('scans')
+        ->select('user_agent', DB::raw('COUNT(*) as scan_count'))
+        ->where('qr_code_id', $code)
+        ->where('scan_date', '>=', DB::raw('(SELECT MIN(start_date) FROM qr_basic_info)'));
 
-        if ($start_date && $end_date && $range !== 'day') {
+        if (!empty($start_date) && !empty($end_date)) {
             $query->whereBetween('scan_date', [$start_date, $end_date]);
         }
 
-        if ($range === 'day') {
-            $query->where('scan_date', '>=', $start_date);
-        }
-
-        $data = $query->groupBy('user_agent')->orderByDesc('scan_count')->get(); 
-
+        $data = $query->groupBy('user_agent')->orderByDesc('user_agent')->get(); 
         return response()->json($data);
     }
 
@@ -150,20 +136,19 @@ class HomeController extends Controller
         $code = $request->code; 
         $start_date = $request->start_date;
         $end_date = $request->end_date;
-        $range = $request->range;
 
-        $query = ScanStatistics::select(DB::raw('DATE(scandate) as scan_date'), DB::raw('SUM(scan_count) as total_scans'))
-            ->where('code', $code);
+        $query = DB::table('scan_statistics')
+        ->selectRaw('DATE(scandate) as scan_date, SUM(scan_count) as total_scans')
+        ->where('code', $code);
 
-        if ($start_date && $end_date && $range !== 'day') {
+        if (!empty($start_date) && !empty($end_date)) {
             $query->whereBetween('scandate', [$start_date, $end_date]);
         }
 
-        if ($range === 'day') {
-            $query->where('scandate', '>=', $start_date);
-        }
-
-        $data = $query->groupBy(DB::raw('DATE(scandate)'))->orderByDesc('scan_date')->get(); 
+      
+        $data = $query->groupBy(DB::raw('DATE(scandate)'))
+                    ->orderByDesc('scan_date')
+                    ->get(); 
 
         return response()->json($data);
     }

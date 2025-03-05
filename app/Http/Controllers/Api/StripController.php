@@ -143,6 +143,7 @@ class StripController extends Controller
                 'renew_status' => 'Enabled',
                 'plan' => $newPlan,
                 'duration' => $duration,
+                'price'=>$request->price
             ]);
             
     

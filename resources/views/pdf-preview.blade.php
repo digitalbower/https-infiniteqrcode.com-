@@ -113,6 +113,7 @@
           </button>
         </div>
       </div>
+  <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
       <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script>
@@ -120,78 +121,99 @@
           $("#downloadPdfBtn").on("click", function () {
             window.location.href ="{{route('download-pdf',$qrCode->code)}}";
         });
-     if (navigator.geolocation) {
-       navigator.geolocation.getCurrentPosition(async (position) => {
-         const latitude = position.coords.latitude;
-         const longitude = position.coords.longitude;
-         
-         try {
-           const cityCountry = await getCityCountry(latitude, longitude);
-           const city = cityCountry?.city || "Unknown";
-           const country = cityCountry?.country || "Unknown";
-           
-           console.log("City:", city);
-           console.log("Country:", country);
-   
-           // Send data to PHP if both city and country are found
-           await sendDataToPHP(city, country);
-            // Redirect after 2 seconds
-         } catch (error) {
-           console.error("Error:", error);
-         }
-       },async (error) => {
-         console.error("Geolocation error:", error);
-         await sendDataToPHP("Unknown", "Unknown");
-       });
-     } else {
-       console.error("Geolocation not supported by this browser.");
-     }
-     async function getCityCountry(lat, lng) {
-       const geocoder = new google.maps.Geocoder();
-       const location = { lat, lng };
-       
-       return new Promise((resolve, reject) => {
-         geocoder.geocode({ location }, (results, status) => {
-           if (status === 'OK' && results[0]) {
-             let city = null, country = null;
-             results[0].address_components.forEach(component => {
-               if (component.types.includes("locality") || component.types.includes("administrative_area_level_1")) {
-                 city = component.long_name;
-               }
-               if (component.types.includes("country")) {
-                 country = component.long_name;
-               }
-             });
-             resolve({ city, country });
-           } else {
-             reject("Geocode failed");
-           }
-         });
-       });
-     }
-     async function sendDataToPHP(city, country) {
-     try {
-       const response = await $.ajax({
-         url: "{{route('country-statistics')}}",
-         method: "POST",
-         data: {
-           code: "{{$qrCode->code}}",  // Output PHP variable
-           city: city,
-           country: country,
-           "_token": "{{ csrf_token() }}",
-         }
-       });
-       return response;  // Return the response if needed
-     } catch (error) {
-       console.error("Error sending data to PHP:", error);
-       throw error;  // Throw the error for handling later if necessary
-     }
-   }
+      });
+    </script>
+  <script>
+    $(document).ready(function() {
+      let city = "Unknown";
+      let country = "Unknown";
+      let fingerprint = "Unknown";
+    
+      // Get fingerprint first
+      (async () => {
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        fingerprint = result.visitorId; // Unique fingerprint
+      })();
+    
+      // Geolocation logic
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+    
+            try {
+              const cityCountry = await getCityCountry(latitude, longitude);
+              city = cityCountry?.city || "Unknown";
+              country = cityCountry?.country || "Unknown";
+            } catch (error) {
+              console.error("Geolocation fetch error:", error);
+            }
+            sendDataToPHP(city, country, fingerprint); // Send data once everything is set
+          },
+          (error) => {
+            console.error("Geolocation error:", error);
+            sendDataToPHP(city, country, fingerprint); // Even if geolocation fails, send fingerprint
+          }
+        );
+      } else {
+        console.error("Geolocation not supported by this browser.");
+        sendDataToPHP(city, country, fingerprint);
+      }
+    
+      // Geocode city and country using Google Maps API
+      async function getCityCountry(lat, lng) {
+        const geocoder = new google.maps.Geocoder();
+        const location = { lat, lng };
+    
+        return new Promise((resolve, reject) => {
+          geocoder.geocode({ location }, (results, status) => {
+            if (status === "OK" && results[0]) {
+              let city = null,
+                country = null;
+              results[0].address_components.forEach((component) => {
+                if (
+                  component.types.includes("locality") ||
+                  component.types.includes("administrative_area_level_1")
+                ) {
+                  city = component.long_name;
+                }
+                if (component.types.includes("country")) {
+                  country = component.long_name;
+                }
+              });
+              resolve({ city, country });
+            } else {
+              reject("Geocode failed");
+            }
+          });
+        });
+      }
+    
+      // Send data to Laravel
+      async function sendDataToPHP(city, country, fingerprint) {
+        try {
+          const response = await $.ajax({
+            url: "{{route('country-statistics')}}",
+            method: "POST",
+            data: {
+              code: "{{$qrCode->code}}",
+              city: city,
+              country: country,
+              fingerprint: fingerprint,
+              "_token": "{{ csrf_token() }}",
+              ip: "{{ request()->ip() }}",
+              session_id: "{{ session()->getId() }}",
+            },
+          });
+          console.log("Data sent:", response);
+        } catch (error) {
+          console.error("Error sending data to PHP:", error);
+        }
+      }
     });
      </script>
   </body>
 
   </html>
-</body>
-
-</html>

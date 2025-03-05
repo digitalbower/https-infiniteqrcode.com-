@@ -100,102 +100,294 @@
 
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function() {
-      $('#connect').click(function () {
-          const ssid = $("#ssid").val();
-          const encryption = $("#encryption").val();
-          const password = $("#password").val(); 
-      
-          let wifiDetails = `SSID: ${ssid}\nPassword: ${password || "No Password"}\nSecurity: ${encryption}`;
+  $(document).ready(function() {
+    $('#connect').click(function () {
+        const ssid = $("#ssid").val();
+        const password = $("#password").val();
+        const encryption = $("#encryption").val() || "WPA2";
+        let wifiDetails = `SSID: ${ssid}\nPassword: ${password || "No Password"}\nSecurity: ${encryption}`;
+        const os = getOS();
+
+        if (os === 'Windows') {
+            // Windows batch file
+            let batFile = `
+              @echo off
+              echo Creating WiFi profile for SSID: ${ssid}
+              (
+              echo ^<WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1"^>
+              echo   ^<name^>${ssid}^</name^>
+              echo   ^<SSIDConfig^>
+              echo     ^<SSID^>
+              echo       ^<name^>${ssid}^</name^>
+              echo     ^</SSID^>
+              echo   ^</SSIDConfig^>
+              echo   ^<connectionType^>ESS^</connectionType^>
+              echo   ^<connectionMode^>auto^</connectionMode^>
+              echo   ^<MSM^>
+              echo     ^<security^>
+              echo       ^<authEncryption^>
+              echo         ^<authentication^>WPA2PSK^</authentication^>
+              echo         ^<encryption^>AES^</encryption^>
+              echo         ^<useOneX^>false^</useOneX^>
+              echo       ^</authEncryption^>
+              echo       ^<sharedKey^>
+              echo         ^<keyType^>passPhrase^</keyType^>
+              echo         ^<protected^>false^</protected^>
+              echo         ^<keyMaterial^>${password}^</keyMaterial^>
+              echo       ^</sharedKey^>
+              echo     ^</security^>
+              echo   ^</MSM^>
+              echo ^</WLANProfile^>
+              ) > WiFi_Profile.xml
+
+              netsh wlan add profile filename="WiFi_Profile.xml"
+              netsh wlan connect name="${ssid}"
+              pause
+              `;
+
+            let blob = new Blob([batFile], { type: "text/plain" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Connect_WiFi.bat";
+            link.click();
+        } else if (os === 'Mac') {
+          // Mac WiFi config
+          let mobileConfig = `<?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+              <dict>
+                  <key>PayloadContent</key>
+                  <array>
+                      <dict>
+                          <key>SSID_STR</key>
+                          <string>${ssid}</string>
+                          <key>HIDDEN_NETWORK</key>
+                          <false/>
+                          <key>AutoJoin</key>
+                          <true/>
+                          <key>EncryptionType</key>
+                          <string>${encryption}</string>
+                          <key>Password</key>
+                          <string>${password}</string>
+                          <key>PayloadType</key>
+                          <string>com.apple.wifi.managed</string>
+                          <key>PayloadVersion</key>
+                          <integer>1</integer>
+                          <key>PayloadIdentifier</key>
+                          <string>com.example.wifi.${ssid}</string>
+                          <key>PayloadUUID</key>
+                          <string>${crypto.randomUUID()}</string>
+                          <key>PayloadDisplayName</key>
+                          <string>${ssid} WiFi Configuration</string>
+                          <key>PayloadOrganization</key>
+                          <string>Your Organization</string>
+                      </dict>
+                  </array>
+                  <key>PayloadType</key>
+                  <string>Configuration</string>
+                  <key>PayloadVersion</key>
+                  <integer>1</integer>
+                  <key>PayloadIdentifier</key>
+                  <string>com.example.wifi.${ssid}.root</string>
+                  <key>PayloadUUID</key>
+                  <string>${crypto.randomUUID()}</string>
+                  <key>PayloadDisplayName</key>
+                  <string>${ssid} WiFi Profile</string>
+                  <key>PayloadOrganization</key>
+                  <string>Your Organization</string>
+              </dict>
+          </plist>`;
+
+          let blob = new Blob([mobileConfig], { type: "application/x-apple-aspen-config" });
+          let link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `${ssid}_WiFi_Config.mobileconfig`;
+          link.click();
+        } else if (os === "Android") {
+          // Try to use the Android intent to trigger WiFi connection
+          window.location.href = `wifi://${ssid}?password=${password}&encryption=${encryption}`;
           let blob = new Blob([wifiDetails], { type: "text/plain" });
           let link = document.createElement("a");
           link.href = URL.createObjectURL(blob);
           link.download = "WiFi_Credentials.txt";
           link.click();
+          alert(`Please check your WiFi settings and connect to "${ssid}". and paste the password manually, the password is in the downloded file`);
+        } else if (os === "iOS") {
+          let mobileConfig = `<?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+                <dict>
+                    <key>PayloadContent</key>
+                    <array>
+                        <dict>
+                            <key>SSID_STR</key>
+                            <string>${ssid}</string>
+                            <key>HIDDEN_NETWORK</key>
+                            <false/>
+                            <key>AutoJoin</key>
+                            <true/>
+                            <key>EncryptionType</key>
+                            <string>${encryption}</string>
+                            <key>Password</key>
+                            <string>${password}</string>
+                            <key>PayloadType</key>
+                            <string>com.apple.wifi.managed</string>
+                            <key>PayloadVersion</key>
+                            <integer>1</integer>
+                            <key>PayloadIdentifier</key>
+                            <string>com.example.wifi.${ssid}</string>
+                            <key>PayloadUUID</key>
+                            <string>${crypto.randomUUID()}</string>
+                            <key>PayloadDisplayName</key>
+                            <string>${ssid} WiFi Configuration</string>
+                        </dict>
+                    </array>
+                    <key>PayloadType</key>
+                    <string>Configuration</string>
+                    <key>PayloadVersion</key>
+                    <integer>1</integer>
+                    <key>PayloadIdentifier</key>
+                    <string>com.example.wifi.${ssid}.root</string>
+                    <key>PayloadUUID</key>
+                    <string>${crypto.randomUUID()}</string>
+                    <key>PayloadDisplayName</key>
+                    <string>${ssid} WiFi Profile</string>
+                    <key>PayloadOrganization</key>
+                    <string>Your Organization</string>
+                </dict>
+            </plist>`;
 
-          // Alternative: Copy WiFi details to clipboard
-          navigator.clipboard.writeText(wifiDetails).then(() => {
-              alert("WiFi details copied! Paste them in your WiFi settings.");
-          }).catch(err => {
-              console.error("Failed to copy:", err);
-          });
-        });
+          let blob = new Blob([mobileConfig], { type: "application/x-apple-aspen-config" });
+          let link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `${ssid}_WiFi_Config.mobileconfig`;
+          link.click();
+        }
+        else {
+              alert("Unsupported OS. Please manually connect to the WiFi.");
+        }
+       
     });
+  });
+
+    function getOS() {
+        const userAgent = window.navigator.userAgent || window.navigator.vendor || window.opera;
+
+        if (/windows phone/i.test(userAgent)) {
+            return "Windows";
+        }
+        if (/android/i.test(userAgent)) {
+            return "Android";
+        }
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            return "iOS";
+        }
+        if (/Macintosh|Mac OS X/.test(userAgent)) {
+            return "Mac";
+        }
+        if (/Windows NT/.test(userAgent)) {
+            return "Windows";
+        }
+        return "Unknown";
+    }
+
+
    </script> 
     <script>
-        $(document).ready(function() {
-     if (navigator.geolocation) {
-       navigator.geolocation.getCurrentPosition(async (position) => {
-         const latitude = position.coords.latitude;
-         const longitude = position.coords.longitude;
-         
-         try {
-           const cityCountry = await getCityCountry(latitude, longitude);
-           const city = cityCountry?.city || "Unknown";
-           const country = cityCountry?.country || "Unknown";
-           
-           console.log("City:", city);
-           console.log("Country:", country);
-   
-           // Send data to PHP if both city and country are found
-           await sendDataToPHP(city, country);
-            // Redirect after 2 seconds
-         } catch (error) {
-           console.error("Error:", error);
-         }
-       },async (error) => {
-         console.error("Geolocation error:", error);
-         await sendDataToPHP("Unknown", "Unknown");
-       });
-     } else {
-       console.error("Geolocation not supported by this browser.");
-     }
-     async function getCityCountry(lat, lng) {
-       const geocoder = new google.maps.Geocoder();
-       const location = { lat, lng };
-       
-       return new Promise((resolve, reject) => {
-         geocoder.geocode({ location }, (results, status) => {
-           if (status === 'OK' && results[0]) {
-             let city = null, country = null;
-             results[0].address_components.forEach(component => {
-               if (component.types.includes("locality") || component.types.includes("administrative_area_level_1")) {
-                 city = component.long_name;
-               }
-               if (component.types.includes("country")) {
-                 country = component.long_name;
-               }
-             });
-             resolve({ city, country });
-           } else {
-             reject("Geocode failed");
-           }
-         });
-       });
-     }
-     async function sendDataToPHP(city, country) {
-     try {
-       const response = await $.ajax({
-         url: "{{route('country-statistics')}}",
-         method: "POST",
-         data: {
-           code: "{{$qrCode->code}}",  // Output PHP variable
-           city: city,
-           country: country,
-           "_token": "{{ csrf_token() }}",
-         }
-       });
-       return response;  // Return the response if needed
-     } catch (error) {
-       console.error("Error sending data to PHP:", error);
-       throw error;  // Throw the error for handling later if necessary
-     }
-   }
-    });
-     </script>
+      $(document).ready(function() {
+        let city = "Unknown";
+        let country = "Unknown";
+        let fingerprint = "Unknown";
+      
+        // Get fingerprint first
+        (async () => {
+          const fp = await FingerprintJS.load();
+          const result = await fp.get();
+          fingerprint = result.visitorId; // Unique fingerprint
+        })();
+      
+        // Geolocation logic
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+      
+              try {
+                const cityCountry = await getCityCountry(latitude, longitude);
+                city = cityCountry?.city || "Unknown";
+                country = cityCountry?.country || "Unknown";
+              } catch (error) {
+                console.error("Geolocation fetch error:", error);
+              }
+              sendDataToPHP(city, country, fingerprint); // Send data once everything is set
+            },
+            (error) => {
+              console.error("Geolocation error:", error);
+              sendDataToPHP(city, country, fingerprint); // Even if geolocation fails, send fingerprint
+            }
+          );
+        } else {
+          console.error("Geolocation not supported by this browser.");
+          sendDataToPHP(city, country, fingerprint);
+        }
+      
+        // Geocode city and country using Google Maps API
+        async function getCityCountry(lat, lng) {
+          const geocoder = new google.maps.Geocoder();
+          const location = { lat, lng };
+      
+          return new Promise((resolve, reject) => {
+            geocoder.geocode({ location }, (results, status) => {
+              if (status === "OK" && results[0]) {
+                let city = null,
+                  country = null;
+                results[0].address_components.forEach((component) => {
+                  if (
+                    component.types.includes("locality") ||
+                    component.types.includes("administrative_area_level_1")
+                  ) {
+                    city = component.long_name;
+                  }
+                  if (component.types.includes("country")) {
+                    country = component.long_name;
+                  }
+                });
+                resolve({ city, country });
+              } else {
+                reject("Geocode failed");
+              }
+            });
+          });
+        }
+      
+        // Send data to Laravel
+        async function sendDataToPHP(city, country, fingerprint) {
+          try {
+            const response = await $.ajax({
+              url: "{{route('country-statistics')}}",
+              method: "POST",
+              data: {
+                code: "{{$qrCode->code}}",
+                city: city,
+                country: country,
+                fingerprint: fingerprint,
+                "_token": "{{ csrf_token() }}",
+                ip: "{{ request()->ip() }}",
+                session_id: "{{ session()->getId() }}",
+              },
+            });
+            console.log("Data sent:", response);
+          } catch (error) {
+            console.error("Error sending data to PHP:", error);
+          }
+        }
+      });
+       </script>
 </body>
 
 </html>

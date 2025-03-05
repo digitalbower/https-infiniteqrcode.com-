@@ -64,10 +64,6 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $email = $fields['email']; 
-        $password = $fields['password'];
-        $user = Auth::attempt(['email' => $email, 'password' => $password]);
-        dd($user); 
         if (Auth::attempt($fields)) { 
             return redirect()->route('profile')->with('success', 'Logged in successfully!');
         } ;

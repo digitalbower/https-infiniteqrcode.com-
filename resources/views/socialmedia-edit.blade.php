@@ -373,7 +373,7 @@
                                         <div class="flex-1">
                                           <label for="startDate" class="block font-medium text-gray-800">Start Date</label>
                                           <div>
-                                            <input id="startDate" min="2025-02-09" type="date"
+                                            <input id="startDate" type="date"
                                               class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                               name="startdate" value="{{$social->start_date}}">
                                             @error('startdate')
@@ -411,8 +411,8 @@
                                           class="w-full p-3 mt-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{$social->remarks}}</textarea>
                                       </div>
                                       <div class="flex justify-between mt-8">
-                  <button type="button" onclick="location.href='QrOption.php'"
-                    class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button>
+                  {{-- <button type="button" onclick="location.href='QrOption.php'"
+                    class="py-2 px-6 rounded-lg bg-gray-300 text-gray-700 font-semibold hover:bg-gray-400">Previous</button> --}}
                   <span id="message" class="bg-white justify-center align-center pt-2 font-semibold py-2 px-6 rounded-lg hidden"></span>
                   <div id="loadingIndicator"
                     class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
@@ -422,7 +422,7 @@
                     </div>
                   </div>
                   <button type="submit" id="nextBtn"
-                    class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Generate Qr Code</button>
+                    class="py-2 px-10 rounded-lg bg-[#F5A623] bg-opacity-80 hover:bg-opacity-100 text-white font-semibold hover:bg-[#F5A623]">Update Content</button>
                 </div>
                                     </div>
                                   </div>

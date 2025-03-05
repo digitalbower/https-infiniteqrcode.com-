@@ -126,23 +126,18 @@
               </div>
               <!-- Scans Section -->
               <div class="rounded-lg sm:bg-gray-900 sm:p-4 lg:p-6 shadow-lg mb-3">
-                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                {{-- <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div class="flex flex-wrap items-center gap-4">
-                    <h2 class="text-lg font-semibold text-gray-200">Scans</h2>
-                  <button
+                    <h2 class="text-lg font-semibold text-gray-200">Scans</h2> --}}
+                  {{-- <button
                     class="flex items-center sm:w-auto w-full gap-2 rounded-md border border-gray-700 px-3 py-1.5 text-sm hover:bg-gray-900">
                     <i class="fas fa-calendar-alt h-4 w-4"></i>
                     <input class="bg-gray-800 sm:bg-gray-900" type="date" id="start_Date" class="text-gray-700"> -
                     <input class="bg-gray-800 sm:bg-gray-900" type="date" id="end_Date"
                       class="text-gray-700">
-                  </button>
-                    <div class="flex rounded-md sm:w-auto w-full justify-around border border-gray-700">
-                      <button id="dayBtn" class="px-3 py-1.5 text-sm hover:bg-gray-900 ">Day</button>
-                      <button id="weekBtn" class="px-3 py-1.5 text-sm hover:bg-gray-900">Week</button>
-                      <button id="monthBtn" class="px-3 py-1.5 text-sm hover:bg-gray-900">Month</button>
-                    </div>
-                  </div>
-                  <div class="flex flex-wrap  sm:w-auto w-full justify-around items-center gap-4">
+                  </button> --}}
+                  {{-- </div> --}}
+                  {{-- <div class="flex flex-wrap  sm:w-auto w-full justify-around items-center gap-4">
                     <button class="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition duration-200">
                       <i class="fas fa-sync h-4 w-4"></i>
                       Reset
@@ -151,8 +146,8 @@
                       <i class="fas fa-download h-4 w-4"></i>
                       Download PDF
                     </button>
-                  </div>
-                </div>
+                  </div> --}}
+                {{-- </div> --}}
     
                 <!-- Charts -->
                 <div class="grid gap-8 md:grid-cols-2">
@@ -180,11 +175,10 @@
                         <p class="text-lg font-semibold">No Countries data available</p>
                         <p class="text-sm text-center md:text-left">Please check back later or contact support for assistance.</p>
                       </div>
-                      <div class="flex items-center justify-between text-gray-400 hidden" id="showCountry">
+                      <div class="hidden" id="showCountry">
                         <span id="country"></span>
                         <div class="flex items-center gap-4">
                           <span id="scan_count"></span>
-                          <span id="percentage" class="w-16 text-right"></span>
                         </div>
                       </div>
                   </div>
@@ -197,11 +191,10 @@
                         <p class="text-lg font-semibold">No city data available</p>
                         <p class="text-sm text-center md:text-left">Please check back later or contact support for assistance.</p>
                       </div>
-                      <div class="flex items-center justify-between text-gray-400 hidden" id="showCity">
+                      <div class="hidden" id="showCity">
                         <span id="city"></span>
                         <div class="flex items-center gap-4">
                           <span id="city_scan_count"></span>
-                          <span class="w-16 text-right" id="city_percentage"></span>
                         </div>
                       </div>
                   </div>
@@ -315,31 +308,78 @@
                   }
                 
                 }
-
+                if(qrtype){
+                  if(qrtype.trim() === "Dynamic"){
+                    $('#downloadButton').removeClass("hidden");
+                     $('#edit').removeClass("hidden");
+                }
+                if(qrtype.trim() === "Static"){
+                    $('#downloadButton').addClass("hidden");
+                    $('#edit').addClass("hidden");
+                }
+                }
+              
                 $.getJSON(`/get-country-data/${code}`, function(data) {
+                  let countryContainer = $('#showCountry'); // Parent element for dynamic content
+                  countryContainer.empty(); // Clear old data
+                  if (data.length > 0) {
                     $.each(data, function(index, item) {
-                        let percentage = Math.round(parseFloat(item.percentage));
-                        $('#country').text(item.country);
-                        $('#scan_count').text(item.scan_count);
-                        $('#percentage').text(percentage + '%');
+                      countryContainer.append(`
+                           <div class="flex justify-between text-gray-400 mb-2 w-full">
+                             <span id="country">${item.country}</span>
+                              <div class="flex items-center gap-4">
+                                <span id="scan_count">${item.total_scans}</span>
+                              </div>
+                          </div>
+                      `);
                         $('#showCountry').removeClass('hidden');
                         $('#noCountry').addClass('hidden');
                     });
+                  }
+                  else {
+                    $('#showCountry').addClass('hidden');
+                    $('#noCountry').removeClass('hidden');
+                }
                 }).fail(function(error) { console.error('Error:', error); });
 
                 $.getJSON(`/get-city-data/${code}`, function(data) {
+                let cityContainer = $('#showCity'); // Parent element for dynamic content
+                cityContainer.empty(); // Clear old data
+
+                if (data.length > 0) {
                     $.each(data, function(index, item) {
-                        let percentage = Math.round(parseFloat(item.percentage));
-                        $('#city').text(item.city);
-                        $('#city_scan_count').text(item.scan_count);
-                        $('#city_percentage').text(percentage + '%');
+                        cityContainer.append(`
+                              <div class="flex justify-between text-gray-400 mb-2 w-full">
+                                <span id="city">${item.city}</span>
+                                 <div class="flex items-center gap-4">
+                                  <span id="city_scan_count">${item.total_scans}</span>
+                                </div>
+                           </div>
+                        `);
+                      });
+
                         $('#showCity').removeClass('hidden');
                         $('#noCity').addClass('hidden');
-                    });
+                } else {
+                    $('#showCity').addClass('hidden');
+                    $('#noCity').removeClass('hidden');
+                }
                 }).fail(function(error) { console.error('Error:', error); });
 
                 $('#barChart-container, #lineChart-container').attr('data-code', code);
-               
+            
+            const getLast7Days = (latestDate = null) => {
+                const dates = [];
+                let currentDate = latestDate ? new Date(latestDate) : new Date();
+
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date(currentDate);
+                    date.setDate(currentDate.getDate() - i);
+                    dates.push(date.toISOString().split('T')[0]); // Format: YYYY-MM-DD
+                }
+                return dates;
+            };
+
                 $.ajax({
                   url: "{{route('barchart')}}",
                   method: 'GET',
@@ -347,24 +387,58 @@
                     code: code,
                     start_date: '',
                     end_date: '',
-                    range: ''
                   },
                   dataType: 'json',
                   success: function (data) {
                     const regex = /\(([^;]+); ([^;]+)/;
-                    const labels = data.map(item => {
-                      const match = item.user_agent.match(regex);
-                      if (match) {
-                        return match[1]; // Device type, e.g., "Mobile";
-                      } else {
-                        return {
-                          os: null,
-                          deviceType: null
-                        }; // No match found
-                      }
-                    });
-                    const scanCounts = data.map(item => item.scan_count);
-          
+                    const osCategories = {
+                        'iOS': ['iPhone', 'iPad', 'iOS'], // Check iOS first
+                        'Android': ['Android'],
+                        'Windows': ['Windows NT', 'Windows', 'Win'],
+                        'Mac': ['Macintosh', 'Mac OS', 'Mac'],
+                        'Other': []
+                      };
+
+                      // Initialize counts for each category
+                      const labelCounts = Object.keys(osCategories).reduce((acc, key) => {
+                        acc[key] = 0;
+                        return acc;
+                      }, {});
+
+                      // Map data to categories
+                      data.forEach(item => {
+                        const userAgent = item.user_agent || 'Other';
+                        let foundCategory = 'Other';
+
+                        for (const [category, identifiers] of Object.entries(osCategories)) {
+                          if (identifiers.some(id => userAgent.includes(id))) {
+                            foundCategory = category;
+                            break; // Stop checking once a match is found
+                          }
+                        }
+
+                        labelCounts[foundCategory] += item.scan_count;
+                      });
+
+                      console.log(labelCounts); // Check if counts are correct
+
+
+                    // Prepare chart data
+                    const labels = Object.keys(labelCounts); 
+                    const scanCounts = Object.values(labelCounts);
+                    const maxScanCount = Math.max(...scanCounts); // Get the largest value for dynamic scaling
+
+                    // Function to calculate step size
+                    const getStepSize = (maxScanCount) => {
+                      if (maxScanCount <= 5) return 5; // If small count, use a step size of 5
+                      return Math.ceil(maxScanCount / 10) * 10 - maxScanCount; // Round up to nearest 10
+                    };
+                    
+                    const suggestedMax = maxScanCount > 0 
+                      ? Math.ceil(maxScanCount / 10) * 10 
+                      : 5; // Default to 5 if no scans
+                    
+                    console.log(suggestedMax); // Debug to see the output
                     const ctx = $('#barChart')[0].getContext('2d');
                     window.barChartInstance = new Chart(ctx, {
                       type: 'bar',
@@ -396,7 +470,16 @@
                             title: {
                               display: true,
                               text: 'Scans'
-                            }
+                          },
+                          ticks: {
+                                stepSize: getStepSize(maxScanCount),
+                                beginAtZero: true,
+                                callback: function(value) {
+                                  return value; // Display raw values like 1, 2, 10, 20, etc.
+                                }
+                            },
+                           suggestedMax: suggestedMax,
+
                           }
                         },
                         plugins: {
@@ -421,28 +504,61 @@
                   method: 'GET',
                   data: {
                     code: code,
-                    start_date: '',
-                    end_date: '',
-                    range: ''
+                    start_date: startDate || '', // Pass empty if not set
+                    end_date: endDate || ''
                   },
                   dataType: 'json',
                   success: function (data) {
-                    const labels = data.map(item => item.scan_date); // Assuming the data contains a "date" field
-                    const scanCounts = data.map(item => item.total_scans); // Assuming the data contains a "scan_count" field
-                  
+                        console.log("Data from server:", data);
+                        
+                        const latestDate = new Date().toISOString().split('T')[0] ;
+
+                        console.log("Latest Date:", latestDate);
+
+                        // Get last 7 days from either latest date or current date
+                        const dateRange = getLast7Days(latestDate);
+                        console.log("Last 7 Days:", dateRange);
+
+                        // Ensure all dates are mapped, default to 0 scans if no data
+                        const scanData = dateRange.map(date => {
+                            const item = data.find(d => d.scan_date === date);
+                            return item ? item.total_scans : 0; // Default to 0 if no data
+                        });
+                        console.log("Scan Data:", scanData);
+
+
+                        const maxScanCount = Math.max(...scanData, 0); // Get max scans or 0
+                        console.log("Max Scan Count:", maxScanCount);
+
+                        // Ensure step size is always 1 when max is small or zero
+                        const getStepSize = (maxScanCount) => {
+                           if (maxScanCount <= 10) {
+                            return 1;
+                          } else if (maxScanCount <= 100) {
+                            return 10; 
+                          } else {
+                            return Math.ceil(maxScanCount / 10) * 10; 
+                          }
+                        };
+
+                        console.log("Step size:", getStepSize(maxScanCount));
+
                     const ctx = $('#lineChart')[0].getContext('2d');
+                    if (window.lineChartInstance) {
+                        window.lineChartInstance.destroy();
+                    }
                     window.lineChartInstance = new Chart(ctx, {
                       type: 'line',
                       data: {
-                        labels: labels,
+                        labels: dateRange, // Empty labels if no data
                         datasets: [{
-                          label: 'Scans Over Time',
-                          data: scanCounts,
+                          label:  'Scans Over Time',
+                          data: scanData,
                           backgroundColor: 'rgba(75, 192, 192, 0.2)',
                           borderColor: 'rgba(75, 192, 192, 1)',
                           borderWidth: 2,
                           fill: true,
-                          tension: 0.4 // Adds smoothing to the line
+                          tension: 0.4
                         }]
                       },
                       options: {
@@ -458,7 +574,16 @@
                             title: {
                               display: true,
                               text: 'Scans'
-                            }
+                            },
+                            beginAtZero: true,
+                            ticks: {
+                              stepSize: getStepSize(maxScanCount), 
+                              precision: 0,
+                              callback: function(value) {
+                                return value; // Display raw values
+                              }
+                            },
+                            suggestedMax: maxScanCount > 0 ? maxScanCount + getStepSize(maxScanCount) : 1,
                           }
                         }
                       }
@@ -469,339 +594,237 @@
                   }
                 });
             
-                // jQuery event listeners
-                $('#dayBtn').on('click', function () {
-                  //updateCharts('day');
-                  fetchDataAndUpdate('day');
-                  $(this).addClass('bg-gray-900');
-                  $('#weekBtn').removeClass('bg-gray-900');
-                  $('#monthBtn').removeClass('bg-gray-900');
-                });
-
-                $('#weekBtn').on('click', function () {
-                  //updateCharts('week');
-                  fetchDataAndUpdate('week');
-                  $(this).addClass('bg-gray-900');
-                  $('#dayBtn').removeClass('bg-gray-900');
-                  $('#monthBtn').removeClass('bg-gray-900');
-                });
-
-                $('#monthBtn').on('click', function () {
-                  //updateCharts('month');
-                  fetchDataAndUpdate('month');
-                  $(this).addClass('bg-gray-900');
-                  $('#dayBtn').removeClass('bg-gray-900');
-                  $('#weekBtn').removeClass('bg-gray-900');
-                });
-  
-  
-                function fetchDataAndUpdate(range) {
-                  if(window.barChartInstance) {
-                      window.barChartInstance.destroy();
-                  }
-                  if (window.lineChartInstance) {
-                     window.lineChartInstance.destroy();
-                  }
-                  let startDate, endDate;
-                  // Determine date range
-                  const today = new Date();
-                  if (range === 'day') {
-                    startDate = today.toISOString().split('T')[0];
-                    endDate = today.toISOString().split('T')[0];
-                  } else if (range === 'week') {
-                    const firstDay = new Date(today.setDate(today.getDate() - today.getDay()));
-                    startDate = firstDay.toISOString().split('T')[0];
-                    endDate = new Date().toISOString().split('T')[0];
-                  } else if (range === 'month') {
-                    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-                    startDate = firstDay.toISOString().split('T')[0];
-                    endDate = new Date().toISOString().split('T')[0];
-                  }
-                 
-                  $.ajax({
-                    url: "{{route('barchart')}}",
-                    method: 'GET',
-                    data: {
-                      code: code,
-                      start_date: startDate,
-                      end_date: endDate,
-                      range: range
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                      const regex = /\(([^;]+); ([^;]+)/;
-                      const labels = data.map(item => {
-                        const match = item.user_agent.match(regex);
-                        if (match) {
-                          return match[1]; // Device type, e.g., "Mobile";
-                        } else {
-                          return {
-                            os: null,
-                            deviceType: null
-                          }; // No match found
-                        }
-                      });
-                      const scanCounts = data.map(item => item.scan_count);
-                      if (window.barChartInstance) {
-                      window.barChartInstance.destroy();
-                      }
-                      const ctx = $('#barChart')[0].getContext('2d');
-                      window.barChartInstance = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                          labels: labels,
-                          datasets: [{
-                            label: 'Scans by OS',
-                            data: scanCounts,
-                            backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1,
-                            barThickness: 30,
-                          }]
-                        },
-                        options: {
-                          responsive: true,
-                          scales: {
-                            x: {
-                              title: {
-                                display: true,
-                                text: 'Operating System'
-                              },
-                              ticks: {
-                                maxRotation: 90,
-                                minRotation: 0,
-                              }
-                            },
-                            y: {
-                              title: {
-                                display: true,
-                                text: 'Scans'
-                              }
-                            }
-                          },
-                          plugins: {
-                            legend: {
-                              display: true
-                            },
-                            tooltip: {
-                              enabled: true
-                            }
-                          }
-                        }
-                      });
-                    },
-                    error: function (xhr, status, error) {
-                      console.error('Error fetching bar chart data:', status, error);
-                    }
-                  });
-                  $.ajax({
-                    url: "{{route('linechart')}}",
-                    method: 'GET',
-                    data: {
-                      code: code,
-                      start_date: startDate,
-                      end_date: endDate,
-                      range: range
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                      const labels = data.map(item => item.scan_date); // Assuming the data contains a "date" field
-                      const scanCounts = data.map(item => item.total_scans); // Assuming the data contains a "scan_count" field
-                      console.log(scanCounts);
-                      const ctx = $('#lineChart')[0].getContext('2d');
-                      if (window.lineChartInstance) {
-                      window.lineChartInstance.destroy();
-                      }
-                      window.lineChartInstance = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                          labels: labels,
-                          datasets: [{
-                            label: 'Scans Over Time',
-                            data: scanCounts,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4 // Adds smoothing to the line
-                          }]
-                        },
-                        options: {
-                          responsive: true,
-                          scales: {
-                            x: {
-                              title: {
-                                display: true,
-                                text: 'Date'
-                              }
-                            },
-                            y: {
-                              title: {
-                                display: true,
-                                text: 'Scans'
-                              }
-                            }
-                          }
-                        }
-                      });
-                    },
-                    error: function (xhr, status, error) {
-                      console.error('Error fetching line chart data:', status, error);
-                    }
-                  });
-            
-            
-            
-                }
-            $("#end_Date").change(function (e) {
-              e.preventDefault();
-              if (window.barChartInstance) {
-                  window.barChartInstance.destroy();
-              }
-              if (window.lineChartInstance) {
-                  window.lineChartInstance.destroy();
-              }
-              startDate = $("#start_Date").val();
-              if (startDate !== '') {
-                endDate = $("#end_Date").val();
-              } else {
-                alert('Choose Start Date');
-              }
+            // $("#end_Date").change(function (e) {
+            //   e.preventDefault();
+            //   if (window.barChartInstance) {
+            //       window.barChartInstance.destroy();
+            //   }
+            //   if (window.lineChartInstance) {
+            //       window.lineChartInstance.destroy();
+            //   }
+            //   startDate = $("#start_Date").val();
+            //   if (startDate !== '') {
+            //     endDate = $("#end_Date").val();
+            //   } else {
+            //     alert('Choose Start Date');
+            //   }
              
-              $.ajax({
-                url: "{{route('barchart')}}",
-                method: 'GET',
-                data: {
-                  code: code,
-                  start_date: startDate,
-                  end_date: endDate,
-                  range: ''
-                },
-                dataType: 'json',
-                success: function (data) {
-                  const regex = /\(([^;]+); ([^;]+)/;
-                  const labels = data.map(item => {
-                    const match = item.user_agent.match(regex);
-                    if (match) {
-                      return match[1]; // Device type, e.g., "Mobile";
-                    } else {
-                      return {
-                        os: null,
-                        deviceType: null
-                      }; // No match found
-                    }
-                  });
-                  const scanCounts = data.map(item => item.scan_count);
-        
-                  const ctx = $('#barChart')[0].getContext('2d');
-                  if (window.barChartInstance) {
-                  window.barChartInstance.destroy();
-                  }
+            //   $.ajax({
+            //     url: "{{route('barchart')}}",
+            //     method: 'GET',
+            //     data: {
+            //       code: code,
+            //       start_date: startDate,
+            //       end_date: endDate,
+            //     },
+            //     dataType: 'json',
+            //     success: function (data) {
+            //       const regex = /\(([^;]+); ([^;]+)/;
+            //       // Broad OS categories
+            //       const osCategories = {
+            //         'Windows': ['Windows NT', 'Windows', 'Win'],
+            //         'Mac': ['Macintosh', 'Mac OS', 'Mac'],
+            //         'Android': ['Android'],
+            //         'iOS': ['iPhone', 'iPad', 'iOS'],
+            //         'Other': []
+            //       };
+
+            //       // Initialize counts for each category
+            //       const labelCounts = Object.keys(osCategories).reduce((acc, key) => {
+            //         acc[key] = 0;
+            //         return acc;
+            //       }, {});
+
+            //       // Map data to categories
+            //       data.forEach(item => {
+            //         const match = item.user_agent.match(regex);
+            //         let os = match ? match[1] : 'Other';
+                    
+            //         let foundCategory = 'Other';
+            //         for (const [category, identifiers] of Object.entries(osCategories)) {
+            //           if (identifiers.some(id => os.includes(id))) {
+            //             foundCategory = category;
+            //             break;
+            //           }
+            //         }
+
+            //         labelCounts[foundCategory] += item.scan_count;
+            //       });
+
+            //       // Prepare chart data
+            //       const labels = Object.keys(labelCounts); 
+            //       const scanCounts = Object.values(labelCounts);
+            //       const maxScanCount = Math.max(...scanCounts); // Get the largest value for dynamic scaling
+
+            //       // Function to calculate step size
+            //       const getStepSize = (maxScanCount) => {
+            //           if (maxScanCount <= 10) {
+            //             return 1;  // Steps of 1 for values 0–10
+            //           } else if (maxScanCount <= 100) {
+            //             return 10; // Steps of 10 for values 11–100
+            //           } else if (maxScanCount <= 1000) {
+            //             return 50; // Steps of 50 for values 101–1000
+            //           } else {
+            //             // Auto-calculate step size for large values (round to nearest multiple of 10)
+            //             return Math.ceil(maxScanCount / 10) * 10;
+            //           }
+            //       };
+            //       const ctx = $('#barChart')[0].getContext('2d');
+            //       if (window.barChartInstance) {
+            //       window.barChartInstance.destroy();
+            //       }
                  
-                  window.barChartInstance = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                      labels: labels,
-                      datasets: [{
-                        label: 'Scans by OS',
-                        data: scanCounts,
-                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1,
-                        barThickness: 30,
-                      }]
-                    },
-                    options: {
-                      responsive: true,
-                      scales: {
-                        x: {
-                          title: {
-                            display: true,
-                            text: 'Operating System'
-                          },
-                          ticks: {
-                            maxRotation: 90,
-                            minRotation: 0,
-                          }
-                        },
-                        y: {
-                          title: {
-                            display: true,
-                            text: 'Scans'
-                          }
-                        }
-                      },
-                      plugins: {
-                        legend: {
-                          display: true
-                        },
-                        tooltip: {
-                          enabled: true
-                        }
-                      }
-                    }
-                  });
-                },
-                error: function (xhr, status, error) {
-                  console.error('Error fetching bar chart data:', status, error);
-                }
-              });
-              $.ajax({
-                url: "{{route('linechart')}}",
-                method: 'GET',
-                data: {
-                  code: code,
-                  start_date: startDate,
-                  end_date: endDate,
-                  range: ''
-                },
-                dataType: 'json',
-                success: function (data) {
-                  const labels = data.map(item => item.scan_date); // Assuming the data contains a "date" field
-                  const scanCounts = data.map(item => item.total_scans); // Assuming the data contains a "scan_count" field
-                  console.log(scanCounts);
-                  const ctx = $('#lineChart')[0].getContext('2d');
-                  if (window.lineChartInstance) {
-                      window.lineChartInstance.destroy();
-                  }
-                  window.lineChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                      labels: labels,
-                      datasets: [{
-                        label: 'Scans Over Time',
-                        data: scanCounts,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4 // Adds smoothing to the line
-                      }]
-                    },
-                    options: {
-                      responsive: true,
-                      scales: {
-                        x: {
-                          title: {
-                            display: true,
-                            text: 'Date'
-                          }
-                        },
-                        y: {
-                          title: {
-                            display: true,
-                            text: 'Scans'
-                          }
-                        }
-                      }
-                    }
-                  });
-                },
-                error: function (xhr, status, error) {
-                  console.error('Error fetching line chart data:', status, error);
-                }
-              });
-            });
+            //       window.barChartInstance = new Chart(ctx, {
+            //         type: 'bar',
+            //         data: {
+            //           labels: labels,
+            //           datasets: [{
+            //             label: 'Scans by OS',
+            //             data: scanCounts,
+            //             backgroundColor: 'rgba(153, 102, 255, 0.6)',
+            //             borderColor: 'rgba(153, 102, 255, 1)',
+            //             borderWidth: 1,
+            //             barThickness: 30,
+            //           }]
+            //         },
+            //         options: {
+            //           responsive: true,
+            //           scales: {
+            //             x: {
+            //               title: {
+            //                 display: true,
+            //                 text: 'Operating System'
+            //               },
+            //               ticks: {
+            //                 maxRotation: 90,
+            //                 minRotation: 0,
+            //               }
+            //             },
+            //             y: {
+            //               title: {
+            //                 display: true,
+            //                 text: 'Scans'
+            //             },
+            //             ticks: {
+            //                   stepSize: getStepSize(maxScanCount),
+            //                   beginAtZero: true,
+            //                   callback: function(value) {
+            //                     return value; // Display raw values like 1, 2, 10, 20, etc.
+            //                   }
+            //               }
+            //             }
+            //           },
+            //           plugins: {
+            //             legend: {
+            //               display: true
+            //             },
+            //             tooltip: {
+            //               enabled: true
+            //             }
+            //           }
+            //         }
+            //       });
+            //     },
+            //     error: function (xhr, status, error) {
+            //       console.error('Error fetching bar chart data:', status, error);
+            //     }
+            //   });
+            //   $.ajax({
+            //     url: "{{route('linechart')}}",
+            //     method: 'GET',
+            //     data: {
+            //       code: code,
+            //       start_date: startDate,
+            //       end_date: endDate,
+            //     },
+            //     dataType: 'json',
+            //     success: function (data) {
+            //       console.log("Data from server:", data);
+            //       const dateRange = getDateRange(startDate, endDate, data);
+            //       console.log("Date Range:", dateRange);
+
+            //       // Map data to date range
+            //       const scanData = dateRange.map(date => {
+            //           const item = data.find(d => d.scan_date === date);
+            //           return item ? item.total_scans : 0; // Default to 0 if no data for that date
+            //       });
+
+            //       console.log("Scan Data:", scanData);
+
+            //       const maxScanCount = Math.max(...scanData, 0); // Get max scans or 0
+            //       console.log("Max Scan Count:", maxScanCount);
+
+            //       // Ensure step size is always 1 when max is small or zero
+            //       const getStepSize = (maxScanCount) => {
+            //         if (maxScanCount <= 10) {
+            //           return 1;  // Steps of 1 for values 0–10
+            //         } else if (maxScanCount <= 100) {
+            //           return 10; // Steps of 10 for values 11–100
+            //         } else if (maxScanCount <= 1000) {
+            //           return 50; // Steps of 50 for values 101–1000
+            //         } else {
+            //           // Auto-calculate step size for large values (round to nearest multiple of 10)
+            //           return Math.ceil(maxScanCount / 10) * 10;
+            //         }
+            //       };
+
+            //       const showAxes = maxScanCount > 0; // Show axes only if there's data
+
+            //       const ctx = $('#lineChart')[0].getContext('2d');
+            //       if (window.lineChartInstance) {
+            //           window.lineChartInstance.destroy();
+            //       }
+            //       window.lineChartInstance = new Chart(ctx, {
+            //         type: 'line',
+            //         data: {
+            //           labels: showAxes ? dateRange : [], // Empty labels if no data
+            //           datasets: [{
+            //             label: showAxes ? `Scans from ${startDate} to ${endDate}` : '',
+            //             data: showAxes ? scanData : [],
+            //             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            //             borderColor: 'rgba(75, 192, 192, 1)',
+            //             borderWidth: 2,
+            //             fill: true,
+            //             tension: 0.4
+            //           }]
+            //         },
+            //         options: {
+            //           responsive: true,
+            //           scales: {
+            //             x: {
+            //               display: showAxes,
+            //               title: {
+            //                 display: showAxes,
+            //                 text: 'Date'
+            //               }
+            //             },
+            //             y: {
+            //               display: true,
+            //               beginAtZero: true,
+            //               suggestedMin: 0,
+            //               suggestedMax: maxScanCount > 0 ? maxScanCount + getStepSize(maxScanCount) : 2,
+            //               ticks: {
+            //                 stepSize: getStepSize(maxScanCount),
+            //                 precision: 0,
+            //                 callback: function(value) {
+            //                   return value; // Always show raw values
+            //                 }
+            //               }
+            //             }
+            //           },
+            //           plugins: {
+            //             legend: {
+            //               display: showAxes
+            //             }
+            //           }
+            //         }
+            //       });
+            //     },
+            //     error: function (xhr, status, error) {
+            //       console.error('Error fetching line chart data:', status, error);
+            //     }
+            //   });
+            // });
           });
           $('#projectChange').trigger('change');
         });

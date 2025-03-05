@@ -15,8 +15,10 @@
                   <h3 class="text-3xl font-bold text-gray-100">{{ ucfirst($plans->plan) }} Plan</h3>
                   <p class="text-xl text-gray-400">${{$plans->paid_amount == '' ? '0' : $plans->paid_amount;}}/{{ $plans->duration == '' ? '7 days' : $plans->duration; }}</p>
                 </div>
-                <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300" onclick="location.href='upgrade';">Upgrade</button>
-              </div>
+                @if ($plans->plan == 'free')
+                  <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300" onclick="location.href='upgrade';">Upgrade</button>
+                @endif
+                </div>
               @if ($plans->plan == 'free')
                 <div class="flex gap-6 mb-6">
                   <div class="flex items-center gap-2">
@@ -191,31 +193,8 @@
           <h2 class="text-xl font-semibold text-gray-800">Enter Card Details</h2>
           <p class="text-gray-600 mt-1">Fill in the form below to add your card.</p>
           <!-- Card Form -->
-          <form id="cardForm" class="mt-4" action="#" method="post" onsubmit="return false;">
-            <div class="mb-4">
-              <label for="cardName" class="block text-sm font-medium text-gray-700">
-                Cardholder Name
-              </label>
-              <input
-                type="text"
-                id="cardName" readonly
-                name="cardName" value="{{Session::get('firstname')}} {{Session::get('lastname')}}"
-                class="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-500"
-                placeholder="John Doe"
-                required>
-              <input type="hidden" name="stripe_customer_id " id="customer_id" value="{{$plans->stripe_customer_id}}">
-              <input type="hidden" name="price" id="price" value="{{$plans->paid_amount}}">
-            </div>
-            <div class="mb-4">
-              <div id="card-element"></div>
-            </div>
-            <div id="card-errors" class="text-red-700"></div>
-            <button
-              type="submit"
-              class="w-full bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition">
-              Save Card
-            </button>
-          </form>
+          
+        
         </div>
       </div>
       <div id="loadingIndicator"  class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">
@@ -233,8 +212,9 @@
     const stripe = Stripe(stripePublicKey); // Use the key from Blade
      const elements = stripe.elements();
     const clientSecret = 'client_secret_from_server';
-
-    const card = elements.create('card');
+    var card = elements.create("card", {
+        hidePostalCode: true,
+    });
     card.mount('#card-element');
 
     const customerid = $('#customer_id').val();
