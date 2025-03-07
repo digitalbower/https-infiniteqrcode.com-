@@ -132,3 +132,9 @@ $(document).ready(function () {
     }
   });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+  const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+  document.getElementById('startDate').setAttribute('min', today);
+  document.getElementById('endDate').setAttribute('min', today);
+});

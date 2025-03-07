@@ -75,17 +75,11 @@
                         <label class="text-base text-gray-600">Phone Number</label>
                         <div class="flex gap-x-2 items-center mt-2">
                           <select class="w-full text-xs md:text-sm rounded-md text-black border p-1 h-10 md:h-auto py-2 md:p-2 lg:pr-10 w-1/3" name="countrycode" id="countrycode" readonly>
-                            <option value="+1" {{ old('countrycode') == '+1' ? 'selected' : '' }}>🇺🇸 USA (+1)</option>
-                            <option value="+91" {{ old('countrycode') == '+91' ? 'selected' : '' }}>🇮🇳 India (+91)</option>
-                            <option value="+44" {{ old('countrycode') == '+44' ? 'selected' : '' }}>🇬🇧 UK (+44)</option>
-                            <option value="+1" {{ old('countrycode') == '+1' ? 'selected' : '' }}>🇨🇦 Canada (+1)</option>
-                            <option value="+61" {{ old('countrycode') == '+61' ? 'selected' : '' }}>🇦🇺 Australia (+61)</option>
-                            <option value="+49" {{ old('countrycode') == '+49' ? 'selected' : '' }}>🇩🇪 Germany (+49)</option>
-                            <option value="+33" {{ old('countrycode') == '+33' ? 'selected' : '' }}>🇫🇷 France (+33)</option>
-                            <option value="+81" {{ old('countrycode') == '+81' ? 'selected' : '' }}>🇯🇵 Japan (+81)</option>
-                            <option value="+55" {{ old('countrycode') == '+55' ? 'selected' : '' }}>🇧🇷 Brazil (+55)</option>
-                            <option value="+971" {{ old('countrycode') == '+971' ? 'selected' : '' }}>🇦🇪 UAE (+971)</option>
-                            <option value="+966" {{ old('countrycode') == '+966' ? 'selected' : '' }}>🇸🇦 SA (+966)</option>
+                            @foreach ($countries as $country)
+                            <option value="{{ $country['dial_code'] }}">
+                                {{ $country['name'] }} ({{ $country['dial_code'] }})
+                            </option>
+                            @endforeach
                           </select>
                           <input type="tel" max="999999999999" name="phone" id="phone" value="{{old('phone')}}" placeholder="Phone" class="w-full w-full rounded-md text-black border text-xs md:text-sm p-2 h-10 md:h-auto pr-10">
 

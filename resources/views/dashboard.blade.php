@@ -113,7 +113,7 @@ src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
                         class="text-green-500">Valid till {{ $freeFormatDate }}  (7 Days)</span></div>
                       @else
                       <div class="flex justify-between items-center mb-2"><span class="text-gray-400">Plan Validity</span><span
-                        class="text-green-500">Valid till {{ $formattedDate }}  ({{$diffTotal}} Days)</span></div>
+                        class="text-green-500">Valid till {{ $formattedDate }}  ({{ $remainingDays }} Days)</span></div>
                       @endif
                   
                   </div>
@@ -440,7 +440,8 @@ src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
                               ticks: {
                                 stepSize: 2,
                                 color: '#FFFFFF'
-                              }
+                              },
+                              suggestedMax:5
                             }
                           },
                           layout: {

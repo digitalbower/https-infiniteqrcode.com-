@@ -13,7 +13,7 @@
               <div class="flex items-start justify-between mb-6">
                 <div>
                   <h3 class="text-3xl font-bold text-gray-100">{{ ucfirst($plans->plan) }} Plan</h3>
-                  <p class="text-xl text-gray-400">${{$plans->paid_amount == '' ? '0' : $plans->paid_amount;}}/{{ $plans->duration == '' ? '7 days' : $plans->duration; }}</p>
+                  <p class="text-xl text-gray-400">${{$plans->price == '' ? '0' : $plans->price;}}/{{ $plans->duration == '' ? '7 days' : $plans->duration; }}</p>
                 </div>
                 @if ($plans->plan == 'free')
                   <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-300" onclick="location.href='upgrade';">Upgrade</button>
@@ -52,17 +52,27 @@
                       <h4 class="text-blue-100 font-semibold">Upgrade Your QR Code Experience</h4>
                       <p class="text-blue-200"> You're currently on the Free Plan. Upgrade to create and manage more QR codes with extended features! </p>
                     </div>
-                  @elseif ($plans->plan == 'basic')
+                  @elseif ($plans->plan == 'basic' && $subscribe  == 'Active' && \Carbon\Carbon::parse($plans->subscription_end)->toDateString() >= now()->toDateString())
                     <div>
                       <h4 class="text-blue-100 font-semibold">Upgrade Your QR Code Experience</h4>
                       <p class="text-blue-200"> You're currently on the Basic Plan. Upgrade before {{ date('F j, Y', strtotime($plans->subscription_end)) }} to unlock advanced features and manage more QR codes! </p>
                     </div>
-                 @elseif ($plans->plan == 'pro')
+                 @elseif (\Carbon\Carbon::parse($plans->subscription_end)->toDateString() >= now()->toDateString() && $subscribe  == 'Inactive' &&  $plans->plan  != 'free') 
+                 <div>
+                  <h4 class="text-blue-100 font-semibold">Reactivate Your Plan Today</h4>
+                  <p class="text-blue-200"> Your plan has been cancelled. Reactivate before  [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to regain access to all features and benefits.</p>
+                </div>
+                @elseif ( $plans->plan  != 'free' && (\Carbon\Carbon::parse($plans->subscription_end)->toDateString() < now()->toDateString() || $subscribe  == 'Inactive')) 
+                 <div>
+                  <h4 class="text-blue-100 font-semibold">Activate a Plan to Unlock Features</h4>
+                  <p class="text-blue-200"> Your current plan has expired or is inactive. Choose a plan today to access advanced features and manage your QR codes effortlessly.</p>
+                </div> 
+                 @elseif ($plans->plan == 'pro'  && $subscribe  == 'Active' && \Carbon\Carbon::parse($plans->subscription_end)->toDateString() >= now()->toDateString())
                     <div>
                       <h4 class="text-blue-100 font-semibold"> Reach the Top with Expert Plan.</h4>
                       <p class="text-blue-200"> You're on the Pro Plan. Upgrade before [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to enjoy the ultimate features and unlimited QR code management with the Expert Plan! </p>
                     </div> 
-                  @elseif ($plans->plan == 'expert')
+                  @elseif ($plans->plan == 'expert'  && $subscribe  == 'Active' && \Carbon\Carbon::parse($plans->subscription_end)->toDateString() >= now()->toDateString())
                     <div>
                       <h4 class="text-blue-100 font-semibold"> Stay at the Top! </h4>
                       <p class="text-blue-200"> You're on the highest plan—Expert. Renew before [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to continue enjoying premium features and unlimited flexibility! </p>
@@ -103,25 +113,6 @@
               </label>
             </div>
             @endif
-
-            @if ($renew_status == 'disabled' && $subscribe == 'Inactive' && $plans->plan  != 'free') 
-              <div>
-                <label for="auto-renew" class="text-gray-100 font-medium"> Reactivate Your Plan Today </label>
-                <p class="text-sm text-gray-400">
-                  Your plan has been canceled. Reactivate before  [{{ date('F j, Y', strtotime($plans->subscription_end)) }}] to regain access to all features and benefits.
-                </p>
-              </div>
-            @endif
-
-            @if ($renew_status == 'disabled' && $subscribe == 'Inactive')
-              <div>
-                <label for="auto-renew" class="text-gray-100 font-medium"> Activate a Plan to Unlock Features </label>
-                <p class="text-sm text-gray-400">
-                  Your current plan has expired or is inactive. Choose a plan today to access advanced features and manage your QR codes effortlessly.
-                </p>
-              </div>
-            @endif
-                  
               <input type="hidden" value="{{ $subscribe}}" id="subscribe" name="subscribe">
               <button class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition duration-300 mt-3 {{ $plans->plan == 'free' ? 'hidden' : '';}}" id="cancel">
                 {{ $subscribe == 'Inactive' ? 'Reactivate' : 'Cancel'}} Subscription
@@ -161,17 +152,19 @@
                       </thead>
                       <tbody>
                        
+                          @foreach ($subscriptions as $subscription)
                             <tr class="border-b border-gray-700">
-                              <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($plans->subscription_start)) }}</td>
-                              <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($plans->subscription_end))}} </td>
-                              <td class="py-3 px-4 text-gray-300">{{$plans->paid_amount}}</td>
+                              <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($subscription->plan_period_start)) }}</td>
+                              <td class="py-3 px-4 text-gray-300">{{ date('F j, Y', strtotime($subscription->plan_period_end))}} </td>
+                              <td class="py-3 px-4 text-gray-300">{{$subscription->paid_amount}}</td>
                               <td class="py-3 px-4">
-                                <a href="{{$plans->ReceiptURL}}" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-300">
+                                <a href="{{$subscription->ReceiptURL}}" target="_blank" class="text-blue-400 hover:text-blue-300 transition duration-300">
                                   <i class="fas fa-download mr-2"></i>
                                   Download
                                 </a>
                               </td>
                             </tr>
+                          @endforeach                         
                        
                       </tbody>
                     </table>
@@ -193,8 +186,31 @@
           <h2 class="text-xl font-semibold text-gray-800">Enter Card Details</h2>
           <p class="text-gray-600 mt-1">Fill in the form below to add your card.</p>
           <!-- Card Form -->
-          
-        
+          <form id="cardForm" class="mt-4" action="#" method="post" onsubmit="return false;">
+            <div class="mb-4">
+              <label for="cardName" class="block text-sm font-medium text-gray-700">
+                Cardholder Name
+              </label>
+              <input
+                type="text"
+                id="cardName" readonly
+                name="cardName" value="{{Session::get('firstname')}} {{Session::get('lastname')}}"
+                class="w-full mt-1 px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 text-gray-500"
+                placeholder="John Doe"
+                required>
+              <input type="hidden" name="stripe_customer_id " id="customer_id" value="{{$plans->stripe_customer_id}}">
+              <input type="hidden" name="price" id="price" value="{{$plans->paid_amount}}">
+            </div>
+            <div class="mb-4">
+              <div id="card-element"></div>
+            </div>
+            <div id="card-errors" class="text-red-700"></div>
+            <button
+              type="submit"
+              class="w-full bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 transition">
+              Save Card
+            </button>
+          </form>
         </div>
       </div>
       <div id="loadingIndicator"  class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50 hidden">

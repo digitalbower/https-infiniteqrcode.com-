@@ -47,43 +47,6 @@
         </div>
         <!-- QR Code Items -->
         <div class="divide-y divide-gray-700" id="qrCodesList">
-
-          <!-- QR Code Items -->
-          @foreach ($qrCodes  as $qrCode)
-          <div class="p-4 flex relative items-center hover:bg-gray-700" id="qr-{{$qrCode['code']}}">
-            <input type="checkbox" class="mr-4 md:relative absolute top-5 md:top-0 md:left-0 left-5" />
-            <div class="w-6 h-6 bg-gray-700 rounded flex items-center justify-center mr-4">
-              <i class="fas fa-qrcode text-4xl text-gray-400"></i>
-            </div>
-            <div class="flex-1 w-auto">
-               <a href="{{route('analytics',$qrCode['code'])}}"> <h3 class="font-medium text-white">{{$qrCode['projectname']}}</h3></a>
-              {{-- <a href="{{$qrCode['url']}}" target="_blank" class="md:text-sm md:line-clamp-none line-clamp-1 max-w-[200px] text-[11px] text-blue-400 hover:underline">{{$qrCode['url']}}</a> --}}
-              <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
-                <span>{{$qrCode['qrtype']}}</span>
-                <span>{{$qrCode['date']}}</span>
-              </div>
-            </div>
-            <div class="ml-auto">
-              <div class="flex justify-end"> 
-                <button class="p-2 w-auto ml-auto text-xs md:text-base hover:bg-gray-600 bg-gray-400 mb-2 rounded">
-                  <a href="{{$qrCode['url']}}" class="flex gap-x-2 items-center" download>
-                    <i class="fas fa-download text-white"></i> Download
-                  </a>
-                </button>
-              </div>
-              <div class="flex items-center justify-end space-x-2">
-                <input id="id" class="id" value="{{$qrCode['code']}}" type="hidden">
-                <button id="edit_qrcode" table="{{$qrCode['qrtable']}}" code="{{$qrCode['code']}}" class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded {{$qrCode['qrtype'] === 'Static' ? 'hidden' : ''}}" >
-                  <i class="fas fa-edit text-gray-400"></i>
-                </button>
-
-                <button class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded deleteQrCode"   data-code="{{$qrCode['code']}}" data-table="{{$qrCode['qrtable']}}">
-                  <i class="fas fa-trash text-gray-400"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-          @endforeach
         </div>
       </section>
         <!-- Pagination -->
@@ -104,6 +67,17 @@
       let qrCodes;
       let folders;
       $(document).ready(function() {
+
+        $.ajax({
+        url: "{{route('qrcodes_list')}}", // URL of the PHP script
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+          qrCodes = response;
+          $("#qrcount").text(qrCodes.length);
+          renderQrCodes(qrCodes);
+        }
+      });
        
         $(document).on('click', ".deleteQrCode", function(e) {
           e.preventDefault();
@@ -267,7 +241,7 @@
                 <i class="fas fa-qrcode text-4xl text-gray-400"></i>
               </div>
               <div class="flex-1 w-auto">
-                 <a href="analytics?${qr.code}"> <h3 class="font-medium text-white">${qr.projectname}</h3></a>
+                 <a href="{{ url('analytics') }}/${qr.code}"><h3 class="font-medium text-white">${qr.projectname}</h3></a>
                 <div class="flex items-center space-x-4 mt-1 text-sm text-gray-500">
                   <span>${qr.qrtype}</span>
                   <span>${(qr.date)}</span>
@@ -283,7 +257,7 @@
                 </div>
                 <div class="flex items-center justify-end space-x-2">
                   <input id="id" class="id" value="${qr.code}" type="hidden">
-                  <button <button id="edit_qrcode"table="${qr.qrtable}" code="${qr.code}"  class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded ${qr.qrtype === 'Static' ? 'hidden' : ''}">
+                 <button id="edit_qrcode"table="${qr.qrtable}" code="${qr.code}"  class="p-2 ml-auto hover:bg-gray-600 text-right text-base rounded ${qr.qrtype === 'Static' ? 'hidden' : ''}">
                     <i class="fas fa-edit text-gray-400"></i>
                   </button>
   

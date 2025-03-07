@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
   <style>
     body,
@@ -294,14 +296,29 @@
   <a href="{{ route('login') }}"><i class="fas fa-user text-black"></i></a>
  @endguest
 
+   @auth
   <!-- Dropdown Menu -->
   <div id="userDropdown"
     class="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg shadow-lg divide-y divide-gray-200 hidden">
+   @php
+        $subscriptionEnded = Auth::user()->subscription_end && Carbon\Carbon::parse(Auth::user()->subscription_end)->isPast();
+          $isNewUser = Auth::user()->subscription_end === null;
+    @endphp
+    
+  
+    @if (!$subscriptionEnded && !$isNewUser && Auth::user()->payment_failed_at == "")
     <a href="{{ route('dashboard') }}"
       class="flex items-center gap-x-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
       <i class="fa-solid fa-house text-blue-500"></i>
       Dashboard
     </a>
+    @elseif ($isNewUser)
+     <a href="{{ route('dashboard') }}"
+      class="flex items-center gap-x-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
+      <i class="fa-solid fa-house text-blue-500"></i>
+      Dashboard
+    </a>
+    @endif
 
     <a href="{{ route('auth.logout') }}"
       class="flex items-center gap-x-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
@@ -309,6 +326,7 @@
       Logout
     </a>
   </div>
+@endauth
 </div>
 
 
@@ -346,7 +364,7 @@ document.addEventListener("click", function(event) {
 
 </div>
 </div>
-
+<div class="success text-center text-green-500 mb-4"></div>
       <!-- Desktop Navigation -->
       <nav class="hidden lg:block">
         <ul class="flex justify-center space-x-8 py-4">
@@ -1380,7 +1398,7 @@ document.addEventListener("click", function(event) {
           <h2 class="text-4xl font-extrabold text-gray-900 mb-6">
             We’re Here to Help
           </h2>
-          <form class="space-y-6" id="contact_form" method="post" onsubmit="return false">
+            <form class="space-y-6" id="contact_form" method="post" onsubmit="return false">
           @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <input type="text" name="name" id="name" required placeholder="Full name"
@@ -1392,17 +1410,11 @@ document.addEventListener("click", function(event) {
               <select
                 class="w-1/3 px-3 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 name="countrycode" id="countrycode" readonly>
-                <option value="+1">🇺🇸 USA (+1)</option>
-                <option value="+91">🇮🇳 India (+91)</option>
-                <option value="+44">🇬🇧 UK (+44)</option>
-                <option value="+1">🇨🇦 Canada (+1)</option>
-                <option value="+61">🇦🇺 Australia (+61)</option>
-                <option value="+49">🇩🇪 Germany (+49)</option>
-                <option value="+33">🇫🇷 France (+33)</option>
-                <option value="+81">🇯🇵 Japan (+81)</option>
-                <option value="+55">🇧🇷 Brazil (+55)</option>
-                <option value="+971">🇦🇪 UAE (+971)</option>
-                <option value="+966">🇸🇦 SA (+966)</option>
+                 @foreach ($countries as $country)
+                  <option value="{{ $country['dial_code'] }}">
+                      {{ $country['name'] }} ({{ $country['dial_code'] }})
+                  </option>
+                @endforeach
               </select>
               <input type="number" max="999999999999" name="phone" id="phone" required placeholder="Phone"
                 class="w-2/3 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -1573,8 +1585,8 @@ document.addEventListener("click", function(event) {
 
     document.addEventListener("DOMContentLoaded", () => {
       // Define the start and end dates
-      const startDate = new Date("12/27/2024").getTime();
-      const endDate = new Date("01/31/2025 23:59:59").getTime();
+      const startDate = new Date("03/07/2025").getTime();
+      const endDate = new Date("04/05/2025 23:59:59").getTime();
 
       const updateCountdown = () => {
         const currentTime = new Date().getTime();
@@ -1653,41 +1665,55 @@ document.addEventListener("click", function(event) {
 
   </script>
   <script>
-    $(document).ready(function () {
-        $("#contact_form").on('submit', function (e) {
-            e.preventDefault();
-            $("#loadingIndicator").removeClass('hidden');
+   $(document).ready(function () {
+    $("#contact_form").on('submit', function (e) {
+        e.preventDefault();
+        $("#loadingIndicator").removeClass('hidden'); // Show Loader
 
-            $.ajax({
-                method: "POST",
-                url: "/contact-submit",
-                data: $(this).serialize(),
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $(".success").text(response.message).addClass('text-green-500');
-                        setTimeout(function () {
-                            location.reload();
-                        }, 3000);
-                    } else {
-                        $(".success").text('Contact admin').addClass('text-red-500');
-                    }
-                },
-                error: function (xhr) {
-                    let errors = xhr.responseJSON.errors;
-                    let errorMessages = Object.values(errors).flat().join("\n");
-                    $(".success").text(errorMessages).addClass('text-red-500');
-                },
-                complete: function () {
-                    $("#loadingIndicator").addClass('hidden');
+        $.ajax({
+            method: "POST",
+            url: "/contact-submit",
+            data: $(this).serialize(),
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Thank You!",
+                        text: response.message,
+                        confirmButtonColor: "#00b8cb",
+                        timer: 3000, // Auto Close After 3 Seconds
+                        showConfirmButton: false
+                    });
+
+                    $("#contact_form")[0].reset(); // Reset form after success
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops!",
+                        text: "Contact admin",
+                    });
                 }
-            });
+            },
+            error: function (xhr) {
+                let errors = xhr.responseJSON.errors;
+                let errorMessages = Object.values(errors).flat().join("\n");
+                Swal.fire({
+                    icon: "error",
+                    title: "Validation Error!",
+                    text: errorMessages,
+                });
+            },
+            complete: function () {
+                $("#loadingIndicator").addClass('hidden'); // Hide Loader
+            }
         });
     });
-  </script>
+});
 
+  </script>
 
 
 </body>

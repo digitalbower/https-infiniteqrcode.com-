@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\Rule;
 use Stripe\Customer;
 use Stripe\Stripe;
-
-
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Session;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -32,7 +32,7 @@ class AuthController extends Controller
         $user->password= Hash::make($request->password);
         $user->countrycode= $request->countrycode;
         $user->phonenumber= $request->phonenumber;
-        $user->plan = 'free';
+         $user->plan = 'free';
         $user->renew_status = 'Enabled';
         $user->subscribe_status = 'Active';
         $user->save();
@@ -48,12 +48,12 @@ class AuthController extends Controller
         $user->stripe_customer_id = $customer->id;
         $user->save();
 
-        Auth::login($user);
+        Auth::login($user); 
 
         // Send Welcome Email asynchronously
-        Mail::to($user->email)->queue(new WelcomeMail($user));
-       
-      return redirect()->route('dashboard')->with('success', 'Account created successfully!');
+        Mail::to($user->email)->send(new WelcomeMail($user));
+
+      return redirect()->route('profile')->with('success', 'Account created successfully!');
     }
 
     // Sign In
@@ -63,11 +63,25 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-
-        if (Auth::attempt($fields)) { 
-            return redirect()->route('profile')->with('success', 'Logged in successfully!');
-        } ;
-
+         if (Auth::attempt($fields)) { 
+            $user = auth()->user();
+    
+            // Check if subscription has ended or ends today
+            $subscriptionEnded = $user->subscription_end && Carbon::parse($user->subscription_end)->isPast();
+            Session::put('firstname', Auth::user()->firstname);
+            Session::put('lastname', Auth::user()->lastname);
+            $isNewUser = Auth::user()->subscription_end === null;
+            if (isset($user->payment_failed_at) || $subscriptionEnded) {
+                session(['showPaymentPopup' => true]); // Persistent session key
+                return redirect()->route('upgrade')->with('success', 'Logged in successfully!');
+            }
+           
+            else{
+               return redirect()->route('profile')->with('success', 'Logged in successfully!');
+            }
+            
+        } 
+    
         return back()->with('error', 'Invalid credentials');
     }
 

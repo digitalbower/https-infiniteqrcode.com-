@@ -26,8 +26,7 @@ class SendAutoRenewReminder extends Command
 
         foreach ($paidSubscriptions as $subscription) {
             if ($subscription && $subscription->email) {
-                Mail::to($subscription->email)
-                    ->send(new AutoRenewReminderMail($subscription));
+               //Add Mail Subject::Subscription Auto-Renewal Notice
             }
         }
 
@@ -38,8 +37,7 @@ class SendAutoRenewReminder extends Command
 
         foreach ($freeSubscriptions as $subscription) {
             if ($subscription && $subscription->email) {
-                Mail::to($subscription->email)
-                    ->send(new FreeSubscriptionReminderMail($subscription));
+                //Add Mail Subject::Your Free trial is about to expire
             }
         }
 

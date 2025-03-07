@@ -60,17 +60,12 @@
                             <label class="text-sm text-gray-600">Phone Number</label>
                             <div class="sm:flex gap-x-2 items-center">
                                 <select class="rounded-md text-black border text-sm p-2 pr-2 w-full sm:w-1/2" name="countrycode" id="countrycode" readonly>
-                                    <option value="+1" <?= $user->countrycode === '+1' ? 'selected' : ''; ?>>🇺🇸 USA (+1)</option>
-                                    <option value="+91" <?= $user->countrycode === '+91' ? 'selected' : ''; ?>>🇮🇳 India (+91)</option>
-                                    <option value="+44" <?= $user->countrycode === '+44' ? 'selected' : ''; ?>>🇬🇧 UK (+44)</option>
-                                    <option value="+1" <?= $user->countrycode === '+1' ? 'selected' : ''; ?>>🇨🇦 Canada (+1)</option>
-                                    <option value="+61" <?= $user->countrycode === '+61' ? 'selected' : ''; ?>>🇦🇺 Australia (+61)</option>
-                                    <option value="+49" <?= $user->countrycode === '+49' ? 'selected' : ''; ?>>🇩🇪 Germany (+49)</option>
-                                    <option value="+33" <?= $user->countrycode === '+33' ? 'selected' : ''; ?>>🇫🇷 France (+33)</option>
-                                    <option value="+81" <?= $user->countrycode === '+81' ? 'selected' : ''; ?>>🇯🇵 Japan (+81)</option>
-                                    <option value="+55" <?= $user->countrycode === '+55' ? 'selected' : ''; ?>>🇧🇷 Brazil (+55)</option>
-                                    <option value="+971" <?= $user->countrycode === '+971' ? 'selected' : ''; ?>>🇦🇪 UAE (+971)</option>
-                                    <option value="+966" <?= $user->countrycode === '+966' ? 'selected' : ''; ?>>🇸🇦 SA (+966)</option>
+                                  @foreach ($countries as $country)
+                                    <option value="{{ $country['dial_code'] }}"
+                                    {{ $country['dial_code'] == $user->countrycode ? 'selected' : '' }}>
+                                        {{ $country['name'] }} ({{ $country['dial_code'] }})
+                                    </option>
+                                  @endforeach
                                 </select>
                                 <input type="number" max="999999999999" name="phonenumber" id="phone" readonly
                                     {{($user->phonenumber !== '0') ? 'readOnly' : 'required';}} 

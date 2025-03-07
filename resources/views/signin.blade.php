@@ -41,7 +41,7 @@
 
           <!-- Logo -->
           <div class="flex justify-center w-full items-center">
-            <a href="#" class="flex items-center gap-2">
+            <a href="{{'/'}}" class="flex items-center gap-2">
               <img src="{{asset('images/indexfav.png')}}" class="w-[200px]" />
             </a>
           </div>
@@ -69,42 +69,42 @@
             </li>
             <li>
               <a
-                href="home#specialoffers"
+                href="{{'/'}}#specialoffers"
                 class="text-sm font-medium hover:text-red-500 transition-colors"
                 >SPECIAL OFFERS</a
               >
             </li>
             <li>
               <a
-                href="home#features"
+                href="{{'/'}}#features"
                 class="text-sm font-medium hover:text-red-500 transition-colors"
                 >FEATURES</a
               >
             </li>
             <li>
               <a
-                href="home#pricing"
+                href="{{'/'}}#pricing"
                 class="text-sm font-medium hover:text-red-500 transition-colors"
                 >PRICING</a
               >
             </li>
             <li>
               <a
-                href="home#benifts"
+                href="{{'/'}}#benifts"
                 class="text-sm font-medium hover:text-red-500 transition-colors"
                 >BENIFITS</a
               >
             </li>
             <li>
               <a
-                href="home#faqs"
+                href="{{'/'}}#faqs"
                 class="text-sm font-medium hover:text-red-500 transition-colors"
                 >FAQS</a
               >
             </li>
             <li>
               <a
-                href="home#contactus"
+                href="{{'/'}}#contactus"
                 class="text-sm font-medium hover:text-red-500 transition-colors"
                 >CONTACT US</a
               >
@@ -431,7 +431,7 @@
           class="flex justify-center flex-wrap gap-5 space-x-8 mb-8 hidden"
         ></div>
         <div class="text-center text-sm text-gray-400">
-          © Copyright 2024. All Rights Reserved
+          © Copyright 2025. All Rights Reserved
         </div>
       </div>
     </footer>

@@ -114,6 +114,7 @@ Route::post("deleteqr",[MyQRCodeController::class, 'deleteQrcode'])->name('delet
 
 
 Route::get('/myqrcodelist', [MyQRCodeController::class, 'myqrcodelist'])->name('myqrcodelist'); //My OR Codes List 
+Route::get('/qrcodes_list', [MyQRCodeController::class, 'qrcodes_list'])->name('qrcodes_list');
 Route::post('/folder_details', [MyQRCodeController::class, 'folder_details'])->name('folder_details'); //Folders Details in My QR Code
 
 //Profile

@@ -10,6 +10,7 @@ use App\Mail\DisablePaymentMail;
 use App\Mail\RenewSubscriptionMail;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
+use App\Models\UserSubscription;
 
 class SubscriptionController extends Controller
 {
@@ -18,17 +19,12 @@ class SubscriptionController extends Controller
         Session::put('lastname', Auth::user()->lastname);
 
         $id = Auth::user()->id;
-        if(Auth::user()->plan == "free"){
-            $plans = User::find($id); 
-        }
-        else{
-             $plans = User::leftJoin('user_subscriptions','user_subscriptions.user_id' ,'=','users.id')->where('users.id',$id)->first();
-             
-        }
+        $plans = User::find($id); 
+        $subscriptions = UserSubscription::where('user_id',$id)->get();
      
         $subscribe = $plans->subscribe_status; 
         $renew_status = $plans->renew_status;
-        return view('subscription')->with(['plans'=>$plans,'subscribe'=>$subscribe,'renew_status'=>$renew_status]);
+        return view('subscription')->with(['plans'=>$plans,'subscriptions'=>$subscriptions,'subscribe'=>$subscribe,'renew_status'=>$renew_status]);
     }
 
     public function upgrade()
@@ -67,14 +63,14 @@ class SubscriptionController extends Controller
 
                 case 'cancel':
                     if ($user->subscribe_status == 'Active') {
-                        User::where('id', $user->id)->update(['renew_status' => 'disabled', 'subscribe_status' => 'Inactive']);
+                        User::where('id', $user->id)->update(['subscribe_status' => 'Inactive']);
                         $this->sendMail($user, "Subscription Cancellation Request", 'emails.cancel');
                     }
                     break;
 
                 case 'Reactivate':
                     if ($user->subscribe_status == 'Inactive') {
-                        User::where('id', $user->id)->update(['renew_status' => 'Enabled', 'subscribe_status' => 'Active']);
+                        User::where('id', $user->id)->update(['subscribe_status' => 'Active']);
                         $this->sendMail($user, "Subscription Reactivate Request", 'emails.reactivate');
                     }
                     break;

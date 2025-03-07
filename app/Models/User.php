@@ -39,7 +39,8 @@ class User extends Authenticatable
         'plan',
         'price',
         'duration',
-        'google_id'
+        'google_id',
+        'payment_failed_at'
     ];
 
     /**

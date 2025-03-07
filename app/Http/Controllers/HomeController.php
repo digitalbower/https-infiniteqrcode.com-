@@ -40,7 +40,9 @@ class HomeController extends Controller
     }
     public function sms()
     {
-        return view('sms'); 
+        $countries = $this->getAllCountries();
+        
+        return view('sms')->with(['countries'=>$countries]);
     }
     public function email()
     {
@@ -174,7 +176,9 @@ class HomeController extends Controller
     }
     public function index()
     {
-        return view('index');
+        $countries = $this->getAllCountries();
+
+        return view('index')->with(['countries'=>$countries]);
     }
     public function login()
     {
@@ -253,8 +257,8 @@ class HomeController extends Controller
         else{
             $freeFormatDate = "";
         }
-        $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd) + 1; 
-        $remainingDays = $currentDate->diffInDays($subscriptionEnd, false);
+        $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd); 
+        $remainingDays = floor($currentDate->diffInDays($subscriptionEnd, false)); 
         $isPast = $currentDate->greaterThan($subscriptionEnd);
 
         // Set validity based on plan type

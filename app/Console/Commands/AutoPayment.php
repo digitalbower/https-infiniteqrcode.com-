@@ -12,6 +12,8 @@ use Stripe\Charge;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\SubscriptionRenewalFailedMail;
+use App\Mail\SubscriptionRenewedMail;
 
 class AutoPayment extends Command
 {
@@ -27,7 +29,7 @@ class AutoPayment extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Process auto-payments for active subscriptions';
 
     /**
      * Execute the console command.
@@ -42,6 +44,7 @@ class AutoPayment extends Command
         ->where('renew_status', 'Enabled')
         ->where('subscribe_status', 'Active')
         ->where('plan', '!=', 'free')
+        ->where('payment_failed_at', '=', null)
         ->get();
 
         if ($users->isEmpty()) {
@@ -73,13 +76,12 @@ class AutoPayment extends Command
                 if ($paymentMethod->card->exp_year < date('Y') || 
                     ($paymentMethod->card->exp_year == date('Y') && $paymentMethod->card->exp_month < date('m'))) {
                     Log::warning("Expired card detected for user: {$user->email}. Expiry: {$paymentMethod->card->exp_month}/{$paymentMethod->card->exp_year}");
-                   
+                    $user->update(['payment_failed_at' => now()]);
                    // Add mail Subject:Action Required:Subscription Renewal failed
-
+                   Mail::to($user->email)->send(new SubscriptionRenewalFailedMail($user));
                     Log::info("Subscription Renewal failed email sent to user: {$user->email}");
                     continue; // Skip to the next user
                 }
-
                 // Attach payment method to customer only if not already attached
                 if ($paymentMethod->customer !== $user->stripe_customer_id) {
                     $paymentMethod->attach(['customer' => $user->stripe_customer_id]);
@@ -99,8 +101,8 @@ class AutoPayment extends Command
                 } else {
                     Log::info("Default payment method already set for user: {$user->email}");
                 }
-
-                // Proceed to create the PaymentIntent only if the card is valid
+                
+                //  Proceed to create the PaymentIntent only if the card is valid
                 $paymentIntent = PaymentIntent::create([
                     'amount' => $amount,
                     'currency' => 'usd',
@@ -108,10 +110,27 @@ class AutoPayment extends Command
                     'payment_method' => $user->payment_method_id,
                     'confirmation_method' => 'automatic',
                     'confirm' => true,
-                    'off_session' => true,
+                    'setup_future_usage' => 'off_session',
                     'receipt_email' => $user->email,
-                ]);
-                        
+                    'return_url' => url('/stripe/subscribe'),
+
+                ]); 
+                Log::info("payment intent status : {$paymentIntent->status}");
+
+                // Handle 3D Secure
+                if ($paymentIntent->status === 'requires_action') {
+                    Log::warning("Payment requires additional action for user: {$user->email}. Sending email notification.");
+                    
+                    // Update user so you know it needs action
+                    $user->update(['payment_failed_at' => now()]);
+            
+                    // Add mail Subject:Action Required:Subscription Renewal failed
+                    Mail::to($user->email)->send(new SubscriptionRenewalFailedMail($user));
+
+                    continue; // Skip further processing for this user
+                }
+                
+                
                 $paymentIntentId = $paymentIntent->id;
                 $charge = Charge::retrieve($paymentIntent->latest_charge);
                 $receiptUrl = $charge->receipt_url;
@@ -143,13 +162,14 @@ class AutoPayment extends Command
                 Log::info("Renewal completed for user: {$user->email}, Amount: {$user->price}, Duration: {$user->duration}, New StartDate: $newStartDate, New EndDate: $newEndDate");
                 
                 //Add Mail Subject::Your Subscription has been Renewed
-
+                Mail::to($user->email)->send(new SubscriptionRenewedMail($user));
             } 
             catch (\Stripe\Exception\CardException $e) {
                 // Mark payment as failed
                 $user->update(['payment_failed_at' => now()]);
                 
                // Add mail Subject:Action Required:Subscription Renewal failed
+               Mail::to($user->email)->send(new SubscriptionRenewalFailedMail($user));
 
                 Log::error("Payment failed for user: {$user->email}. Stripe Error: " . $e->getError()->message);
         
