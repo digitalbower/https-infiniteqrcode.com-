@@ -9,16 +9,24 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeEmai extends Mailable
+class SubscriptionRenewalFailedMail extends Mailable
 {
     use Queueable, SerializesModels;
+
+    public $user;
+    public $plan;
+    public $amount;
+    public $date;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($user, $plan, $amount, $date)
     {
-        //
+        $this->user = $user;
+        $this->plan = $plan;
+        $this->amount = $amount;
+        $this->date = $date;
     }
 
     /**
@@ -27,7 +35,7 @@ class WelcomeEmai extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome Email',
+            subject: 'Action Required:Subscription Renewal Failed',
         );
     }
 
@@ -37,14 +45,20 @@ class WelcomeEmai extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.subscription_renewed_failed',
+            with: [
+                'user' => $this->user,
+                'plan' => $this->plan,
+                'amount' => $this->amount,
+                'date' => $this->date,
+            ],
         );
     }
 
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array
      */
     public function attachments(): array
     {

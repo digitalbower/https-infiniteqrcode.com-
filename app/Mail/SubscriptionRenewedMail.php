@@ -3,10 +3,14 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SubscriptionFailedMail extends Mailable
+
+class SubscriptionRenewedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -25,7 +29,7 @@ class SubscriptionFailedMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Action Required: Subscription Renewal Failed')
-                    ->view('emails.subscription_renewed_failed');
+        return $this->subject('Your Subscription Has Been Renewed')
+                    ->view('emails.subscription_renewed');
     }
 }

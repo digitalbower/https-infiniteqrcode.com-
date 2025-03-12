@@ -284,19 +284,27 @@
   
       function renderPagination(currentPage, totalItems, itemsPerPage) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
-  
-        // Validate input
-        if (totalPages <= 1 || currentPage < 1 || currentPage > totalPages) return;
-  
+
         // Clear existing pagination buttons
         pageInfo.innerHTML = '';
-  
+
+        // Only show pagination if there's more than one page
+        if (totalPages <= 1 || totalItems <= itemsPerPage) {
+          prevPage.style.display = 'none';
+          nextPage.style.display = 'none';
+          pageInfo.style.display = 'none';
+          return;
+        } else {
+          prevPage.style.display = 'inline-block';
+          nextPage.style.display = 'inline-block';
+          pageInfo.style.display = 'flex';
+        }
+
         // Update Previous Button
         prevPage.disabled = currentPage === 1;
         prevPage.classList.toggle('text-gray-400', currentPage === 1);
         prevPage.classList.toggle('text-blue-500', currentPage !== 1);
-  
-        // Add event listener for Previous Button
+
         prevPage.onclick = () => {
           if (currentPage > 1) {
             currentPage--;
@@ -304,13 +312,12 @@
             renderPagination(currentPage, totalItems, itemsPerPage);
           }
         };
-  
+
         // Update Next Button
         nextPage.disabled = currentPage === totalPages;
         nextPage.classList.toggle('text-gray-400', currentPage === totalPages);
         nextPage.classList.toggle('text-blue-500', currentPage !== totalPages);
-  
-        // Add event listener for Next Button
+
         nextPage.onclick = () => {
           if (currentPage < totalPages) {
             currentPage++;
@@ -318,11 +325,11 @@
             renderPagination(currentPage, totalItems, itemsPerPage);
           }
         };
-  
+
         // Calculate range of pages to display
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(totalPages, currentPage + 2);
-  
+
         if (endPage - startPage < 4) {
           if (startPage === 1) {
             endPage = Math.min(totalPages, startPage + 4);
@@ -330,29 +337,28 @@
             startPage = Math.max(1, endPage - 4);
           }
         }
-        // Add ellipsis and first page button if necessary
+
         if (startPage > 1) {
           pageInfo.appendChild(createPageButton(1, currentPage, qrCodes));
-  
           const ellipsis = document.createElement('span');
           ellipsis.textContent = '...';
           ellipsis.classList.add('px-2', 'text-gray-500');
           pageInfo.appendChild(ellipsis);
         }
-        // Add page number buttons
+
         for (let i = startPage; i <= endPage; i++) {
           pageInfo.appendChild(createPageButton(i, currentPage, qrCodes));
         }
-        // Add ellipsis and last page button if necessary
+
         if (endPage < totalPages) {
           const ellipsis = document.createElement('span');
           ellipsis.textContent = '...';
           ellipsis.classList.add('px-2', 'text-gray-500');
           pageInfo.appendChild(ellipsis);
-  
           pageInfo.appendChild(createPageButton(totalPages, currentPage, qrCodes));
         }
       }
+
       // Helper function to create a page button
       function createPageButton(page, currentPage, qrCodes) {
         const pageButton = document.createElement('button');

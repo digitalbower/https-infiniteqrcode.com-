@@ -415,7 +415,9 @@
                     placeholder="John Doe"
                     required>
                   <input type="hidden" name="stripe_customer_id " id="customer_id" value="{{auth()->user()->stripe_customer_id}}">
-                  <input type="hidden" name="price" id="price" value="{{auth()->user()->price}}">
+                  <input type="hidden" name="price" id="bprice" value="{{auth()->user()->price}}">
+                  <input type="hidden" name="plan" id="bplan" value="{{auth()->user()->plan}}">
+                  <input type="hidden" name="duration" id="bduration" value="{{auth()->user()->duration}}">
                 </div>
                 <div class="mb-4">
                   <div id="card-element2"></div>
@@ -494,95 +496,93 @@
             submitButton.textContent = 'Processing...';
 
             try {
-    
-
-
-              // Step 1: Get client secret for PaymentIntent from the server
-               const response = await fetch('/api/stripe/create-setup-intent', {
+                // Step 1: Get client secret for SetupIntent from server
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                 const setupResponse = await fetch('/api/stripe/create-setup-intent', {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken 
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                });
+        
+                const setupData = await setupResponse.json();
+                if (!setupData.clientSecret) {
+                    throw new Error(setupData.error || 'Failed to get setup intent.');
+                }
+        
+                const clientSecret = setupData.clientSecret;
+                console.log('clientSecret:', clientSecret);
+                const username = document.getElementById("name").value;
+                const amount =  document.getElementById('bprice').value; 
+        
+                const { setupIntent, error: setupError } = await stripe.confirmCardSetup(clientSecret, {
+                    payment_method: {
+                        card: cardElement,
+                        billing_details: { name: username }
                     }
                 });
 
-                const data = await response.json(); 
-                
-                if (!data.clientSecret) {
-                    throw new Error(data.error);
+                if (setupError ||  setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
+                    throw new Error('Card setup failed or no payment method found.');
                 }
 
-                const clientSecret = data.clientSecret;  
-
-                console.log('clientSecret',clientSecret);
-
-            // Confirm card setup
-            const username = document.getElementById("name").value;
-                const { setupIntent, error: error1 } = await stripe.confirmCardSetup(clientSecret, {
-                payment_method: {
-                    card: cardElement,
-                    billing_details: { name: username },
-                },
-                });
-        
-                if (error1) {
-                handleStripeError(error1);
-                return;
-                }
-
-                const amount =  document.getElementById('billingprice').value; 
-                const paymentResponse = await fetch('/api/stripe/create-payment-intent', {
+                console.log('SetupIntent:', setupIntent);
+       
+            // Step 3: Create Payment Intent
+            const paymentResponse = await fetch('/api/stripe/create-payment-intent', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     body: JSON.stringify({
-                        amount: amount, 
-                        payment_method_id: setupIntent.payment_method,
-                    }),
+                        amount: amount,
+                        payment_method_id: setupIntent.payment_method
+                    })
                 });
+          
+                const paymentData = await paymentResponse.json();
+                console.log('Payment Intent Response:', paymentData);
 
-                const resultPayment = await paymentResponse.json();
-                console.log('Full payment intent response:', resultPayment);
-                const paymentIntent = resultPayment.payment_intent;
-
-               // Step 4: Handle PaymentIntent status
-               if (paymentIntent?.status === 'succeeded') {
-                    console.log('Payment succeeded:', paymentIntent);         
-                    
-               
+                // Step 4: Handle 3D Secure if needed
+                if (paymentData.requires_action) {
+                    const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(paymentData.payment_intent_client_secret);
         
-                    await completeSubscription(paymentIntent.id,setupIntent.payment_method,setupIntent.id);
-                } else if (resultPayment.requires_action) {
-                    console.log('3D Secure required. Processing authentication...');
-                    const { error: confirmError2, paymentIntent } = await stripe.confirmCardPayment(resultPayment.payment_intent_client_secret);
-                    if (confirmError2) {
-                        handleStripeError(confirmError2);
-                        return;
+                    if (confirmError || paymentIntent.status !== 'succeeded') {
+                        throw new Error('Failed to confirm payment.');
                     }
-                    else if (paymentIntent?.status === 'succeeded') {
-                        console.log('3D Secure successful:', paymentIntent);
-                        
-                       
-                        await completeSubscription(paymentIntent.id,setupIntent.payment_method,setupIntent.id);
-                    }
-                } else {
-                    console.warn('Unexpected payment status:', paymentIntent?.status);
-                    handleStripeError({ message: result.error || "An error occurred during payment processing." });
+        
+                    await completeSubscription(paymentIntent.id, setupIntent.payment_method, setupIntent.id);
+                } 
+                // Payment without 3D Secure
+                else if (paymentData.payment_intent?.status === 'succeeded') {
+                    await completeSubscription(paymentData.payment_intent.id, setupIntent.payment_method,setupIntent.id);
+                } 
+                else {
+                    throw new Error('Unexpected payment status.');
                 }
-                }catch (err) {
-                    console.error('Payment error:', err.message || err);
-                    Swal.fire('Payment Error', err.message || 'Unexpected error occurred.', 'error');
-                }  finally {
-                    $("#loadingIndicator").addClass("hidden");
-                }
+            } catch (err) {
+                console.error('Payment error:', err.message || err);
+                Swal.fire('Payment Error', err.message || 'Unexpected error occurred.', 'error');
+            } finally {
+                $("#loadingIndicator").addClass("hidden");
+            }
         });
         async function completeSubscription(paymentIntentId,paymentMethodId,setupIntent) {
-            try { console.log(paymentIntentId);
-                console.log(paymentMethodId);
-                console.log(setupIntent);
+            try { 
+                console.log('Completing subscription with:', { paymentIntentId, paymentMethodId, setupIntent });
+                const plan = document.getElementById("bplan").value; 
+                const bduration = document.getElementById("bduration").value; 
+                const price = document.getElementById("bprice").value;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                //  // Gather form data
-               const plan = document.getElementById("plan").value; 
-                const duration = document.getElementById("duration").value; 
-                const price = document.getElementById("billingprice").value;
+                if(bduration === 'monthly'){
+                    duration = "30";
+                }
+                else{
+                    duration = "365";
+                }
  
                 //  Send data to backend
                 const responseSubscribe = await fetch("/api/stripe/subscribe", {
@@ -599,9 +599,7 @@
                 });
 
                 const resultSubscribe = await responseSubscribe.json();
-                console.log('plan',plan);
-                console.log('duration',duration);
-                console.log('price',price);
+
                 console.log(resultSubscribe);
 
                 if (resultSubscribe.success) {
@@ -655,14 +653,10 @@
     </script>
     @endif
    <script>
-       
         const stripe = Stripe(stripePublicKey); // Use the key from Blade
         const elements = stripe.elements();
        
-
-        var cardElement = elements.create('card', {
-            hidePostalCode: true
-        });
+        const cardElement = elements.create('card', { hidePostalCode: true });
         cardElement.mount("#card-element");
 
         const form = document.getElementById("multiStepForm");
@@ -671,141 +665,128 @@
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
             $("#loadingIndicator").removeClass("hidden");
+        
             try {
-                // Create a payment method
-                // const { paymentMethod, error } = await stripe.createPaymentMethod({
-                // type: "card",
-                // card: cardElement,
-                // });
-
-                // if (error) {
-                // handleStripeError(error);
-                // return;
-                // }
-                // console.log('paymentMethod',paymentMethod)
-
-               
-                // Step 1: Get client secret for PaymentIntent from the server
-                const response = await fetch('/api/stripe/create-setup-intent', {
+                // Step 1: Get client secret for SetupIntent from server
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                 const setupResponse = await fetch('/api/stripe/create-setup-intent', {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken 
+                        'X-CSRF-TOKEN': csrfToken
                     }
                 });
-
-                const data = await response.json(); 
-                
-                if (!data.clientSecret) {
-                    throw new Error(data.error);
+        
+                const setupData = await setupResponse.json();
+                if (!setupData.clientSecret) {
+                    throw new Error(setupData.error || 'Failed to get setup intent.');
                 }
-
-                const clientSecret = data.clientSecret;  
-
-                console.log('clientSecret',clientSecret);
-
-                // Confirm card setup
+        
+                const clientSecret = setupData.clientSecret;
+                console.log('clientSecret:', clientSecret);
+        
+                // Step 2: Confirm card setup
                 const username = document.getElementById("name").value;
-                    const { setupIntent, error: error1 } = await stripe.confirmCardSetup(clientSecret, {
+                const amount = document.getElementById('billingprice').value;
+        
+                const { setupIntent, error: setupError } = await stripe.confirmCardSetup(clientSecret, {
                     payment_method: {
-                            card: cardElement,
-                            billing_details: { name: username },
-                        },
-                        });
-
-                        if (error1) {
-                        handleStripeError(error1);
-                        return;
-                        }
-
-
-
-                const amount =  document.getElementById('billingprice').value; 
-                const paymentResponse = await fetch('/api/stripe/create-payment-intent', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                    body: JSON.stringify({
-                        amount: amount, 
-                        payment_method_id: setupIntent.payment_method,
-                    }),
+                        card: cardElement,
+                        billing_details: { name: username }
+                    }
                 });
-
-                const resultPayment = await paymentResponse.json();
-                console.log('Full payment intent response:', resultPayment);
-                const paymentIntent = resultPayment.payment_intent;
-
-               // Step 4: Handle PaymentIntent status
-               if (paymentIntent?.status === 'succeeded') {
-                    console.log('Payment succeeded:', paymentIntent);         
-                    
+        
+                if (setupError ||  setupIntent.status !== 'succeeded' || !setupIntent.payment_method) {
+                    throw new Error('Card setup failed or no payment method found.');
+                }
+        
+                console.log('SetupIntent:', setupIntent);
                
         
-                    await completeSubscription(paymentIntent.id,setupIntent.payment_method,setupIntent.id);
-                } else if (resultPayment.requires_action) {
-                    console.log('3D Secure required. Processing authentication...');
-                    const { error: confirmError2, paymentIntent } = await stripe.confirmCardPayment(resultPayment.payment_intent_client_secret);
-                    if (confirmError2) {
-                        handleStripeError(confirmError2);
-                        return;
-                    }
-                    else if (paymentIntent?.status === 'succeeded') {
-                        console.log('3D Secure successful:', paymentIntent);
-                        
-                       
-                        await completeSubscription(paymentIntent.id,setupIntent.payment_method,setupIntent.id);
-                    }
-                } else {
-                    console.warn('Unexpected payment status:', paymentIntent?.status);
-                    handleStripeError({ message: result.error || "An error occurred during payment processing." });
-                }
-                }catch (err) {
-                    console.error('Payment error:', err.message || err);
-                    Swal.fire('Payment Error', err.message || 'Unexpected error occurred.', 'error');
-                }  finally {
-                    $("#loadingIndicator").addClass("hidden");
-                }
-        });
-        async function completeSubscription(paymentIntentId,paymentMethodId,setupIntent) {
-            try { console.log(paymentIntentId);
-                console.log(paymentMethodId);
-                console.log(setupIntent);
-               //  // Gather form data
-               const plan = document.getElementById("plan").value; 
-                const duration = document.getElementById("duration").value; 
-                const price = document.getElementById("billingprice").value;
- 
-                //  Send data to backend
-                const responseSubscribe = await fetch("/api/stripe/subscribe", {
-                method: "POST",
-                headers: { "Content-Type": "application/json",'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify({
-                    setup_intent_id: setupIntent,
-                    payment_intent_id: paymentIntentId,
-                    payment_method_id:paymentMethodId,
-                    plan,
-                    duration,
-                    price,
-                }),
+                // Step 3: Create Payment Intent
+                const paymentResponse = await fetch('/api/stripe/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        payment_method_id: setupIntent.payment_method
+                    })
                 });
+          
+                const paymentData = await paymentResponse.json();
+                console.log('Payment Intent Response:', paymentData);
 
+                // Step 4: Handle 3D Secure if needed
+                if (paymentData.requires_action) {
+                    const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(paymentData.payment_intent_client_secret);
+        
+                    if (confirmError || paymentIntent.status !== 'succeeded') {
+                        throw new Error('Failed to confirm payment.');
+                    }
+        
+                    await completeSubscription(paymentIntent.id, setupIntent.payment_method, setupIntent.id);
+                } 
+                // Payment without 3D Secure
+                else if (paymentData.payment_intent?.status === 'succeeded') {
+                    await completeSubscription(paymentData.payment_intent.id, setupIntent.payment_method,setupIntent.id);
+                } 
+                else {
+                    throw new Error('Unexpected payment status.');
+                }
+            } catch (err) {
+                console.error('Payment error:', err.message || err);
+                Swal.fire('Payment Error', err.message || 'Unexpected error occurred.', 'error');
+            } finally {
+                $("#loadingIndicator").addClass("hidden");
+            }
+        });
+
+        
+        
+        // Complete subscription function
+        async function completeSubscription(paymentIntentId, paymentMethodId, setupIntent) {
+            try {
+                console.log('Completing subscription with:', { paymentIntentId, paymentMethodId, setupIntent });
+        
+                const plan = document.getElementById("plan").value;
+                const duration = document.getElementById("duration").value;
+                const price = document.getElementById("billingprice").value;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        
+                const responseSubscribe = await fetch("/api/stripe/subscribe", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        setup_intent_id: setupIntent,
+                        payment_intent_id: paymentIntentId,
+                        payment_method_id: paymentMethodId,
+                        plan,
+                        duration,
+                        price
+                    })
+                });
+        
                 const resultSubscribe = await responseSubscribe.json();
-                console.log('plan',plan);
-                console.log('duration',duration);
-                console.log('price',price);
-                console.log(resultSubscribe);
-
+                console.log('Subscription Response:', resultSubscribe);
+        
                 if (resultSubscribe.success) {
                     Swal.fire("Payment successful!", "", "success");
                     setTimeout(() => window.location.replace('/subscription'), 2000);
                 } else {
-                    console.error('Subscription failed:', resultSubscribe.error || 'Unknown error');
                     Swal.fire('Failed to finalize subscription: ' + (resultSubscribe.error || 'Please try again.'));
                 }
             } catch (err) {
                 console.error('Error finalizing subscription:', err.message || err);
-                 Swal.fire('Failed to complete the subscription. Please check your connection and try again.');
+                Swal.fire('Failed to complete the subscription. Please check your connection and try again.');
             }
         }
+
 
         function handleStripeError(error) {
             $("#loadingIndicator").addClass("hidden");

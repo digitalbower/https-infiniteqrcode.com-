@@ -199,7 +199,7 @@
                 placeholder="John Doe"
                 required>
               <input type="hidden" name="stripe_customer_id " id="customer_id" value="{{$plans->stripe_customer_id}}">
-              <input type="hidden" name="price" id="price" value="{{$plans->paid_amount}}">
+              <input type="hidden" name="price" id="price" value="{{$plans->price}}">
             </div>
             <div class="mb-4">
               <div id="card-element"></div>
@@ -263,12 +263,14 @@
 
     try {
         // Step 1: Fetch Client Secret
-        const clientSecretResponse = await fetch('/api/stripe/create-payment-intent', {  
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
-            credentials: 'include' 
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const clientSecretResponse = await fetch('/api/stripe/create-setup-intent', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': csrfToken
+          }
         });
-
         if (!clientSecretResponse.ok) {
           throw new Error('Failed to fetch client secret');
         }
@@ -297,16 +299,16 @@
         }
 
         console.log(customerid);
-        console.log($('#price').val());
         console.log(setupIntent);
-
+        const amount =  document.getElementById('price').value; 
+        console.log(amount);
         // Step 3: Save Payment Method
         const saveResponse = await fetch('/api/stripe/save-paymentcard', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json','X-CSRF-TOKEN': csrfToken },
           body: JSON.stringify({
             customerid: customerid,
-            amount: $('#price').val(),
+            amount: amount,
             paymentMethodId: setupIntent.payment_method,
 
           }),

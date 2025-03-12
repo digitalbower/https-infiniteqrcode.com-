@@ -59,14 +59,16 @@
     <body>
         <div class="email-container">
             <div class="header">
-                <img src="{{$logo}}" alt="Qr Logo">   
+                 <img src="{{ asset('images/indexfav.png') }}" class="logo" alt="Infinite QR Code Logo">
             </div> 
             <div class="content">
                 <p> Dear {{$user->firstname}},</p>
-                <p>We’re sorry to see you go! Your subscription cancellation request has been processed. Your account will remain active until the end of your current billing cycle.</p>
-                <p>If you’d like to reactivate your subscription or have any feedback, feel free to reach out.</p>
-
-                Best regards,<br>
+                <p>We’re sorry to see you go! Your subscription cancellation request has been processed. Your account will remain active until the end of your current billing cycle.
+                    If you’d like to reactivate your subscription or have any feedback, feel free to reach out.
+                    Best regards,
+                    The Infinite QR Code Team
+                    </p>
+                
                 <p>The Infinite QR Code Team<br>
                 <a href="http://www.infiniteqrcode.com" target="_blank" style="text-decoration:none;color:black;">infiniteqrcode.com</a>  |  <a href="mailto:support@infiniteqrcode.com" target="_blank" style="text-decoration:none;color:black;">support@infiniteqrcode.com</a></p>
             </div>

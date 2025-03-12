@@ -957,7 +957,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1174,7 +1174,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1235,7 +1235,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1306,7 +1306,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1386,7 +1386,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1450,7 +1450,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1518,7 +1518,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1575,7 +1575,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1628,7 +1628,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1709,7 +1709,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1803,7 +1803,7 @@ class MyQRCodeController extends Controller
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
             }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
@@ -1983,9 +1983,9 @@ class MyQRCodeController extends Controller
 
             if (Gate::forUser($user)->denies('scan', $qrBasicInfo)) {
                 abort(403, 'Scan limit reached! Please upgrade your plan.');
-            }
-            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || Carbon::parse($user->subscription_end)->isPast()) {
-                
+            } 
+            if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
+    
                 return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
             }
             else{
@@ -2059,7 +2059,7 @@ class MyQRCodeController extends Controller
         ScanStatistics::where('code', $code)
             ->where('city', $city)
             ->where('country', $country)
-            ->increment('scan_count');
+            ->increment('scan_count', 1, ['scandate' => now()]);
 
         \Log::info('Scan count updated', ['qr_code_id' => $code, 'device_identifier' => $device_identifier]);
         return response()->json(['message' => 'Scan count updated.'], 200);

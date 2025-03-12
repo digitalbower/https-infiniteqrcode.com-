@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Free Trial is Ending Soon!</title>
+    <title>Subscription Renewal Failed</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
-            text-align: center;
             background-color: #f4f4f4;
+            text-align: center;
             padding: 20px;
         }
         .container {
@@ -20,24 +20,24 @@
             margin: auto;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
         .header {
-            color: #ff6600;
-            font-size: 24px;
+            color: #ff0000;
+            font-size: 22px;
             font-weight: bold;
+            text-align: center;
         }
-        .plan-section {
-            background: #ff6600;
-            color: white;
+        .details {
+            background: #ffebeb;
             padding: 15px;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             margin: 20px 0;
-            font-weight: bold;
         }
         .cta-button {
             display: inline-block;
-            background: #007bff;
+            background: #ff6600;
             color: white;
             padding: 12px 20px;
             text-decoration: none;
@@ -49,6 +49,7 @@
             font-size: 12px;
             color: #777;
             margin-top: 20px;
+            text-align: center;
         }
         .footer a {
             color: #007BFF;
@@ -59,19 +60,29 @@
 <body>
 
     <div class="container">
-        <h2 class="header">Your Free Trial Is About to Expire</h2>
+        <h2 class="header">⚠️ Subscription Renewal Failed</h2>
 
         <p>Dear <strong>{{ $user->firstname }}</strong>,</p>
 
-        <p>We hope you’ve enjoyed exploring the features of <strong>Infinite QR Code</strong> during your free trial! This is a quick reminder that your trial will expire on <strong>{{ $user->created_at->addDays(7)->format('Y-m-d') }}</strong>.</p>
+        <p>We were unable to process the renewal for your <strong>{{ $plan }}</strong> subscription on <strong>{{ $date->format('Y-m-d') }}</strong>.</p>
 
-        <p>To continue enjoying uninterrupted access to our premium QR code creation and management tools, upgrade to one of our subscription plans today.</p>
+        <div class="details">
+            <p><strong>Plan Name:</strong> {{$plan }}</p>
+            <p><strong>Renewal Date:</strong> {{ $date->format('Y-m-d') }}</p>
+            <p><strong>Amount:</strong> ${{ $amount }}</p>
+        </div>
 
-        <a href="{{ route('upgrade') }}" class="cta-button">Upgrade My Plan Now</a>
+        <p>This may have occurred due to an issue with your payment method. To avoid service interruption, please update your payment information as soon as possible.</p>
 
-        <p>Don’t let your QR codes go inactive! Choose a plan that suits your needs and keep your QR code journey going.</p>
+        <h3>What to Do:</h3>
+        <ul>
+            <li>🔹 Log in to your account at <a href="https://infiniteqrcode.com">Infinite QR Code</a>.</li>
+            <li>🔹 Update your payment method in the Account Settings.</li>
+            <li>🔹 Retry the payment.</li>
+        </ul>
 
-        <p>If you have any questions or need assistance, feel free to reach out.</p>
+
+        <p>If you need assistance, feel free to contact us at <a href="mailto:support@infiniteqrcode.com">support@infiniteqrcode.com</a>.</p>
 
         <p class="footer">
             Best regards, <br>

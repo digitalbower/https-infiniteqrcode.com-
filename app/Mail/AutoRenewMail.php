@@ -28,7 +28,7 @@ class AutoRenewMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Your Auto-Renewal Setting Has Been Updated')
+        return $this->subject('Subscription Auto-Renewal Notice')
                     ->view('emails.auto_renew')
                     ->with([
                         'user' => $this->user,

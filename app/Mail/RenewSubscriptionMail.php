@@ -28,7 +28,7 @@ class RenewSubscriptionMail extends Mailable
         $this->subject = $subject;
         $this->view = $view;
         // Convert image to Base64
-        $imagePath = public_path('demoimg/logo.png'); // Update the path if needed
+        $imagePath = '/home/u169755773/domains/infiniteqrcode.com/public_html/demoimg/logo.png'; // Update the path if needed
         if (file_exists($imagePath)) {
             $imageData = base64_encode(file_get_contents($imagePath));
             $mimeType = mime_content_type($imagePath);

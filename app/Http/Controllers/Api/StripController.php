@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Stripe\PaymentMethod;
 use App\Mail\SubscriptionPlanChange;
+use App\Mail\SubscriptionRenewedMail;
 
 class StripController extends Controller
 {
@@ -49,21 +50,23 @@ class StripController extends Controller
     public function createPaymentIntent(Request $request)
     {
         $request->validate([
-            // 'amount' => 'required|numeric|min:1',
+            'amount' => 'required|numeric|min:1',
             'payment_method_id' => 'required|string',
         ]);
         
         Stripe::setApiKey(config('services.stripe.secret'));
 
         $user = auth()->user();
-        if($user->price){
-            $amount = intval($user->price * 100);
+
+        $amount = intval($request->amount * 100);
+
+        if ($amount <= 0) {
+            \Log::error('Invalid amount detected', ['user_id' => $user->id, 'amount' => $amount]);
+            return response()->json(['error' => 'Invalid amount.'], 400);
         }
-        else{
-            $amount = intval($request->amount * 100);
-        }
-    
-        try {
+       try {
+            \Log::info('Creating PaymentIntent', ['user_id' => $user->id, 'amount' => $amount]);
+
                 $paymentIntent = PaymentIntent::create([
                     'amount' => $amount,
                     'currency' => 'usd',
@@ -76,7 +79,9 @@ class StripController extends Controller
                     'return_url' => url('/stripe/subscribe'),
 
                 ]);
-                // Handle 3D Secure
+
+            \Log::info('PaymentIntent created', ['status' => $paymentIntent->status]);
+
                 if ($paymentIntent->status === 'requires_action') {
                     return response()->json([
                         'success' => false,
@@ -93,72 +98,46 @@ class StripController extends Controller
            
     
         } catch (\Stripe\Exception\ApiErrorException $e) {
+            \Log::error('Stripe API Error', ['error' => $e->getMessage()]);
             return response()->json(['error' => $e->getMessage()], 500);
+        } catch (\Exception $e) {
+            \Log::error('Unexpected Error', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Unexpected error occurred.'], 500);
         }
     }
     public function subscribe(Request $request)
     { 
-            if(Auth::user()->plan != "free"){
-                if(Auth::user()->payment_failed_at === null){
-                    $request->validate([
-                        'payment_method_id' => 'required|string',
-                        'plan' => 'required|string',
-                        'duration' => 'required|in:30,365',
-                        'price' => 'required|numeric',
-                        'setup_intent_id' => 'required|string',
-                    ]);
-                }
-                else{
-                    $request->validate([
-                        'payment_method_id' => 'required|string',
-                        'setup_intent_id' => 'required|string',
-                    ]);
-                }
-            }
-            else{
-                $request->validate([
-                    'payment_method_id' => 'required|string',
-                    'plan' => 'required|string',
-                    'duration' => 'required|in:30,365',
-                    'price' => 'required|numeric',
-                    'setup_intent_id' => 'required|string',
-                ]);
-            }
-            
+        $request->validate([
+            'payment_method_id' => 'required|string',
+            'plan' => 'required|string',
+            'duration' => 'required|in:30,365',
+            'price' => 'required|numeric',
+            'setup_intent_id' => 'required|string',
+        ]);
     
         Stripe::setApiKey(config('services.stripe.secret'));
         DB::beginTransaction();
     
         try {
-            $user = Auth::user();
-            if (!$user) {
+           
+            if (!auth()->check()) {
                 \Log::error('Unauthorized access attempt.');
                 return response()->json(['error' => 'Unauthorized'], 401);
             }
+            $user = Auth::user();
     
             // Ensure no duplicate active subscriptions
-            if($user->plan != "free" && !isset($request->plan)){
-                if($user->plan){
-                    $newPlan = $user->plan;
-                }
-                else{
-                    $newPlan = trim($request->plan);
-                }
-            }
-            else{
-                $newPlan = trim($request->plan);
-            }
+            
+            $newPlan = trim($request->plan);
+            \Log::error("plan",['plan'=>$newPlan]);
             $existingPlan = $user->plan;
-            if ($existingPlan === $newPlan && $user->subscribe_status === 'Active' && $user->payment_failed_at === null) {
-                return response()->json(['success' => false, 'message' => 'Already subscribed.']);
-            }
-            if($user->duration){
-                $duration =  $user->duration;
-            }
-            else{
-                $duration = $request->duration == '30' ? 'monthly' : 'yearly';
-            }
-
+            // if ($existingPlan === $newPlan && $user->subscribe_status === 'Active' && $user->payment_failed_at === null) {
+            //     return response()->json(['success' => false, 'message' => 'Already subscribed.']);
+            // }
+           
+            $duration = $request->duration == '30' ? 'monthly' : 'yearly';
+            
+            \Log::error("duration",['duration'=>$duration]);
             $amount = intval($request->price * 100); // Convert to cents
             $setupIntent = SetupIntent::retrieve($request->setup_intent_id); 
             $paymentMethodId = $setupIntent->payment_method;
@@ -180,11 +159,14 @@ class StripController extends Controller
             }
             $startDate = now();
             $endDate = ($duration === 'monthly') ? $startDate->copy()->addMonth() : $startDate->copy()->addYear();
+            $startDate = $startDate->format('Y-m-d H:i:s');
+            $endDate = $endDate->format('Y-m-d H:i:s');
             // Reuse existing PaymentIntent if available
             if ($request->payment_intent_id) {
                 $paymentIntent = PaymentIntent::retrieve($request->payment_intent_id);
             }    
-            
+            \Log::error("paymentIntent",['paymentIntent'=>$paymentIntent]);
+
             // Retrieve charge details
             $chargeId = $paymentIntent->latest_charge;
             if (!$chargeId) {
@@ -203,7 +185,7 @@ class StripController extends Controller
                 'user_id' => $user->id,
                 'plan_id' => $newPlan,
                 'default_payment_method' => $paymentMethodId,
-                'paid_amount' => $request->price ?? $user->price,
+                'paid_amount' => $request->price,
                 'plan_interval' => $duration,
                 'customer_name' => $user->firstname . ' ' . $user->lastname,
                 'customer_email' => $user->email,
@@ -229,11 +211,13 @@ class StripController extends Controller
             // Mail::send('emails.subscription', ['user' => $user, 'plan' => $newPlan, 'endDate' => $endDate], function ($message) use ($user, $newPlan) {
             //     $message->to($user->email)->subject("Welcome to Plan {$newPlan} - Your Upgrade Is Complete!");
             // });
-             Mail::to($user->email)->send(new SubscriptionPlanChange($user, $newPlan, $endDate, $request->price, $existingPlan));
+              Mail::to($user->email)->send(new SubscriptionPlanChange($user, $newPlan, $endDate, $request->price, $existingPlan));
 
             if($user->payment_failed_at){
                 session()->forget('showPaymentPopup');
                 $user->update(['payment_failed_at' => null]);
+                //Add Mail Subject::Your Subscription has been Renewed
+                 Mail::to($user->email)->send(new SubscriptionRenewedMail($user, $newPlan,  $endDate, $request->price));
             }
             DB::commit();
             return response()->json(['success' => true, 'receipt_url' => $receiptUrl]);
@@ -252,8 +236,6 @@ class StripController extends Controller
             return response()->json(['error' => 'Error: ' . $e->getMessage()], 500);
         }
     }
-
-
     private function handleStripeError($e)
     {
         $error = $e->getError();
@@ -281,7 +263,7 @@ class StripController extends Controller
             Stripe::setApiKey(config('services.stripe.secret'));
 
             // Retrieve request data
-            $customerId = Auth::user()->strip_customer_id;
+            $customerId = $request->customerid ?? Auth::user()->strip_customer_id;
             $amount = $request->amount * 100; // Convert to cents
             $paymentMethodId = $request->paymentMethodId;
 
@@ -323,13 +305,11 @@ class StripController extends Controller
     }
     public function getCustomerPaymentMethods(Request $request)
     {
-
-        if(Auth::user()->plan !=="free" && Auth::user()->payment_failed_at !== ""){
-            // Validate request
-            $request->validate([
-                'customer_id' => 'required|string',
-            ]);
-        }
+        // Validate request
+        $request->validate([
+            'customer_id' => 'required|string',
+        ]);
+        
         try {
             // Set Stripe API Key from .env
             Stripe::setApiKey(config('services.stripe.secret'));
@@ -386,6 +366,7 @@ class StripController extends Controller
             ], 400);
         }
     }
+
     public function updateDefaultCard(Request $request)
     {
         // Validate request

@@ -249,18 +249,22 @@ class HomeController extends Controller
 
         $timestamp = strtotime($subscriptionEnd);
         $formattedDate = date('d M. Y', $timestamp);  
+     
         if($user->plan == "free"){
-            $subscriptionStartDate = Carbon::parse($user->created_at); 
-            $freeDate = $subscriptionStartDate->copy()->addDays(7);
-            $freeFormatDate = $freeDate->format('d M. Y');
+            $freeSubscriptionStartDate = Carbon::parse($user->created_at)->addDays(7);
+            $freeFormatDate = $freeSubscriptionStartDate->format('d M. Y');
         }
         else{
             $freeFormatDate = "";
         }
-        $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd); 
-        $remainingDays = floor($currentDate->diffInDays($subscriptionEnd, false)); 
-        $isPast = $currentDate->greaterThan($subscriptionEnd);
-
+        if($user->duration == "monthly"){
+                $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd); 
+            $remainingDays = floor($currentDate->diffInDays($subscriptionEnd, false)); 
+        }
+        if($user->duration == "yearly"){
+                $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd) + 1;
+                $remainingDays = max(0, $currentDate->startOfDay()->diffInDays($subscriptionEnd->startOfDay(), false));
+        }
         // Set validity based on plan type
         $validity = 0;
         $dynamic = 0;
@@ -312,16 +316,35 @@ public function scanData(){
 
     $userId = Auth::user()->id;
 
-    $response = QrBasicInfo::selectRaw('DATE(qr_basic_info.created_At) AS scan_date, qr_basic_info.qrtype, SUM(qr_basic_info.total_scans) AS total_scans')
+    $response = QrBasicInfo::selectRaw('
+        DATE(scan_statistics.scandate) AS scan_date,
+        qr_basic_info.qrtype,
+        users.plan,
+        users.subscription_start,
+        users.subscription_end,
+        COALESCE(SUM(scan_statistics.scan_count), 0) AS total_scans
+    ')
     ->leftJoin('users', 'qr_basic_info.userid', '=', 'users.id')
+    ->leftJoin('scan_statistics', DB::raw('scan_statistics.code COLLATE utf8mb4_unicode_ci'), '=', DB::raw('qr_basic_info.project_code COLLATE utf8mb4_unicode_ci'))
     ->where('qr_basic_info.userid', $userId)
     ->where(function ($query) {
-        $query->where('qr_basic_info.created_At', '>=', DB::raw('CURDATE() - INTERVAL 7 DAY'))
-              ->orWhereBetween('qr_basic_info.created_At', [DB::raw('users.subscription_start'), DB::raw('users.subscription_end')]);
-    })
+        $query->where(function ($q) {
+            // Free scans — only BEFORE subscription starts (even on the same day)
+            $q->where('users.plan', 'free')
+            ->where(function ($subQuery) {
+                $subQuery->whereNull('users.subscription_start')
+                ->orWhereRaw('scan_statistics.scandate < DATE_ADD(users.created_at, INTERVAL 7 DAY)');
+            });
+        })->orWhere(function ($q) {
+            // Paid scans — between subscription start and end
+            $q->whereIn('users.plan', ['basic', 'pro', 'expert'])
+            ->whereNotNull('users.subscription_start')
+            ->whereRaw('scan_statistics.scandate BETWEEN users.subscription_start AND users.subscription_end');
+        });
+})
     ->where('renew_status', 'Enabled')
     ->where('users.subscribe_status', 'Active')
-    ->groupBy('scan_date', 'qr_basic_info.qrtype')
+    ->groupBy('scan_date', 'qr_basic_info.qrtype', 'users.plan', 'users.subscription_start', 'users.subscription_end')
     ->orderBy('scan_date')
     ->orderBy('qr_basic_info.qrtype')
     ->get();
@@ -329,6 +352,7 @@ public function scanData(){
     return response()->json($response);
 
 }
+
 public function getAllCountries(){
 
     $countries = [

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscription Payment Failed</title>
+    <title>We're Here to Help!</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,21 +30,14 @@
             max-width: 150px;
         }
         .header {
-            color: #d32f2f;
+            color: #007bff;
             font-size: 22px;
             font-weight: bold;
             text-align: center;
         }
-        .details {
-            background: #ffebee;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 16px;
-            margin: 20px 0;
-        }
         .cta-button {
             display: inline-block;
-            background: #d32f2f;
+            background: #007bff;
             color: white;
             padding: 12px 20px;
             text-decoration: none;
@@ -59,7 +52,7 @@
             text-align: center;
         }
         .footer a {
-            color: #d32f2f;
+            color: #007bff;
             text-decoration: none;
         }
     </style>
@@ -70,39 +63,28 @@
         
         <!-- LOGO -->
         <div class="logo">
-            <img src="{{ asset('images/logo.png') }}" alt="Your App Name">
+            <img src="{{ asset('images/logo.png') }}" alt="Infinite QR Code">
         </div>
 
-        <h2 class="header">⚠️ Subscription Payment Failed</h2>
+        <h2 class="header">🤝 We're Here to Help, {{ $name }}!</h2>
 
-        <p>Hello, <strong>{{ $user->firstname }}</strong>!</p>
+        <p>Thank you for reaching out to us! Our team is here to assist you with any **questions or concerns** you may have.</p>
 
-        <p>We regret to inform you that your subscription payment for <strong>[Your App Name]</strong> has <strong>failed</strong>.</p>
-
-        <div class="details">
-            <p><strong>Reason:</strong> {{ $reason }}</p>
-        </div>
-
-        <p>To avoid service disruption, please update your payment details and retry the transaction.</p>
+        <p>You can **reply to this email** or use our **contact form** on the website. We’ll get back to you **within 24–48 hours**.</p>
 
         <p>
-            <a href="{{ $retryLink }}" class="cta-button">
-                Retry Payment
+            <a href="{{ url('/contact') }}" class="cta-button">
+                Contact Support
             </a>
         </p>
 
-        <p>If you need any assistance, feel free to contact our support team.</p>
-
-        <p>Thank you for choosing <strong>[Your App Name]</strong>.</p>
-
         <p class="footer">
             Best regards, <br>
-            <strong>The [Your App Name] Team</strong> <br>
-            <a href="https://yourapp.com">yourapp.com</a> | 
-            <a href="mailto:support@yourapp.com">support@yourapp.com</a>
+            <strong>The Infinite QR Code Team</strong> <br>
+            <a href="https://yourwebsite.com">yourwebsite.com</a> | 
+            <a href="mailto:support@yourwebsite.com">support@yourwebsite.com</a>
         </p>
     </div>
 
 </body>
 </html>
-

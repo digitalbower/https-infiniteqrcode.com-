@@ -113,7 +113,7 @@ src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
                         class="text-green-500">Valid till {{ $freeFormatDate }}  (7 Days)</span></div>
                       @else
                       <div class="flex justify-between items-center mb-2"><span class="text-gray-400">Plan Validity</span><span
-                        class="text-green-500">Valid till {{ $formattedDate }}  ({{ $remainingDays }} Days)</span></div>
+                        class="text-green-500">Valid till {{ $formattedDate }}  ({{$remainingDays}} Days)</span></div>
                       @endif
                   
                   </div>
@@ -340,8 +340,15 @@ src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
                     $('.static').text(staticTotal);
                     $('.dynamic').text(dynamicTotal);
                     const validity = "<?= $validity; ?>";
-                    const remainingScans = validity - totalScans;
-          
+                    let remainingScans = 0;
+
+                    if (validity === null || validity === '') {
+                        remainingScans = 0; // No data -> show 0
+                    } else if (!isFinite(validity)) {
+                        remainingScans = '∞'; // Infinite -> show ∞
+                    } else {
+                        remainingScans = validity - totalScans;
+                    }
                     // Update UI
                     document.getElementById("total-scans").textContent = totalScans;
                     document.getElementById("remaining-scans").textContent = `${remainingScans} Scans`;
@@ -350,11 +357,11 @@ src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
                     // Calculate progress percentage
                     let progressPercentage = 0; // Default progress value
           
-                    if (validity !== Infinity) {
-                      progressPercentage = (totalScans / validity) * 100;
+                    if (isFinite(validity)) { // Checks if validity is a finite number
+                        progressPercentage = (totalScans / validity) * 100;
                     } else {
-                      // Handle the case where validity is Infinity
-                      progressPercentage = 100; // You can decide what to do here, assuming 100% progress
+                        // If validity is Infinity or not a number, set progress to 100%
+                        progressPercentage = 100;
                     }
                     // Update progress bar width
                     document.getElementById("progress-bar").style.width = `${progressPercentage}%`;
@@ -437,7 +444,7 @@ src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
                             y: {
                               beginAtZero: true,
           
-                              ticks: {
+                             ticks: {
                                 stepSize: 2,
                                 color: '#FFFFFF'
                               },

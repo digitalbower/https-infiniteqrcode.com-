@@ -12,6 +12,8 @@ use Stripe\Stripe;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -38,20 +40,31 @@ class AuthController extends Controller
         $user->save();
 
 
-        Stripe::setApiKey(config('services.stripe.secret'));
+          // Attempt Stripe customer creation
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
 
-        $customer = Customer::create([
-            'email' => $user->email,
-            'name' => $user->name,
-        ]);
+            $customer = Customer::create([
+                'email' => $user->email,
+                'name' => "{$user->firstname} {$user->lastname}",
+            ]);
 
-        $user->stripe_customer_id = $customer->id;
-        $user->save();
+            $user->stripe_customer_id = $customer->id;
+            $user->save();
+        } catch (Exception $e) {
+            // Log the Stripe error for debugging
+            Log::error('Stripe Customer Creation Failed: ' . $e->getMessage());
+        }
+
 
         Auth::login($user); 
 
         // Send Welcome Email asynchronously
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        try {
+            Mail::to($user->email)->send(new WelcomeMail($user));
+        } catch (Exception $e) {
+            Log::error('Welcome Email Failed: ' . $e->getMessage());
+        }
 
       return redirect()->route('profile')->with('success', 'Account created successfully!');
     }
@@ -63,21 +76,27 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-         if (Auth::attempt($fields)) { 
+        if (Auth::attempt($fields)) { 
             $user = auth()->user();
     
             // Check if subscription has ended or ends today
             $subscriptionEnded = $user->subscription_end && Carbon::parse($user->subscription_end)->isPast();
+        //  $freeTrialEndsAt = Carbon::parse($user->created_at)->addDays(7);
+        //  $freeSubscriptionEnded = now()->greaterThan($freeTrialEndsAt);
+
             Session::put('firstname', Auth::user()->firstname);
             Session::put('lastname', Auth::user()->lastname);
             $isNewUser = Auth::user()->subscription_end === null;
-            if (isset($user->payment_failed_at) || $subscriptionEnded) {
+            if (isset($user->payment_failed_at) || $subscriptionEnded) { 
                 session(['showPaymentPopup' => true]); // Persistent session key
                 return redirect()->route('upgrade')->with('success', 'Logged in successfully!');
             }
-           
+        // else if($freeSubscriptionEnded) { 
+        //     session(['showPaymentPopup' => true]); // Persistent session key
+        //     return redirect()->route('upgrade')->with('success', 'Logged in successfully!');
+        // }
             else{
-               return redirect()->route('profile')->with('success', 'Logged in successfully!');
+            return redirect()->route('profile')->with('success', 'Logged in successfully!');
             }
             
         } 
