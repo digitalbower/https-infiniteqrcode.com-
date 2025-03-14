@@ -31,18 +31,22 @@
             font-size: 14px;
             color: #777;
         }
+         .logo {
+            width: 200px;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="{{ asset('images/indexfav.png') }}" class="w-[200px]" alt="Company Logo" />
+        <img src="{{ asset('images/indexfav.png') }}" class="logo" alt="Company Logo" />
 
-        <h2>Welcome to Infinite QR Code, {{ $user->firstname }}!</h2>
-        <p>Your 7-day free trial is now active. Explore all the premium features and see how our platform can simplify your QR code needs.</p>
+        <p>Dear {{ $user->firstname }},</p>
+        <p>Welcome to Infinite QR Code! Your 7-day free trial is now active.Explore all the premium features to see how our platform can simplify your QR code needs.</p>
 
-        <a href="{{ url('/login') }}" class="btn">Login to Your Account</a>
+        <p>Ready to dive in?<a href="{{ url('/signin') }}">Login to Your Account</a></p>
 
-        <p class="footer">If you have any questions, we’re here to help.</p>
+        <p>If you have any questions, we’re here to help.</p>
         <p class="footer">Cheers, <br> The Infinite QR Code Team</p>
     </div>
 </body>

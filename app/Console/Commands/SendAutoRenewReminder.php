@@ -75,6 +75,11 @@ class SendAutoRenewReminder extends Command
         }  
         foreach ($expiredFreeSubscriptions as $subscription) {
             if ($subscription && $subscription->email) {
+                $user = User::where('email',$subscription->email)->first(); 
+                $user->subscribe_status = "Inactive";
+                $user->renew_status = "disabled";
+                $user->save();
+
                 //Add Mail Subject::Your Free trial is expired
                 Mail::to($subscription->email)
                     ->send(new TrialPeriodEndedUpgradetoContinueAccess($subscription));

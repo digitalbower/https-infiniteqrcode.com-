@@ -218,30 +218,13 @@
           <!-- Google Button -->
           <div class="mt-4">
             <div class="mt-4">
-            <a href="{{ route('google.login') }}">
-              <button
-                class="w-full flex items-center justify-center bg-white text-gray-700 transition-colors"
-              >
-                <div
-                  id="g_id_onload"
-                  data-client_id="623466204275-lp0ub4bkq7a9qo4meemkiagb9rb8mquj.apps.googleusercontent.com"
-                  data-context="signin"
-                  data-callback="handleCredentialResponse"
-                  data-auto_prompt="false"
-                  data-width="400"
-                  data-height="200"
-                ></div>
-
-                <div
-                  class="g_id_signin"
-                  data-type="standard"
-                  data-shape="rectangular"
-                  data-theme="outline"
-                  data-text="sign_in_with"
-                  data-size="large"
-                ></div>
-              </button>
-              </a>
+           
+              <a href="{{ route('google.login') }}" 
+                   class="flex items-center justify-center gap-2 p-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-100 transition">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+                    <span class="text-gray-700 font-medium">Sign in with Google</span>
+               </a>
+             
             </div>
           </div> 
         </div>
@@ -284,22 +267,23 @@
       <input
         type="email"
         placeholder="Email"
-        id="Email1"
+         id="email"
         name="email"
         value="{{ old('email') }}"
         class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
       />
+      <span id="email-error" class="text-red-500 text-sm"></span>
       @error('email')
       <small class="error-message text-red-500">{{ $message }}</small>
       @enderror
 
       <select
-        class="w-full rounded-md mr-4 text-gray-400 border py-3 px-1 w-0.5"
+        class="w-full rounded-md mr-4 text-gray-400 border py-3 px-1"
         name="countrycode"
         id="countrycode"
             readonly>
           @foreach ($countries as $country)
-              <option value="{{ $country['dial_code'] }}">
+              <option value="{{ $country['dial_code'] }}" {{ old('countrycode') == $country['dial_code'] ? 'selected' : '' }}>
                   {{ $country['name'] }} ({{ $country['dial_code'] }})
               </option>
           @endforeach
@@ -330,9 +314,9 @@
     >
       <i class="fas fa-eye" id="signUpEyeIcon"></i>
     </button>
-      @error('password')
-      <small class="error-message text-red-500">{{ $message }}</small>
-      @enderror
+    @error('password')
+    <small class="error-message text-red-500">{{ $message }}</small>
+    @enderror
     </div>
     <div class="relative">
       <input
@@ -366,6 +350,7 @@
         I agree to all
         <a href="terms" target="_blank" style="text-decoration: underline;">Terms & Conditions</a>
         <br />
+        <small class="error-message text-red-500" id="termsError"></small>
         @error('terms')
         <small class="error-message text-red-500">{{ $message }}</small>
         @enderror
@@ -383,30 +368,13 @@
           <span class="success"></span>
           <div class="text-center text-gray-500 mt-4">or</div>
             <div class="mt-4">
-              <a href="{{ route('google.login') }}" >
-              <button
-                class="w-full flex items-center justify-center bg-white text-gray-700 transition-colors"
-              >
-                <div
-                  id="g_id_onload"
-                  data-client_id="623466204275-lp0ub4bkq7a9qo4meemkiagb9rb8mquj.apps.googleusercontent.com"
-                  data-context="signin"
-                  data-callback="handleCredentialResponse"
-                  data-auto_prompt="false"
-                  data-width="400"
-                  data-height="200"
-                ></div>
-
-                <div
-                  class="g_id_signin"
-                  data-type="standard"
-                  data-shape="rectangular"
-                  data-theme="outline"
-                  data-text="sign_in_with"
-                  data-size="large"
-                ></div>
-              </button>
-              </a>
+             
+             <a href="{{ route('google.login') }}" 
+   class="flex items-center justify-center gap-2 p-2 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-100 transition">
+    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+    <span class="text-gray-700 font-medium">Sign in with Google</span>
+</a>
+              
             </div>
           </div>
       </div>
@@ -436,86 +404,35 @@
       </div>
     </footer>
 
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script
-      src="https://accounts.google.com/gsi/client"
-      async
-      defer
-      reffererpolicy
-    ></script>
-    <!-- endinject -->
-    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
-    <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"
-    ></script>
+    <!-- jQuery Validation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+
     <script>
-      function handleCredentialResponse(response) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "../fetch/verify_token.php");
-        xhr.setRequestHeader(
-          "Content-Type",
-          "application/x-www-form-urlencoded"
-        );
-        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-        xhr.setRequestHeader("Cross-Origin-Resource-Policy", "same-site");
-        referrerPolicy: {
-          policy: "strict-origin-when-cross-origin";
-        }
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            // Assume the response is the form data you want to send to the next page
-            var serverResponse = xhr.responseText;
-
-            // Call function to forward to another page with the response data
-            forwardToNextPage(serverResponse);
-          } else {
-            console.error("An error occurred");
-          }
-        };
-        xhr.send("credential=" + response.credential);
-      }
-
-      function forwardToNextPage(formData) {
-        // Create a new form element
-        var form = document.createElement("form");
-        form.method = "POST"; // Use POST method
-        form.action = "../fetch/glsignup.php"; // PHP page to forward the data
-
-        // Create an input element to hold the formData
-        var input = document.createElement("input");
-        input.type = "hidden"; // Hidden input
-        input.name = "data"; // Form field name
-        input.value = formData; // Pass the responseText from AJAX as form data
-
-        // Append the input to the form
-        form.appendChild(input);
-
-        // Append form to the body (it must be in the DOM to submit)
-        document.body.appendChild(form);
-
-        // Submit the form programmatically
-        form.submit();
-      }
-
-      $(document).ready(function () {
-        // Populate fields if the cookies exist
-        if ($.cookie("username") && $.cookie("password")) {
-          $("#username").val($.cookie("username"));
-          $("#password").val($.cookie("password"));
-          //$('#rememberMe').prop('checked', true);
-        }
-      });
-
-      // On form submit
-    </script>
-    <script>
-      $(document).ready(function () {
+      const disposableDomains = @json(config('disposable.domains'));
+  </script>
+  <script>
+    $(document).ready(function () {
+        @if ($errors->any())
+          $('#signUpTab').trigger('click'); // Ensure the signup tab is shown on server validation errors
+        @endif
+        // Custom password pattern method
+        $.validator.addMethod('passwordPattern', function(value, element) {
+          // Regex: First letter capital, 8+ chars, 1 number, 1 special char
+          return this.optional(element) || /^[A-Z](?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/.test(value);
+        }, 'Password must start with a capital letter,1 number and 1 special character.');
+       //Custom Email Method
         $.validator.addMethod('email', function (value, element) {
-           return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        }, "Enter Valid email");
+            return this.optional(element) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+        }, "Enter a valid email");
+        // Custom method to check for disposable emails
+        $.validator.addMethod('noDisposableEmail', function(value, element) {
+            if (!value) return true; // Skip if empty, other rules will handle "required"
+            const domain = value.split('@')[1];
+            return domain && !disposableDomains.includes(domain);
+        }, "Disposable email addresses are not allowed.");
 
         $('#registerform').validate({  
         rules: {  
@@ -528,14 +445,16 @@
           email: {  
             required: true,  
             email: true,  
+            noDisposableEmail: true
           },  
           
-            password: {  
-              required: true,  
-              minlength: 6,  
-            },
-            password_confirmation: {
-              equalTo: "#Password1"
+          password: {  
+            required: true,  
+            minlength: 8,
+            passwordPattern: true
+          },
+          password_confirmation: {
+            equalTo: "#Password1"
           },
           terms:{
             required: true,  
@@ -544,14 +463,20 @@
         messages: {  
           firstname: 'First name is required',  
           lastname: 'Last name is required',  
-          email: 'A valid Email is required', 
+          email: {
+            required:'Email is required',
+            email:'A valid Email is required',
+            noDisposableEmail: 'Disposable email addresses are not allowed'
+          }, 
+         
           phonenumber:{
             required:'Phone Number is required' ,
             number:'Please enter numbers Only'
           },
           password: { 
             required:'Password is required' ,
-            minlength: 'Password must be at least 6 characters long'  
+            minlength: "Password must be at least 8 characters long",
+            passwordPattern: "Password must start with a capital letter,1 number and 1 special character."
           },
           password_confirmation: { 
             equalTo:'Password do not match' ,
@@ -569,6 +494,9 @@
         errorPlacement: function (error, element) {
           if (element.attr("type") == "checkbox") error.appendTo("#termsError");
             else error.insertAfter(element);
+        }, invalidHandler: function() {
+          // Ensure we switch to the signup tab if there's a validation error
+          $('#signUpTab').trigger('click');
         }
       });  
       $('#login').validate({  
@@ -641,7 +569,24 @@
           $(".success").addClass("text-red-600");
         }
       });
+      $('#email').on('blur', function() {
+            let email = $(this).val();
+            let errorElement = $('#email-error');
+            errorElement.text('');
 
+            if (email) {
+                $.ajax({
+                    url: "{{ route('check.email') }}",
+                    type: "GET",
+                    data: { email: email },
+                    success: function(response) {
+                        if (!response.available) {
+                            errorElement.text('This email is already taken.');
+                        }
+                    }
+                });
+            }
+      });
 
     });
   </script>

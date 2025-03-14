@@ -72,7 +72,7 @@ class HomeController extends Controller
     {
         return view('socialmedia');
     }
-    public function analytics($code = null)
+      public function analytics($code = null)
     {
         // $userId = auth()->id();
         $userId = Auth::user()->id; // Get the authenticated user's ID
@@ -86,7 +86,7 @@ class HomeController extends Controller
             return view('analytics',['projects'=>$projects,'code'=>$code]);
         }
     }
-    public function getCountriesData($code){
+        public function getCountriesData($code){
 
         $country_data = ScanStatistics::select(
             'country',
@@ -114,7 +114,7 @@ class HomeController extends Controller
         return response()->json($city_data);
     
     }
-    public function getBarChartAnalyticData(Request $request)
+   public function getBarChartAnalyticData(Request $request)
     {   
         $code = $request->code; 
         $start_date = $request->start_date;
@@ -132,7 +132,6 @@ class HomeController extends Controller
         $data = $query->groupBy('user_agent')->orderByDesc('user_agent')->get(); 
         return response()->json($data);
     }
-
     public function getLineChartAnalyticData(Request $request)
     {
         $code = $request->code; 
@@ -199,7 +198,7 @@ class HomeController extends Controller
             ->orderByDesc('created_At')
             ->limit(3)
             ->pluck('project_code')
-            ->toArray();  
+            ->toArray(); 
 
         $qrCodes = [];
         $combinedResults = [];
@@ -227,10 +226,9 @@ class HomeController extends Controller
         foreach ($combinedResults as $item) {
             if (isset($item['code'])) {
                 $id = $item['code'];
-                $project = QrBasicInfo::where('project_code', $id)
+                 $project = QrBasicInfo::where('project_code', $id)
                     ->select('project_name', 'total_scans')
                     ->first();
-
                 $item['projectname'] = $project->project_name ?? '';
                 $item['totalscans'] = $project->total_scans ?? '0';
                 $qrCodes[] = $item;
@@ -249,22 +247,32 @@ class HomeController extends Controller
 
         $timestamp = strtotime($subscriptionEnd);
         $formattedDate = date('d M. Y', $timestamp);  
-     
+
         if($user->plan == "free"){
             $freeSubscriptionStartDate = Carbon::parse($user->created_at)->addDays(7);
             $freeFormatDate = $freeSubscriptionStartDate->format('d M. Y');
+            $remainingDays = "";
+            $diffTotal = "";
         }
         else{
             $freeFormatDate = "";
         }
-        if($user->duration == "monthly"){
-                $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd); 
-            $remainingDays = floor($currentDate->diffInDays($subscriptionEnd, false)); 
+        
+        if( Auth::user()->duration == "monthly"){
+            $monthlySubscriptionStart = Carbon::parse($user->subscription_start); 
+            $monthlySubscriptionEnd = Carbon::parse($user->subscription_end); 
+            $today = Carbon::now();
+            $diffTotal = $monthlySubscriptionStart->diffInDays($monthlySubscriptionEnd); 
+            $remainingDays = floor($today->diffInDays($monthlySubscriptionEnd, false));
         }
-        if($user->duration == "yearly"){
-                $diffTotal = $subscriptionStart->diffInDays($subscriptionEnd) + 1;
-                $remainingDays = max(0, $currentDate->startOfDay()->diffInDays($subscriptionEnd->startOfDay(), false));
+        if( Auth::user()->duration == "yearly"){
+            $yearlySubscriptionStart = Carbon::parse($user->subscription_start); 
+            $yearlySubscriptionEnd = Carbon::parse($user->subscription_end); 
+            $TodayDate = Carbon::now();
+            $diffTotal = $yearlySubscriptionStart->diffInDays($yearlySubscriptionEnd) + 1;
+            $remainingDays = max(0, $TodayDate->startOfDay()->diffInDays($yearlySubscriptionEnd->startOfDay(), false));
         }
+        
         // Set validity based on plan type
         $validity = 0;
         $dynamic = 0;
@@ -297,7 +305,7 @@ class HomeController extends Controller
         $staticCount = 0;
         $dynamicCount = 0;
 
-        $infos = QrBasicInfo::where('userid', $userId)->get(); 
+  $infos = QrBasicInfo::where('userid', $userId)->get(); 
 
 
             foreach ($infos as $item) {
@@ -308,8 +316,9 @@ class HomeController extends Controller
                 }
             }
             $totalCount = $staticCount + $dynamicCount;
+         
 
-    return view('dashboard', compact('userId', 'user','formattedDate','totalCount','staticCount','dynamicCount','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'isPast', 'diffTotal','freeFormatDate'));
+    return view('dashboard', compact('userId', 'user','formattedDate','totalCount','staticCount','dynamicCount','qrCodes', 'validity', 'dynamic', 'static', 'remainingDays', 'diffTotal','freeFormatDate'));
 }
 public function scanData(){
 

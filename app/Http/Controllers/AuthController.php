@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use App\Rules\BlockDisposableEmail;
 
 class AuthController extends Controller
 {
@@ -22,9 +23,15 @@ class AuthController extends Controller
        $request->validate([
             'firstname' => 'required|string|max:255',
             'lastname' => 'required|string|max:255',
-            'email' => ['required','string','email','max:255',Rule::unique('users')->whereNull('deleted_at')], // Ignore soft deleted records,
-            'password' => 'required|string|min:6|confirmed',
+            'email' => ['required','string',new BlockDisposableEmail(),'email','max:255',Rule::unique('users')->whereNull('deleted_at')], // Ignore soft deleted records,
+            'password' => ['required','string','min:8','regex:/^[A-Z]/','regex:/\d/','regex:/[@$!%*?&]/','confirmed'],
             'phonenumber' => 'required|numeric',
+            'terms'=>'required'
+       ],[
+        'password.required' => 'Password is required.',
+        'password.min' => 'Password must be at least 8 characters.',
+        'password.regex' => 'Password must start with a capital letter, and include at least one number and one special character.',
+        'password.confirmed' => 'Passwords do not match.',
        ]);
         $user = new User();
         $user->firstname= $request->firstname;
@@ -76,33 +83,40 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
+    
         if (Auth::attempt($fields)) { 
             $user = auth()->user();
     
-            // Check if subscription has ended or ends today
-            $subscriptionEnded = $user->subscription_end && Carbon::parse($user->subscription_end)->isPast();
-        //  $freeTrialEndsAt = Carbon::parse($user->created_at)->addDays(7);
-        //  $freeSubscriptionEnded = now()->greaterThan($freeTrialEndsAt);
+            // Check subscription and trial statuses
+            $subscriptionEnded = $user->subscription_end && Carbon::parse($user->subscription_end)->endOfDay()->isPast();
+            $trialEnded = $user->created_at->addDays(8)->startOfDay()->isPast();
+            $freeSubscriptionEnded = $user->plan === 'free' && $trialEnded;
 
-            Session::put('firstname', Auth::user()->firstname);
-            Session::put('lastname', Auth::user()->lastname);
-            $isNewUser = Auth::user()->subscription_end === null;
-            if (isset($user->payment_failed_at) || $subscriptionEnded) { 
-                session(['showPaymentPopup' => true]); // Persistent session key
-                return redirect()->route('upgrade')->with('success', 'Logged in successfully!');
-            }
-        // else if($freeSubscriptionEnded) { 
-        //     session(['showPaymentPopup' => true]); // Persistent session key
-        //     return redirect()->route('upgrade')->with('success', 'Logged in successfully!');
-        // }
-            else{
-            return redirect()->route('profile')->with('success', 'Logged in successfully!');
+            // Store user and plan details in session
+            session([
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+                'plan' => $user->plan,
+                'subscription_ended' => $subscriptionEnded,
+                'free_subscription_ended' => $freeSubscriptionEnded,
+                'payment_failed' => !is_null($user->payment_failed_at)
+            ]);
+
+            if ($user->payment_failed_at || $subscriptionEnded) { 
+                session(['showPaymentPopup' => true]);
+                return redirect()->route('upgrade')->with('error', 'Your subscription has ended.');
             }
             
+            if ($freeSubscriptionEnded) { 
+                return redirect()->route('subscription')->with('info', 'Your free trial has ended. Please subscribe.');
+            }
+    
+            return redirect()->route('profile')->with('success', 'Logged in successfully!');
         } 
     
         return back()->with('error', 'Invalid credentials');
     }
+    
 
     // Logout
     public function logout()

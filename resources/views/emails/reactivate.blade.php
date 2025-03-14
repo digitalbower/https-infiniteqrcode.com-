@@ -25,8 +25,8 @@
                     text-align: center;
                 }
                 .header img {
-                    width: 150px;
-                    height: 75px;
+                    width: 200px;
+                    height: auto;
                 }
                 .header h1 {
                     margin: 0;
@@ -59,21 +59,17 @@
     <body>
         <div class="email-container">
             <div class="header">
-                <img src="{{$logo}}" alt="Qr Logo">   
+                 <img src="{{ asset('images/indexfav.png') }}" class="logo" alt="Infinite QR Code Logo">
             </div> 
             <div class="content">
                 <p> Dear {{$user->firstname}},</p>
                 <p>We’re sorry to see you go! Your  subscription Reactivate request has been processed. Your account enabled for auto-renewal billing cycle.</p>
                 <p>If you have any queries, feel free to reach out.</p>
-
-                Best regards,<br>
-                <p>The Infinite QR Code Team<br>
-                <a href="http://www.infiniteqrcode.com" target="_blank" style="text-decoration:none;color:black;">infiniteqrcode.com</a>  |  <a href="mailto:support@infiniteqrcode.com" target="_blank" style="text-decoration:none;color:black;">support@infiniteqrcode.com</a></p>
+                <p>Best regards,</p>
+                <p>The Infinite QR Code Team</p>
             </div>
             <div class="footer">
-                <p>
-                ©infinitecode.com 2025, All rights Reserved
-                </p>
+                &copy; <a href="https://infiniteqrcode.com" style="text-decoration: none; color: #555;">infiniteqrcode.com</a> 2025, All rights reserved.
             </div>
         </div>
     </body>

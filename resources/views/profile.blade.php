@@ -60,12 +60,12 @@
                             <label class="text-sm text-gray-600">Phone Number</label>
                             <div class="sm:flex gap-x-2 items-center">
                                 <select class="rounded-md text-black border text-sm p-2 pr-2 w-full sm:w-1/2" name="countrycode" id="countrycode" readonly>
-                                  @foreach ($countries as $country)
-                                    <option value="{{ $country['dial_code'] }}"
-                                    {{ $country['dial_code'] == $user->countrycode ? 'selected' : '' }}>
-                                        {{ $country['name'] }} ({{ $country['dial_code'] }})
-                                    </option>
-                                  @endforeach
+                                    @foreach ($countries as $country)
+                                        <option value="{{ $country['dial_code'] }}"
+                                        {{ $country['dial_code'] == $user->countrycode ? 'selected' : '' }}>
+                                            {{ $country['name'] }} ({{ $country['dial_code'] }})
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <input type="number" max="999999999999" name="phonenumber" id="phone" readonly
                                     {{($user->phonenumber !== '0') ? 'readOnly' : 'required';}} 
@@ -103,62 +103,67 @@
 
               <!-- Password Section -->
               <div class="rounded-lg border bg-white p-6">
-                <div class="mb-6 flex items-center justify-between">
-                  <h3 class="text-xl font-semibold">Password</h3>
-                  <div class="flex items-center gap-2">
-                    <button
-                        id="edit-password"
-                        class="rounded-full bg-blue-500 p-2 text-white w-10 h-10 hover:bg-blue-600"
-                        onclick="toggleEditing('password')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button
-                        id="save-password"
-                        class="hidden rounded-md bg-green-500 px-3 py-2 text-sm text-white hover:bg-green-600">
-                        Save
+                <form autocomplete="off" id="password-form" method="POST">
+                  @csrf
+                  <div class="mb-6 flex items-center justify-between">
+                    <h3 class="text-xl font-semibold">Password</h3>
+                    <div class="flex items-center gap-2">
+                      <button
+                          id="edit-password"
+                          type="button"
+                          class="rounded-full bg-blue-500 p-2 text-white w-10 h-10 hover:bg-blue-600"
+                          onclick="toggleEditing('password')">
+                          <i class="fas fa-edit"></i>
                       </button>
-                  </div>
-                </div>
-
-                <div class="space-y-4">
-                  <!-- Password Field -->
-                  <label class="success"></label>
-                  <div class="grid gap-1 relative">
-                    <label class="text-sm text-gray-600">Password</label>
-                    <input
-                      id="password-input"
-                      type="password"
-                      name="password"
-                      class="w-full rounded-md text-black border p-2 pr-10"
-                      readonly />
-                    <button
-                      type="button"
-                      id="toggle-password"
-                      class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
-                      onclick="togglePasswordVisibility('password-input', 'password-icon')">
-                      <i id="password-icon" class="fas fa-eye"></i>
-                    </button>
+                      <button
+                          id="save-password"
+                          type="submit"
+                          class="hidden rounded-md bg-green-500 px-3 py-2 text-sm text-white hover:bg-green-600">
+                          Save
+                        </button>
+                    </div>
                   </div>
 
-                  <!-- Confirm Password Field -->
-                  <div class="grid gap-1 relative">
-                    <label class="text-sm text-gray-600">Confirm
-                      Password</label>
-                    <input
-                      id="confirm-password-input"
-                      type="password"
-                      name="password_confirmation"
-                      class="w-full text-black rounded-md border p-2 pr-10"
-                      readonly />
-                    <button
-                      type="button"
-                      id="toggle-confirm-password"
-                      class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
-                      onclick="togglePasswordVisibility('confirm-password-input', 'confirm-password-icon')">
-                      <i id="confirm-password-icon" class="fas fa-eye"></i>
-                    </button>
+                  <div class="space-y-4">
+                    <!-- Password Field -->
+                    <label class="success"></label>
+                    <div class="grid gap-1 relative">
+                      <label class="text-sm text-gray-600">Password</label>
+                      <input
+                        id="password-input"
+                        type="password"
+                        name="password"
+                        class="w-full rounded-md text-black border p-2 pr-10"
+                        readonly />
+                      <button
+                        type="button"
+                        id="toggle-password"
+                        class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                        onclick="togglePasswordVisibility('password-input', 'password-icon')">
+                        <i id="password-icon" class="fas fa-eye"></i>
+                      </button>
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="grid gap-1 relative">
+                      <label class="text-sm text-gray-600">Confirm
+                        Password</label>
+                      <input
+                        id="confirm-password-input"
+                        type="password"
+                        name="password_confirmation"
+                        class="w-full text-black rounded-md border p-2 pr-10"
+                        readonly />
+                      <button
+                        type="button"
+                        id="toggle-confirm-password"
+                        class="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                        onclick="togglePasswordVisibility('confirm-password-input', 'confirm-password-icon')">
+                        <i id="confirm-password-icon" class="fas fa-eye"></i>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </form>
               </div>
 
               <!-- Delete Account Button -->
@@ -285,7 +290,7 @@
                 
                   if (data.status === 'success') {
                       // Show success message
-                      Swal.fire({
+                       Swal.fire({
                           title: 'Updated!',
                           text: 'Account successfully updated!',
                           icon: 'success'
@@ -313,48 +318,89 @@
               }
           });
       });
-    
-         
-      $("#save-password").click(function(e) {
-        e.preventDefault();
-        let password = $('#password-input').val();
-        let cpassword = $('#confirm-password-input').val();
-        if (password === '' || cpassword === '') {
-          $(".success").text('Password fields are Need to be filled');
-          $(".success").addClass('text-red-500');
-        } else if (password === cpassword) {
-          $(".success").text('');
-          $.ajax({
-            type: "POST",
-            url: "{{route('password-reset')}}",
-            data: {
-              password: password,
-              "_token": "{{ csrf_token() }}",
-            },
-            dataType: 'json',
-            success: function(response) {
-              console.log(response);
-              if (response.message === 'success') {
-                $(".success").text('Password Changed Successfully');
-                $(".success").addClass('text-green-500');
-                setTimeout(() => {
-                  location.reload();
-                }, 3000);
-              } else {
-                $(".success").text(response);
-                $(".success").addClass('text-red-500');
-              }
-            }
-          });
-        } else {
-          $(".success").text('Password Not Matched');
-          $(".success").addClass('text-red-500');
-        }
+      $("#edit-password").click(function() {
+          $("#password-input, #confirm-password-input").removeAttr("readonly");
+      });
+      // Add custom password pattern validation method
+      $.validator.addMethod('passwordPattern', function(value, element) {
+          // Regex: First letter capital, 8+ chars, 1 number, 1 special char
+          return this.optional(element) || /^[A-Z](?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{7,}$/.test(value);
+      }, 'Password must start with a capital letter, 1 number, and 1 special character.');
 
+      // Initialize jQuery validation when the page loads
+      $("#password-form").validate({
+          rules: {
+              password: {
+                  required: true,
+                  minlength: 8,
+                  passwordPattern: true
+              },
+              password_confirmation: {
+                  required: true,
+                  equalTo: "#password-input"
+              }
+          },
+          messages: {
+              password: {
+                  required: "Password is required",
+                  minlength: "Password must be at least 8 characters",
+                  passwordPattern: "Password must start with a capital letter, 1 number, and 1 special character."
+              },
+              password_confirmation: {
+                  required: "Please confirm your password",
+                  equalTo: "Passwords do not match"
+              }
+          },
+          errorElement: 'small',
+          errorClass: "text-red-500",
+          highlight: function(element) {
+              $(element).addClass('border-red-500');
+          },
+          unhighlight: function(element) {
+              $(element).removeClass('border-red-500');
+          }
+      });
+
+         
+      // Handle form submission via AJAX
+      $("#save-password").click(function(e) {
+          e.preventDefault();
+          if ($("#password-form").valid()) { // Ensure form is valid before sending AJAX request
+              let password = $('#password-input').val();
+              let password_confirmation = $('#confirm-password-input').val();
+              $.ajax({
+                  type: "POST",
+                  url: "{{route('password-reset')}}",
+                  data: {
+                      password: password,
+                      password_confirmation:password_confirmation,
+                      "_token": "{{ csrf_token() }}"
+                  },
+                  dataType: 'json',
+                  success: function(response) {
+                      let message = response.message === 'success' ? 'Password Changed Successfully' : response;
+                      $(".success").text(message).removeClass('text-red-500').addClass('text-green-500');
+                      if (response.message === 'success') {
+                          setTimeout(() => location.reload(), 3000);
+                      }
+                  },
+                  error: function(xhr) {
+                    if (xhr.status === 422) {
+                      let errors = xhr.responseJSON.errors;
+                      let errorMessage = errors.password ? errors.password[0] : 'An error occurred. Please try again.';
+                      $(".success").text(errorMessage).removeClass('text-green-500').addClass('text-red-500');
+                    }
+                    else {
+                      $(".success").text('An error occurred. Please try again.').removeClass('text-green-500').addClass('text-red-500');
+                    }
+                      
+                  }
+              });
+          }
       });
       $('#delete-account').on('click', function(e) {
         e.preventDefault();
-        Swal.fire({
+         Swal.fire({
           title: "Delete Your Account?",
           text: "This action cannot be undone. Are you sure you want to proceed?",
           icon: "warning",
@@ -391,7 +437,7 @@
               }
             });
           } else {
-            Swal.fire({
+               Swal.fire({
           title: "Cancelled",
           text: "Your account remains safe. Let us know if you need further assistance",
           icon: "warning",

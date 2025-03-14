@@ -300,26 +300,13 @@
   <!-- Dropdown Menu -->
   <div id="userDropdown"
     class="absolute right-0 mt-2 w-56 bg-white border border-gray-300 rounded-lg shadow-lg divide-y divide-gray-200 hidden">
-   @php
-        $subscriptionEnded = Auth::user()->subscription_end && Carbon\Carbon::parse(Auth::user()->subscription_end)->isPast();
-          $isNewUser = Auth::user()->subscription_end === null;
-    @endphp
-    
-  
-    @if (!$subscriptionEnded && !$isNewUser && Auth::user()->payment_failed_at == "")
+ 
     <a href="{{ route('dashboard') }}"
       class="flex items-center gap-x-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
       <i class="fa-solid fa-house text-blue-500"></i>
       Dashboard
     </a>
-    @elseif ($isNewUser)
-     <a href="{{ route('dashboard') }}"
-      class="flex items-center gap-x-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
-      <i class="fa-solid fa-house text-blue-500"></i>
-      Dashboard
-    </a>
-    @endif
-
+   
     <a href="{{ route('auth.logout') }}"
       class="flex items-center gap-x-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition">
       <i class="fas fa-sign-out-alt text-red-500"></i>

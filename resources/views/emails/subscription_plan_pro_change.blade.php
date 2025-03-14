@@ -74,7 +74,7 @@
             <p><strong>Your Subscription Details:</strong></p>
             <p><strong>Previous Plan:</strong> {{ $previousPlan }}</p>
             <p><strong>Plan:</strong> {{ $plan }}</p>
-            <p><strong>Next Billing Date:</strong> {{ $endDate->format('d M, Y') }}</p>
+            <p><strong>Next Billing Date:</strong> {{  \Carbon\Carbon::parse($endDate)->format('d M, Y') }}</p>
             <p><strong>Monthly Price:</strong> ${{ $amount }}</p>
         </div>
 

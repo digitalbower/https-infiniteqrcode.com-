@@ -959,7 +959,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Emailqr::where('code',$code)->first();  
@@ -968,7 +968,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
     }
     public function getAllCountries(){
@@ -1176,7 +1176,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Wifiqr::where('code',$code)->first(); 
@@ -1185,7 +1185,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
     }
     public function editBitcoinQrcode($code){
@@ -1237,7 +1237,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Bitcoinqr::where('code',$code)->first();  
@@ -1246,7 +1246,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
        
     }
@@ -1308,7 +1308,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Pdfqr::where('code',$code)->first();  
@@ -1317,7 +1317,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
       
     }
@@ -1388,7 +1388,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = MP3qr::where('code',$code)->first();  
@@ -1396,7 +1396,7 @@ class MyQRCodeController extends Controller
                 return view('mp3-preview')->with(['qrCode'=>$qrCode]);
             }
         } else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
     }
     public function editImageQrcode($code){
@@ -1452,7 +1452,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Imageqr::where('code',$code)->first();  
@@ -1461,7 +1461,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
         
     }
@@ -1520,7 +1520,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Videoqr::where('code',$code)->first();  
@@ -1529,7 +1529,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
        
     }
@@ -1577,7 +1577,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Appstoreqr::where('code',$code)->first();  
@@ -1586,7 +1586,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
     
     }
@@ -1630,7 +1630,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Urlqr::where('code',$code)->first();  
@@ -1639,7 +1639,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
         
     }
@@ -1711,7 +1711,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = VCardqr::where('code',$code)->first();  
@@ -1720,7 +1720,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
        
     }
@@ -1805,7 +1805,7 @@ class MyQRCodeController extends Controller
             }
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
                 
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = SocialMediaqr::where('code',$code)->first();  
@@ -1814,7 +1814,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
     }
     public function myqrcodelist(Request $request)
@@ -1986,7 +1986,7 @@ class MyQRCodeController extends Controller
             } 
             if (Carbon::parse($qrBasicInfo->end_date)->isPast()|| $user->subscribe_status == 'Inactive' || ($user->subscription_end && Carbon::parse($user->subscription_end)->isPast())) {
     
-                return view('qr-error')->with('message', 'Your subscription has expired or is inactive.');
+                return view('qr-error');
             }
             else{
                 $qrCode = Sms::where('code',$code)->first();  
@@ -1995,7 +1995,7 @@ class MyQRCodeController extends Controller
             }
         }
         else{
-            return view('qr-error')->with('message', 'QR Code does not exist.');
+            return view('qr-not-found');
         }
     
     }
@@ -2035,7 +2035,7 @@ class MyQRCodeController extends Controller
         ->first();
         // If first-time scan from this device
         if (!$existingScan) {
-
+            // Increment both total and unique scans for new devices
             $qrCode->increment('total_scans');
             $qrCode->increment('unique_scans');
 
@@ -2044,27 +2044,25 @@ class MyQRCodeController extends Controller
                 'user_agent' => $device_type,
                 'device_identifier' => $device_identifier,
             ]);
-            // Update or insert scan statistics
-            ScanStatistics::updateOrInsert(
-                ['code' => $code, 'city' => $city, 'country' => $country],
-                ['scan_count' => \DB::raw('scan_count + 1'), 'created_at' => now(), 'updated_at' => now()]
-            );
             \Log::info('New unique scan recorded', ['qr_code_id' => $code, 'device_identifier' => $device_identifier]);
-            return response()->json(['message' => 'New unique scan recorded.'], 200);
+            
         } else {
-        // Increment total scans
-        $qrCode->increment('total_scans');
-
-        // Increment scan count for existing scan statistics
-        ScanStatistics::where('code', $code)
-            ->where('city', $city)
-            ->where('country', $country)
-            ->increment('scan_count', 1, ['scandate' => now()]);
-
-        \Log::info('Scan count updated', ['qr_code_id' => $code, 'device_identifier' => $device_identifier]);
+             // Increment total scans for existing devices
+            $qrCode->increment('total_scans');
+            \Log::info('Existing device scan recorded', ['qr_code_id' => $qrCode->id, 'device_identifier' => $device_identifier]);
+        }
+        // Insert a new row for each scan (every scan is recorded)
+        ScanStatistics::create([
+            'code' => $code,
+            'city' => $city,
+            'country' => $country,
+            'scan_count' => 1, // Each entry adds 1
+            'scandate' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         return response()->json(['message' => 'Scan count updated.'], 200);
     }
-}
    public function deleteQrcode(Request $request){
 
         try {

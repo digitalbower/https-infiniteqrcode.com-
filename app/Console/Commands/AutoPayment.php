@@ -40,7 +40,7 @@ class AutoPayment extends Command
 
         // Get users with subscriptions due for renewal
         $users = User::select('id', 'stripe_customer_id', 'payment_method_id', 'subscription_end', 'price', 'duration', 'email', 'plan', 'firstname', 'lastname')
-        ->whereDate('subscription_end', Carbon::today())
+        ->whereDate('subscription_end', Carbon::yesterday())
         ->where('renew_status', 'Enabled')
         ->where('subscribe_status', 'Active')
         ->where('plan', '!=', 'free')

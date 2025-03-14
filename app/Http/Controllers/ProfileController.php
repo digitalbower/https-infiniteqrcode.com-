@@ -15,7 +15,7 @@ class ProfileController extends Controller
      */
     public function edit()
     {
-        $user = User::where('username',Auth::user()->username)->orWhere('email',Auth::user()->username)->first();
+        $user = User::where('id',Auth::user()->id)->orWhere('email',Auth::user()->email)->first();
         $countries = $this->getAllCountries();
 
         return view('profile',['user'=>$user,'countries'=>$countries]);
@@ -56,6 +56,24 @@ class ProfileController extends Controller
      * Password reset.
      */
     public function password_reset(Request $request){
+        // Validate password rules
+        $request->validate([
+            'password' => [
+                'required',
+                'string',
+                'min:8', // At least 8 characters
+                'regex:/^[A-Z]/', // Must start with a capital letter
+                'regex:/\d/', // Must contain at least one number
+                'regex:/[@$!%*?&]/', // Must contain at least one special character
+                'confirmed'
+            ],
+        ], [
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must start with a capital letter, and include at least one number and one special character.',
+            'password.confirmed' => 'Passwords do not match.',
+        ]);
+
         $id = Auth::user()->id; 
         $user = User::find($id);
         $user->password= $request->password;

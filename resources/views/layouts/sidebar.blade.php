@@ -32,13 +32,6 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
     <ul class="space-y-2">
     <!-- Dashboard -->
     <!-- Based  on Payment Failed or Not -->
-    @php
-        $subscriptionEnded = Auth::user()->subscription_end && Carbon\Carbon::parse(Auth::user()->subscription_end)->isPast();
-          $isNewUser = Auth::user()->subscription_end === null;
-    @endphp
-    
-  
-    @if (!$subscriptionEnded && !$isNewUser && Auth::user()->payment_failed_at == "")
         <!-- Your content goes here -->
         
     <li>
@@ -100,70 +93,7 @@ class="fixed overflow-y-auto pb-50 top-0 shad left-0 w-10/12 lg:w-64 h-screen  b
             </button>
         </a>
     </li>
-    
-    
-@elseif ($isNewUser)
-    <li>
-        <a href="{{route('dashboard')}}"
-         class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-        <i class="fa-solid fa-house mr-2"></i> Dashboard
-        </a>
-    </li>
 
-    <!-- Create QR Code -->
-    <li>
-        <a href="{{ route('createqrcode') }}"
-         class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-            <i class="fa-solid fa-qrcode mr-3"></i> Create QR Code
-        </a>
-    </li>
-
-    <!-- Profile -->
-    <li>
-        <a href="{{ route('profile') }}" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-            <i class="fa-solid fa-user-circle mr-3"></i> Profile
-        </a>
-    </li>
-
-    <!-- Analytics -->
-    <li>
-        <a href="{{ route('analytics') }}" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-            <i class="fa-solid fa-chart-line mr-3"></i> Analytics
-        </a>
-    </li>
-
-    <!-- Subscription -->
-    <li>
-        <a href="{{ route('subscription') }}" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-            <i class="fa-solid fa-calendar-days mr-3"></i> Subscription
-        </a>
-    </li>
-
-    <!-- My QR Codes -->
-    <li>
-        <a href="{{ route('myqrcodelist') }}" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-            <i class="fa-solid fa-qrcode mr-3"></i> My QR Codes
-        </a>
-    </li>
-    @if(auth()->user()->plan == 'free')
-    <li class="mx-0 pt-4">
-        <a href="{{route('upgrade')}}" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-            <button class="bg-blue-500 flex items-center w-full text-white py-3 px-12 rounded-lg shadow-md hover:bg-blue-600 transition duration-300">
-                <i class="fa-solid fa-arrow-up mr-2"></i> Upgrade
-            </button>
-        </a>
-    </li>
-  @endif
-    <!-- Logout -->
-    <li class="mx-0 pt-4">
-        <a href="{{route('auth.logout')}}" class="flex items-center w-full text-left py-2 px-2 rounded hover:bg-gray-700">
-            <button class="bg-orange-500 flex items-center w-full text-white py-3 px-12 rounded-lg shadow-md hover:bg-orange-600 transition duration-300">
-                <i class="fa-solid fa-sign-out-alt mr-2"></i> Logout
-            </button>
-        </a>
-    </li>
-    
-@endif
 </ul>
 </nav>
 

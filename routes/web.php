@@ -8,16 +8,24 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\ContactController;
+use App\Models\User;
+use App\Http\Middleware\CheckSubscription;
+
+
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
-
 Route::get('/auth/google', [GoogleAuthController::class, 'redirectToGoogle'])->name('google.login');
-Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback']);
+Route::get('/auth/google/callback', [GoogleAuthController::class, 'handleGoogleCallback'])->name('google');
 Route::post('/contact-submit', [ContactController::class, 'submitForm']);
-
 Route::middleware('guest')->group(function(){
+    Route::get('/check-email', function (Request $request) {
+    $email = $request->query('email');
+    $exists = User::where('email', $email)->whereNull('deleted_at')->exists();
+    
+    return response()->json(['available' => !$exists]);
+    })->name('check.email');
     Route::get('/signin', [HomeController::class, 'login'])->name('login');
     Route::get('/logout', [HomeController::class, 'logout'])->name('logout');
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
@@ -37,9 +45,10 @@ Route::middleware('guest')->group(function(){
     Route::post('/country-statistics', [MyQRCodeController::class, 'countryStatistics'])->name('country-statistics');
     Route::get('/download-pdf/{code}',  [MyQRCodeController::class, 'downloadPdf'])->name('download-pdf');
     Route::get('/download-vcard/{code}',  [MyQRCodeController::class, 'downloadVcard'])->name('download-vcard');
+    
 
 });
-Route::middleware(['auth'])->group(function () {
+Route::middleware([CheckSubscription::class, 'auth'])->group(function () {
 Route::get('/createqrcode', [HomeController::class, 'createqrcode'])->name('createqrcode');
 Route::get('/url', [HomeController::class, 'url'])->name('url');
 Route::get('/wi-fi', [HomeController::class, 'wifi'])->name('wifi');
@@ -64,11 +73,9 @@ Route::get('/scan_data',[HomeController::class,'scanData'])->name('scan_data');
 Route::get('/text', [HomeController::class, 'text'])->name('text');
 Route::get('/Pdf', [HomeController::class, 'Pdf'])->name('Pdf');
 Route::get('/facebook', [HomeController::class, 'facebook'])->name('facebook');
-Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 
 
-Route::get('/subscription', [SubscriptionController::class, 'subscription'])->name('subscription'); // Subscription 
-Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade'); //Upgrade
+
 Route::post('/renew-subscription', [SubscriptionController::class, 'renewSubscription'])->name('renew-subscription'); //Renew
 
 //Create QR code 
@@ -109,8 +116,10 @@ Route::post('update-vcardqr/{code}',[MyQRCodeController::class, 'updateVcardQrco
 Route::post('create-socialqr',[MyQRCodeController::class, 'createSocialQrcode'])->name('create-socialqr');
 Route::get('edit-socialqr/{code}',[MyQRCodeController::class, 'editSocialQrcode'])->name('edit-socialqr');  
 Route::post('update-socialqr/{code}',[MyQRCodeController::class, 'updateSocialQrcode'])->name('update-socialqr');  
-
 Route::post("deleteqr",[MyQRCodeController::class, 'deleteQrcode'])->name('delete-qr'); 
+Route::get('/qrcodestyling/{code}',  [MyQRCodeController::class, 'qrcodestyling'])->name('qrcodestyling');
+
+
 
 
 Route::get('/myqrcodelist', [MyQRCodeController::class, 'myqrcodelist'])->name('myqrcodelist'); //My OR Codes List 
@@ -124,43 +133,9 @@ Route::post('password-reset', [ProfileController::class, 'password_reset'])->nam
 Route::post('delete-account', [ProfileController::class, 'delete_account'])->name('delete-account');
 Route::post('profile-picture/update',[ProfileController::class,'updateProfilePicture'])->name('profile-picture.update');
 });
-
-// Route::get('/qrcode', [HomeController::class, 'qrcode'])->name('qrcode');
-
-
-
-
-
-// Route::get('/qrcode/create', [HomeController::class, 'create'])->name('qrcode.create');
-// Route::post('/qrcode/store', [HomeController::class, 'store'])->name('qrcode.store');
-// Route::get('/qrcode/list', [HomeController::class, 'list'])->name('qrcode.list');
-// Route::get('/qrcode/{id}', [HomeController::class, 'show'])->name('qrcode.show');
-
-
-// Route::get('/scan-qr', function (Request $request) {
-//     $data = json_decode($request->get('data'), true);
-//     return view('qr-view', ['data' => $data]);
-// });
-
-
-
-
-
-// Route::get('/payment/success', function () {
-//     return 'Payment Successful!';
-// })->name('payment.success');
-// Route::get('/payment/failure', function () {
-//     return 'Payment Failed!';
-// })->name('payment.failure');
-
-// Route::get('/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
-// Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
-
-
-// Route::get('/checkout', function () {
-//     return view('checkout');
-// })->name('checkout');
-
-// Route::post('/stripe/payment', [StripeController::class, 'processPayment'])->name('stripe.payment');
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/subscription', [SubscriptionController::class, 'subscription'])->name('subscription'); // Subscription 
+    Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade'); //Upgrade
+    Route::get('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+});
 

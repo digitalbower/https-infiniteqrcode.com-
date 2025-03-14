@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expired QR Code</title>
+    <title>QR Code Not Found</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,13 +25,12 @@
             font-size: 18px;
             color: #333;
         }
-        
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Expired QR Code</h1>
-        <p>The QR code you scanned is no longer valid. If you believe this is an error, please reach out to our support team.</p>
+        <h1>QR Code Not Found</h1>
+        <p>The QR code you scanned does not exist.If you believe this is an error, please reach out to our support team.</p>
     </div>
 </body>
 </html>
